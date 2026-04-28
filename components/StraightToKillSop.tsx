@@ -535,12 +535,6 @@ export default function StraightToKillSop({ category }: Props) {
 
           </div>
 
-          {/* Footer */}
-          <div className={styles.sopFooter}>
-            <strong>Straight To Kill Ad Creative SOP</strong> v1.0
-            <div className={styles.sopFooterCopy}>Copyright &copy; 2026 NM Media Sdn. Bhd. All rights reserved.</div>
-          </div>
-
           {/* Back link */}
           <div className="max-w-[880px] mx-auto px-6 py-8 flex items-center justify-between border-t border-[var(--border)]">
             <Link href="/dashboard" className="inline-flex items-center gap-1.5 text-sm text-[var(--muted)] hover:text-[var(--text)] transition-colors group">

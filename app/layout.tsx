@@ -28,8 +28,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeProvider>
           <div className="min-h-screen flex flex-col">
             <div className="flex-1">{children}</div>
-            <footer className="border-t border-[var(--border)] bg-[var(--bg)]/80">
-              <div className="max-w-6xl mx-auto px-6 py-4 text-center text-xs text-[var(--muted)]">
+            <footer className="border-t border-[#1e1e2e] bg-[#0f0f1a]">
+              <div className="max-w-6xl mx-auto px-6 py-4 text-center text-xs text-[#9090aa]">
                 Copyright © 2026 NM Media Sdn. Bhd. All rights reserved.
               </div>
             </footer>
