@@ -1,6 +1,6 @@
 import { redirect, notFound } from 'next/navigation';
 import { getSession } from '@/lib/auth';
-import { getUserById, userHasAccess, getCategories, getSopDocumentBySlug } from '@/lib/db';
+import { getUserById, userHasAccess, getCategories } from '@/lib/db';
 import metaAdsSOP from '@/data/sop/meta-ads';
 import salesClosingSOP from '@/data/sop/sales-closing';
 import contentCreationSOP from '@/data/sop/content-creation';
@@ -34,27 +34,18 @@ export default async function SopPage({ params }: { params: { category: string }
     return (
       <div className="min-h-screen bg-[var(--bg)]">
         <Navbar user={{ name: user.name, email: user.email, role: user.role }} />
-        <StraightToKillSop category={category} isAdmin={user.role === 'admin'} />
+        <StraightToKillSop category={category} />
       </div>
     );
   }
 
-  const baseSop = SOP_MAP[params.category];
-  let override: Awaited<ReturnType<typeof getSopDocumentBySlug>> = null;
-  try {
-    override = await getSopDocumentBySlug(params.category);
-  } catch {
-    // Fail open: if the editable override store is unavailable,
-    // still render the bundled SOP instead of crashing the page.
-    override = null;
-  }
-  const sop = (override?.content as SOPDoc | undefined) ?? baseSop;
+  const sop = SOP_MAP[params.category];
   if (!sop) notFound();
 
   return (
     <div className="min-h-screen bg-[var(--bg)]">
       <Navbar user={{ name: user.name, email: user.email, role: user.role }} />
-      <SopViewer sop={sop} category={category} isAdmin={user.role === 'admin'} />
+      <SopViewer sop={sop} category={category} />
     </div>
   );
 }
