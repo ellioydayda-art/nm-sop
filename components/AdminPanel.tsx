@@ -75,7 +75,7 @@ export default function AdminPanel({ initialUsers, currentUserId, categories = [
     setError('');
     try {
       if (editingUser) {
-        const body: Record<string, unknown> = { name: form.name, role: form.role, categories: form.categories };
+        const body: Record<string, unknown> = { name: form.name, email: form.email, role: form.role, categories: form.categories };
         if (form.password) body.password = form.password;
         const res = await fetch(`/api/admin/users/${editingUser.id}`, {
           method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
@@ -268,12 +268,10 @@ export default function AdminPanel({ initialUsers, currentUserId, categories = [
                   onChange={e => setForm(p => ({ ...p, name: e.target.value }))} required />
               </Field>
 
-              {!editingUser && (
-                <Field label="Email">
-                  <input type="email" className="input" placeholder="user@email.com" value={form.email}
-                    onChange={e => setForm(p => ({ ...p, email: e.target.value }))} required />
-                </Field>
-              )}
+              <Field label="Email">
+                <input type="email" className="input" placeholder="user@email.com" value={form.email}
+                  onChange={e => setForm(p => ({ ...p, email: e.target.value }))} required />
+              </Field>
 
               <Field label={editingUser ? 'New Password (blank = keep current)' : 'Password'}>
                 <input type="password" className="input" placeholder="••••••••" value={form.password}

@@ -21,6 +21,13 @@ create table if not exists public.categories (
   accent_hex text not null
 );
 
+-- Editable SOP documents. Content is stored as JSON for live admin edits.
+create table if not exists public.sop_documents (
+  slug text primary key references public.categories(slug) on delete cascade,
+  content jsonb not null,
+  updated_at timestamptz not null default now()
+);
+
 -- Seed default categories.
 insert into public.categories (slug, name, department, description, accent_hex)
 values
@@ -40,6 +47,7 @@ set
 -- Grant access for anon/authenticated roles so existing app flows work.
 alter table public.users enable row level security;
 alter table public.categories enable row level security;
+alter table public.sop_documents enable row level security;
 
 drop policy if exists "users_full_access_anon" on public.users;
 create policy "users_full_access_anon"
@@ -52,6 +60,14 @@ with check (true);
 drop policy if exists "categories_full_access_anon" on public.categories;
 create policy "categories_full_access_anon"
 on public.categories
+for all
+to anon, authenticated
+using (true)
+with check (true);
+
+drop policy if exists "sop_documents_full_access_anon" on public.sop_documents;
+create policy "sop_documents_full_access_anon"
+on public.sop_documents
 for all
 to anon, authenticated
 using (true)

@@ -25,7 +25,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body className="noise">
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <div className="min-h-screen flex flex-col">
+            <div className="flex-1">{children}</div>
+            <footer className="border-t border-[var(--border)] bg-[var(--bg)]/80">
+              <div className="max-w-6xl mx-auto px-6 py-4 text-center text-xs text-[var(--muted)]">
+                Copyright © 2026 NM Media Sdn. Bhd. All rights reserved.
+              </div>
+            </footer>
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );

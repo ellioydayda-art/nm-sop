@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import type { SOPDoc, ContentBlock } from '@/data/sop/meta-ads';
 import VideoPlayer from './VideoPlayer';
 import { CategoryIcon, IconArrowLeft, IconChevronRight, IconCheck } from './Icons';
 import styles from './sop-viewer.module.css';
+import { createClient } from '@supabase/supabase-js';
 
 interface SopViewerCategory {
   slug: string;
@@ -17,11 +18,39 @@ interface SopViewerCategory {
 interface SopViewerProps {
   sop: SOPDoc;
   category: SopViewerCategory;
+  isAdmin: boolean;
 }
 
-export default function SopViewer({ sop, category }: SopViewerProps) {
+type SaveStatus = 'idle' | 'saving' | 'saved' | 'failed';
+
+interface SopRealtimeRow {
+  slug: string;
+  content: SOPDoc;
+}
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+export default function SopViewer({ sop, category, isAdmin }: SopViewerProps) {
+  const [doc, setDoc] = useState<SOPDoc>(sop);
   const [activeSection, setActiveSection] = useState(sop.sections[0]?.id ?? '');
   const [progress, setProgress] = useState(0);
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
+  const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    setDoc(sop);
+    setActiveSection(sop.sections[0]?.id ?? '');
+  }, [sop]);
+
+  useEffect(() => {
+    return () => {
+      if (saveTimerRef.current) {
+        clearTimeout(saveTimerRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -36,6 +65,30 @@ export default function SopViewer({ sop, category }: SopViewerProps) {
     els.forEach(el => observer.observe(el));
     return () => observer.disconnect();
   }, []);
+
+  useEffect(() => {
+    if (!supabaseUrl || !supabaseAnonKey) return;
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+
+    const channel = supabase
+      .channel(`sop-live-${category.slug}`)
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'sop_documents', filter: `slug=eq.${category.slug}` },
+        payload => {
+          const row = payload.new as SopRealtimeRow;
+          if (!row?.content) return;
+          setDoc(row.content);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [category.slug]);
 
   useEffect(() => {
     function onScroll() {
@@ -53,7 +106,73 @@ export default function SopViewer({ sop, category }: SopViewerProps) {
     setActiveSection(id);
   }
 
-  const activeIdx = sop.sections.findIndex(s => s.id === activeSection);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      void fetch(`/api/admin/sop/${category.slug}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.content) {
+            setDoc(data.content as SOPDoc);
+          }
+        })
+        .catch(() => {
+          // Keep current state if sync fails.
+        });
+    }, 15000);
+
+    return () => clearInterval(interval);
+  }, [category.slug]);
+
+  const activeIdx = doc.sections.findIndex(s => s.id === activeSection);
+
+  function writePath(source: SOPDoc, path: string, value: string): SOPDoc {
+    const clone = JSON.parse(JSON.stringify(source)) as SOPDoc;
+    const segments = path.split('.');
+    let current: unknown = clone;
+    for (let i = 0; i < segments.length - 1; i += 1) {
+      const key = segments[i];
+      if (typeof current !== 'object' || current === null || !(key in current)) {
+        return source;
+      }
+      current = (current as Record<string, unknown>)[key];
+    }
+    if (typeof current !== 'object' || current === null) return source;
+    const last = segments[segments.length - 1];
+    (current as Record<string, unknown>)[last] = value;
+    return clone;
+  }
+
+  async function saveDoc(nextDoc: SOPDoc) {
+    if (!isAdmin) return;
+    setSaveStatus('saving');
+    try {
+      const response = await fetch(`/api/admin/sop/${category.slug}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: nextDoc }),
+      });
+      if (!response.ok) {
+        throw new Error('Save failed');
+      }
+      setSaveStatus('saved');
+      setLastSavedAt(new Date().toLocaleTimeString());
+      setTimeout(() => setSaveStatus('idle'), 1400);
+    } catch {
+      setSaveStatus('failed');
+    }
+  }
+
+  function updateText(path: string, value: string) {
+    const nextDoc = writePath(doc, path, value);
+    setDoc(nextDoc);
+    setSaveStatus('idle');
+    if (saveTimerRef.current) {
+      clearTimeout(saveTimerRef.current);
+    }
+    saveTimerRef.current = setTimeout(() => {
+      void saveDoc(nextDoc);
+    }, 700);
+  }
 
   return (
     <>
@@ -76,13 +195,25 @@ export default function SopViewer({ sop, category }: SopViewerProps) {
           </span>
 
           <h1 className={styles.heroTitle}>
-            {sop.title.replace(' SOP', '')}
+            <EditableText
+              value={doc.title}
+              isAdmin={isAdmin}
+              path="title"
+              onChange={updateText}
+              className={styles.heroTitle}
+              multiline={false}
+            />
           </h1>
 
           <div className={styles.heroAccentLine} style={{ background: `linear-gradient(90deg, ${category.accentHex}, ${category.accentHex}50)` }} />
 
           <p className={styles.heroSub}>{category.description}</p>
-          <p className={styles.heroDept}>{sop.sections.length} sections · {category.department}</p>
+          <p className={styles.heroDept}>{doc.sections.length} sections · {category.department}</p>
+          {isAdmin && (
+            <p className={styles.heroDept} style={{ marginTop: 8 }}>
+              {saveStatus === 'saving' ? 'Saving...' : saveStatus === 'saved' ? `Saved at ${lastSavedAt ?? ''}` : saveStatus === 'failed' ? 'Save failed' : 'All changes synced'}
+            </p>
+          )}
         </div>
 
         {/* ── Layout ───────────────────────────────────────── */}
@@ -103,19 +234,19 @@ export default function SopViewer({ sop, category }: SopViewerProps) {
                 <CategoryIcon slug={category.slug} size={15} style={{ color: category.accentHex } as React.CSSProperties} />
               </div>
               <p className={styles.sidebarDept} style={{ color: category.accentHex }}>{category.department}</p>
-              <p className={styles.sidebarTitle}>{sop.title}</p>
+              <p className={styles.sidebarTitle}>{doc.title}</p>
             </div>
 
             <div className={styles.progressBar}>
               <div
                 className={styles.progressFill}
-                style={{ width: `${((activeIdx + 1) / sop.sections.length) * 100}%`, background: category.accentHex }}
+                style={{ width: `${((activeIdx + 1) / doc.sections.length) * 100}%`, background: category.accentHex }}
               />
             </div>
-            <p className={styles.progressText}>{activeIdx + 1} of {sop.sections.length}</p>
+            <p className={styles.progressText}>{activeIdx + 1} of {doc.sections.length}</p>
 
             <nav style={{ flex: 1 }}>
-              {sop.sections.map((section, i) => {
+              {doc.sections.map((section, i) => {
                 const isActive = activeSection === section.id;
                 return (
                   <button
@@ -141,7 +272,7 @@ export default function SopViewer({ sop, category }: SopViewerProps) {
 
           {/* ── Main content ─────────────────────────────── */}
           <main className={styles.main}>
-            {sop.sections.map((section, i) => (
+            {doc.sections.map((section, i) => (
               <section
                 key={section.id}
                 id={section.id}
@@ -154,7 +285,14 @@ export default function SopViewer({ sop, category }: SopViewerProps) {
                     {String(i + 1).padStart(2, '0')}
                   </div>
                   <div>
-                    <h2 className={styles.sectionTitle}>{section.title}</h2>
+                    <EditableText
+                      value={section.title}
+                      isAdmin={isAdmin}
+                      path={`sections.${i}.title`}
+                      onChange={updateText}
+                      className={styles.sectionTitle}
+                      multiline={false}
+                    />
                     <div
                       className={styles.sectionRule}
                       style={{ background: `linear-gradient(90deg, ${category.accentHex}, ${category.accentHex}40)` }}
@@ -164,7 +302,7 @@ export default function SopViewer({ sop, category }: SopViewerProps) {
 
                 <div style={{ paddingLeft: 70 }}>
                   {section.blocks.map((block, bi) => (
-                    <Block key={bi} block={block} accentHex={category.accentHex} />
+                    <Block key={bi} block={block} accentHex={category.accentHex} isAdmin={isAdmin} sectionIndex={i} blockIndex={bi} onChange={updateText} />
                   ))}
                 </div>
               </section>
@@ -184,17 +322,30 @@ export default function SopViewer({ sop, category }: SopViewerProps) {
   );
 }
 
-function Block({ block, accentHex }: { block: ContentBlock; accentHex: string }) {
+function Block({
+  block,
+  accentHex,
+  isAdmin,
+  sectionIndex,
+  blockIndex,
+  onChange,
+}: {
+  block: ContentBlock;
+  accentHex: string;
+  isAdmin: boolean;
+  sectionIndex: number;
+  blockIndex: number;
+  onChange: (path: string, value: string) => void;
+}) {
+  const basePath = `sections.${sectionIndex}.blocks.${blockIndex}`;
   switch (block.type) {
 
     case 'text':
-      return <p className={styles.bodyText}>{block.content}</p>;
+      return <EditableText value={block.content} isAdmin={isAdmin} path={`${basePath}.content`} onChange={onChange} className={styles.bodyText} />;
 
     case 'bold-text':
       return (
-        <p className={styles.bodyText} style={{ fontWeight: 700, color: '#1a1a2e' }}>
-          {block.content}
-        </p>
+        <EditableText value={block.content} isAdmin={isAdmin} path={`${basePath}.content`} onChange={onChange} className={styles.bodyText} style={{ fontWeight: 700, color: '#1a1a2e' }} />
       );
 
     case 'divider':
@@ -212,7 +363,7 @@ function Block({ block, accentHex }: { block: ContentBlock; accentHex: string })
               ) : (
                 <span className={styles.listDot} style={{ background: accentHex, marginTop: 9 }} />
               )}
-              <span>{item}</span>
+              <EditableText value={item} isAdmin={isAdmin} path={`${basePath}.items.${i}`} onChange={onChange} />
             </li>
           ))}
         </ul>
@@ -224,13 +375,21 @@ function Block({ block, accentHex }: { block: ContentBlock; accentHex: string })
           <table className={styles.table}>
             <thead className={styles.tableHead}>
               <tr>
-                {block.headers.map((h, i) => <th key={i}>{h}</th>)}
+                {block.headers.map((h, i) => (
+                  <th key={i}>
+                    <EditableText value={h} isAdmin={isAdmin} path={`${basePath}.headers.${i}`} onChange={onChange} multiline={false} />
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody>
               {block.rows.map((row, ri) => (
                 <tr key={ri}>
-                  {row.map((cell, ci) => <td key={ci}>{cell}</td>)}
+                  {row.map((cell, ci) => (
+                    <td key={ci}>
+                      <EditableText value={cell} isAdmin={isAdmin} path={`${basePath}.rows.${ri}.${ci}`} onChange={onChange} multiline={false} />
+                    </td>
+                  ))}
                 </tr>
               ))}
             </tbody>
@@ -265,10 +424,10 @@ function Block({ block, accentHex }: { block: ContentBlock; accentHex: string })
           {block.title && (
             <p className={`${styles.calloutLabel} ${labelClass}`}>
               <span>{icons[block.variant]}</span>
-              {block.title}
+              <EditableText value={block.title ?? ''} isAdmin={isAdmin} path={`${basePath}.title`} onChange={onChange} multiline={false} />
             </p>
           )}
-          <p className={styles.calloutText}>{block.content}</p>
+          <EditableText value={block.content} isAdmin={isAdmin} path={`${basePath}.content`} onChange={onChange} className={styles.calloutText} />
         </div>
       );
     }
@@ -282,19 +441,19 @@ function Block({ block, accentHex }: { block: ContentBlock; accentHex: string })
                 {String.fromCharCode(65 + i)}
               </div>
               <div className={styles.stepCard}>
-                <p className={styles.stepCardTitle}>{step.label}</p>
+                <EditableText value={step.label} isAdmin={isAdmin} path={`${basePath}.steps.${i}.label`} onChange={onChange} className={styles.stepCardTitle} multiline={false} />
                 <div>
                   {step.items.map((item, ii) => (
                     <div key={ii} className={styles.stepCardItem}>
                       <span className={styles.stepCardNum}>{ii + 1}.</span>
-                      <span>{item}</span>
+                      <EditableText value={item} isAdmin={isAdmin} path={`${basePath}.steps.${i}.items.${ii}`} onChange={onChange} />
                     </div>
                   ))}
                 </div>
                 {step.result && (
                   <div className={styles.stepResult}>
                     <IconCheck size={12} />
-                    {step.result}
+                    <EditableText value={step.result} isAdmin={isAdmin} path={`${basePath}.steps.${i}.result`} onChange={onChange} multiline={false} />
                   </div>
                 )}
               </div>
@@ -309,9 +468,9 @@ function Block({ block, accentHex }: { block: ContentBlock; accentHex: string })
     case 'image':
       return (
         <div style={{ borderRadius: 10, overflow: 'hidden', border: '1px solid #dcdcec', background: '#f4f4fb', margin: '6px 0' }}>
-          <img src={block.url} alt={block.alt} style={{ width: '100%', display: 'block' }} loading="lazy" />
+              <img src={block.url} alt={block.alt} style={{ width: '100%', display: 'block' }} loading="lazy" />
           {block.alt && (
-            <p style={{ fontSize: 12, color: '#9090b0', textAlign: 'center', padding: '10px 16px' }}>{block.alt}</p>
+            <EditableText value={block.alt} isAdmin={isAdmin} path={`${basePath}.alt`} onChange={onChange} style={{ fontSize: 12, color: '#9090b0', textAlign: 'center', padding: '10px 16px' }} />
           )}
         </div>
       );
@@ -321,7 +480,7 @@ function Block({ block, accentHex }: { block: ContentBlock; accentHex: string })
         <div style={{ margin: '6px 0' }}>
           {block.rows.map((row, i) => (
             <div key={i} className={styles.namingCard}>
-              <p className={styles.namingLabel}>{row.label}</p>
+              <EditableText value={row.label} isAdmin={isAdmin} path={`${basePath}.rows.${i}.label`} onChange={onChange} className={styles.namingLabel} multiline={false} />
               <code
                 style={{
                   display: 'block',
@@ -335,11 +494,11 @@ function Block({ block, accentHex }: { block: ContentBlock; accentHex: string })
                   lineHeight: 1.6,
                 }}
               >
-                {row.pattern}
+                <EditableText value={row.pattern} isAdmin={isAdmin} path={`${basePath}.rows.${i}.pattern`} onChange={onChange} multiline={false} />
               </code>
               {row.example && (
                 <p style={{ fontSize: 11, color: '#9090b0', marginTop: 6, fontFamily: "'JetBrains Mono', monospace" }}>
-                  e.g. {row.example}
+                  e.g. <EditableText value={row.example} isAdmin={isAdmin} path={`${basePath}.rows.${i}.example`} onChange={onChange} multiline={false} />
                 </p>
               )}
             </div>
@@ -350,4 +509,51 @@ function Block({ block, accentHex }: { block: ContentBlock; accentHex: string })
     default:
       return null;
   }
+}
+
+function EditableText({
+  value,
+  isAdmin,
+  path,
+  onChange,
+  className,
+  multiline = true,
+  style,
+}: {
+  value: string;
+  isAdmin: boolean;
+  path: string;
+  onChange: (path: string, value: string) => void;
+  className?: string;
+  multiline?: boolean;
+  style?: React.CSSProperties;
+}) {
+  if (!isAdmin) {
+    return (
+      <span className={className} style={style}>
+        {value}
+      </span>
+    );
+  }
+
+  if (!multiline) {
+    return (
+      <input
+        className={`${className ?? ''} input`}
+        value={value}
+        onChange={event => onChange(path, event.target.value)}
+        style={style}
+      />
+    );
+  }
+
+  return (
+    <textarea
+      className={`${className ?? ''} input`}
+      value={value}
+      onChange={event => onChange(path, event.target.value)}
+      style={style}
+      rows={Math.max(2, value.split('\n').length)}
+    />
+  );
 }

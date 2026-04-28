@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { Category } from '@/lib/db';
-import { CategoryIcon, IconEdit, IconCheck } from './Icons';
+import { CategoryIcon, IconEdit } from './Icons';
 
 interface CategoryEditorProps {
   initialCategories: Category[];
@@ -14,8 +14,9 @@ export default function CategoryEditor({ initialCategories }: CategoryEditorProp
   const [categories, setCategories] = useState(initialCategories);
   const [editingSlug, setEditingSlug] = useState<string | null>(null);
   const [editForm, setEditForm] = useState({ name: '', description: '' });
-  const [loading, setLoading] = useState(false);
+  const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved'>('idle');
   const [error, setError] = useState('');
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   function startEdit(cat: Category) {
     setEditingSlug(cat.slug);
@@ -23,18 +24,37 @@ export default function CategoryEditor({ initialCategories }: CategoryEditorProp
     setError('');
   }
 
-  async function saveEdit(slug: string) {
-    if (!editForm.name.trim()) {
+  useEffect(() => {
+    return () => {
+      if (saveTimerRef.current) {
+        clearTimeout(saveTimerRef.current);
+      }
+    };
+  }, []);
+
+  async function saveEdit(slug: string, formValues: { name: string; description: string }) {
+    const trimmedName = formValues.name.trim();
+    if (!trimmedName) {
       setError('Name cannot be empty');
       return;
     }
 
-    setLoading(true);
+    const currentCategory = categories.find(category => category.slug === slug);
+    if (
+      currentCategory &&
+      currentCategory.name === trimmedName &&
+      currentCategory.description === formValues.description
+    ) {
+      return;
+    }
+
+    setSaveState('saving');
+    setError('');
     try {
       const res = await fetch('/api/admin/categories', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ slug, name: editForm.name, description: editForm.description }),
+        body: JSON.stringify({ slug, name: trimmedName, description: formValues.description }),
       });
 
       if (!res.ok) {
@@ -45,17 +65,50 @@ export default function CategoryEditor({ initialCategories }: CategoryEditorProp
       setCategories(prev =>
         prev.map(c =>
           c.slug === slug
-            ? { ...c, name: editForm.name, description: editForm.description }
+            ? { ...c, name: trimmedName, description: formValues.description }
             : c
         )
       );
-      setEditingSlug(null);
+      setEditForm({ name: trimmedName, description: formValues.description });
+      setSaveState('saved');
+      setTimeout(() => setSaveState('idle'), 1200);
       router.refresh();
     } catch (err: unknown) {
+      setSaveState('idle');
       setError(err instanceof Error ? err.message : 'Update failed');
-    } finally {
-      setLoading(false);
     }
+  }
+
+  function queueSave(slug: string, nextForm: { name: string; description: string }) {
+    if (saveTimerRef.current) {
+      clearTimeout(saveTimerRef.current);
+    }
+
+    saveTimerRef.current = setTimeout(() => {
+      void saveEdit(slug, nextForm);
+    }, 700);
+  }
+
+  function handleNameChange(slug: string, value: string) {
+    const nextForm = { ...editForm, name: value };
+    setEditForm(nextForm);
+    setSaveState('idle');
+    queueSave(slug, nextForm);
+  }
+
+  function handleDescriptionChange(slug: string, value: string) {
+    const nextForm = { ...editForm, description: value };
+    setEditForm(nextForm);
+    setSaveState('idle');
+    queueSave(slug, nextForm);
+  }
+
+  function flushSave(slug: string) {
+    if (saveTimerRef.current) {
+      clearTimeout(saveTimerRef.current);
+      saveTimerRef.current = null;
+    }
+    void saveEdit(slug, editForm);
   }
 
   return (
@@ -104,7 +157,8 @@ export default function CategoryEditor({ initialCategories }: CategoryEditorProp
                 <input
                   type="text"
                   value={editForm.name}
-                  onChange={e => setEditForm(p => ({ ...p, name: e.target.value }))}
+                  onChange={e => handleNameChange(cat.slug, e.target.value)}
+                  onBlur={() => flushSave(cat.slug)}
                   className="input text-sm"
                   placeholder="SOP name"
                 />
@@ -124,11 +178,13 @@ export default function CategoryEditor({ initialCategories }: CategoryEditorProp
               {editingSlug === cat.slug ? (
                 <>
                   <button
-                    onClick={() => saveEdit(cat.slug)}
-                    disabled={loading}
-                    className="flex items-center gap-1 text-xs text-emerald-500 hover:text-emerald-400 px-2 py-1.5 rounded hover:bg-emerald-500/5 transition-all disabled:opacity-50"
+                    onClick={() => {
+                      flushSave(cat.slug);
+                      setEditingSlug(null);
+                    }}
+                    className="text-xs text-[var(--muted)] hover:text-[var(--text)] px-2 py-1.5 rounded hover:bg-[var(--raised)] transition-all font-bold"
                   >
-                    <IconCheck size={12} />
+                    Done
                   </button>
                   <button
                     onClick={() => setEditingSlug(null)}
@@ -156,12 +212,17 @@ export default function CategoryEditor({ initialCategories }: CategoryEditorProp
                 <label className="block text-[10px] font-black text-[var(--subtle)] uppercase tracking-[0.18em] mb-1">Description</label>
                 <textarea
                   value={editForm.description}
-                  onChange={e => setEditForm(p => ({ ...p, description: e.target.value }))}
+                  onChange={e => handleDescriptionChange(cat.slug, e.target.value)}
+                  onBlur={() => flushSave(cat.slug)}
                   className="input text-sm"
                   placeholder="SOP description"
                   rows={2}
                 />
-                {error && <p className="text-red-400 text-xs mt-1">{error}</p>}
+                <div className="mt-1 min-h-4">
+                  {error && <p className="text-red-400 text-xs">{error}</p>}
+                  {!error && saveState === 'saving' && <p className="text-[var(--subtle)] text-xs">Autosaving...</p>}
+                  {!error && saveState === 'saved' && <p className="text-emerald-400 text-xs">Saved</p>}
+                </div>
               </div>
             </div>
           )}

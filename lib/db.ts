@@ -38,6 +38,12 @@ interface CategoryRow {
   accent_hex: string;
 }
 
+interface SopContentRow {
+  slug: string;
+  content: unknown;
+  updated_at: string;
+}
+
 function mapUserRow(row: UserRow): User {
   return {
     id: row.id,
@@ -126,6 +132,7 @@ export async function updateUser(
   updates: Partial<Omit<User, "id" | "createdAt">>,
 ): Promise<User | null> {
   const payload: Partial<UserRow> = {};
+  if (typeof updates.email === "string") payload.email = updates.email;
   if (typeof updates.name === "string") payload.name = updates.name;
   if (typeof updates.role === "string") payload.role = updates.role;
   if (Array.isArray(updates.categories)) payload.categories = updates.categories;
@@ -203,4 +210,28 @@ export async function updateCategory(
   }
 
   return (count ?? 0) > 0;
+}
+
+export async function getSopDocumentBySlug(slug: string): Promise<SopContentRow | null> {
+  const { data, error } = await supabase
+    .from("sop_documents")
+    .select("slug,content,updated_at")
+    .eq("slug", slug)
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(`Failed to fetch SOP document: ${error.message}`);
+  }
+
+  return data ? (data as SopContentRow) : null;
+}
+
+export async function upsertSopDocument(slug: string, content: unknown): Promise<void> {
+  const { error } = await supabase
+    .from("sop_documents")
+    .upsert({ slug, content, updated_at: new Date().toISOString() }, { onConflict: "slug" });
+
+  if (error) {
+    throw new Error(`Failed to save SOP document: ${error.message}`);
+  }
 }
