@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import { getSession } from '@/lib/auth';
 import { getUserById } from '@/lib/db';
+import KoiLogoConcepts from '@/components/KoiLogoConcepts';
 
 function ConceptA({ size = 96 }: { size?: number }) {
   return (
@@ -212,6 +213,7 @@ export default async function LogoPreviewPage() {
     <div className="min-h-screen bg-[var(--bg)]">
       <Navbar user={{ name: user.name, email: user.email, role: user.role }} />
       <main className="max-w-6xl mx-auto px-6 py-12">
+        <KoiLogoConcepts />
         <h1 className="text-3xl font-bold mb-2">Vault Logo Preview</h1>
         <p className="text-[var(--muted)] mb-8">All options are vault-focused, each with a different style language. Pick one letter and I will apply it to dashboard/navbar.</p>
 
