@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import type { Category } from '@/data/categories';
 import { IconArrowLeft, IconChevronRight } from './Icons';
 import styles from './straight-to-kill.module.css';
 
@@ -65,7 +64,15 @@ function ImgCard({ src, alt, dlName }: { src: string; alt: string; dlName: strin
   );
 }
 
-interface Props { category: Category }
+interface StraightToKillCategory {
+  slug: string;
+  name: string;
+  department: string;
+  description: string;
+  accentHex: string;
+}
+
+interface Props { category: StraightToKillCategory }
 
 export default function StraightToKillSop({ category }: Props) {
   const [activeSection, setActiveSection] = useState('overview');

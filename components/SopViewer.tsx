@@ -3,14 +3,20 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import type { SOPDoc, ContentBlock } from '@/data/sop/meta-ads';
-import type { Category } from '@/data/categories';
 import VideoPlayer from './VideoPlayer';
 import { CategoryIcon, IconArrowLeft, IconChevronRight, IconCheck } from './Icons';
 import styles from './sop-viewer.module.css';
 
+interface SopViewerCategory {
+  slug: string;
+  department: string;
+  description: string;
+  accentHex: string;
+}
+
 interface SopViewerProps {
   sop: SOPDoc;
-  category: Category;
+  category: SopViewerCategory;
 }
 
 export default function SopViewer({ sop, category }: SopViewerProps) {
