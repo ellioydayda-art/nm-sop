@@ -9,10 +9,10 @@ export default async function DashboardPage() {
   const session = await getSession();
   if (!session) redirect('/login');
 
-  const user = getUserById(session.userId);
+  const user = await getUserById(session.userId);
   if (!user) redirect('/login');
 
-  const categories = getCategories();
+  const categories = await getCategories();
   const accessible = categories.filter(
     cat => user.categories.includes('*') || user.categories.includes(cat.slug)
   );

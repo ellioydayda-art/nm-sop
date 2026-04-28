@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
   if (!session || session.role !== 'admin') {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
-  const users = getUsers().map(({ passwordHash: _, ...u }) => u);
+  const users = (await getUsers()).map(({ passwordHash: _, ...u }) => u);
   return NextResponse.json({ users });
 }
 
@@ -24,12 +24,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'email, password, and name are required' }, { status: 400 });
   }
 
-  if (getUserByEmail(email)) {
+  if (await getUserByEmail(email)) {
     return NextResponse.json({ error: 'Email already exists' }, { status: 409 });
   }
 
   const passwordHash = await bcrypt.hash(password, 10);
-  const user = createUser({
+  const user = await createUser({
     email,
     passwordHash,
     name,

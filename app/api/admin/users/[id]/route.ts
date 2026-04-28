@@ -17,7 +17,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   if (categories) updates.categories = categories;
   if (password) updates.passwordHash = await bcrypt.hash(password, 10);
 
-  const updated = updateUser(params.id, updates);
+  const updated = await updateUser(params.id, updates);
   if (!updated) return NextResponse.json({ error: 'User not found' }, { status: 404 });
 
   const { passwordHash: _, ...safe } = updated;
@@ -35,7 +35,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
     return NextResponse.json({ error: 'Cannot delete your own account' }, { status: 400 });
   }
 
-  const ok = deleteUser(params.id);
+  const ok = await deleteUser(params.id);
   if (!ok) return NextResponse.json({ error: 'User not found' }, { status: 404 });
 
   return NextResponse.json({ ok: true });

@@ -21,10 +21,10 @@ export default async function SopPage({ params }: { params: { category: string }
   const session = await getSession();
   if (!session) redirect('/login');
 
-  const user = getUserById(session.userId);
+  const user = await getUserById(session.userId);
   if (!user) redirect('/login');
 
-  const categories = getCategories();
+  const categories = await getCategories();
   const category = categories.find(c => c.slug === params.category);
   if (!category) notFound();
 

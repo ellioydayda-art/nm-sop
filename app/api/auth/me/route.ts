@@ -6,7 +6,7 @@ export async function GET(req: NextRequest) {
   const session = await getSessionFromRequest(req);
   if (!session) return NextResponse.json({ user: null }, { status: 401 });
 
-  const user = getUserById(session.userId);
+  const user = await getUserById(session.userId);
   if (!user) return NextResponse.json({ user: null }, { status: 401 });
 
   return NextResponse.json({

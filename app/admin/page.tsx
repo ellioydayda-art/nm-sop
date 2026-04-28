@@ -9,11 +9,11 @@ export default async function AdminPage() {
   const session = await getSession();
   if (!session || session.role !== 'admin') redirect('/dashboard');
 
-  const user = getUserById(session.userId);
+  const user = await getUserById(session.userId);
   if (!user) redirect('/login');
 
-  const users = getUsers().map(({ passwordHash: _, ...u }) => u);
-  const categories = getCategories();
+  const users = (await getUsers()).map(({ passwordHash: _, ...u }) => u);
+  const categories = await getCategories();
   const totalAccess = users.reduce((sum, u) => sum + (u.categories.includes('*') ? categories.length : u.categories.length), 0);
 
   return (

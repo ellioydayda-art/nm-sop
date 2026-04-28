@@ -2,8 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import { getCategories, updateCategory } from '@/lib/db';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
-  const categories = getCategories();
+  const categories = await getCategories();
   return NextResponse.json({ categories });
 }
 
@@ -21,7 +23,7 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ error: 'Missing slug or name' }, { status: 400 });
     }
 
-    const updated = updateCategory(slug, { name, description });
+    const updated = await updateCategory(slug, { name, description });
     if (!updated) {
       return NextResponse.json({ error: 'Category not found' }, { status: 404 });
     }

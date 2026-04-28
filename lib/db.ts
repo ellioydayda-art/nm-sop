@@ -1,14 +1,13 @@
-import fs from 'fs';
-import path from 'path';
+import { supabase } from "@/lib/supabase";
 
-export type UserRole = 'admin' | 'user';
+export type UserRole = "admin" | "user";
 
 export interface User {
   id: string;
   email: string;
   passwordHash: string;
   role: UserRole;
-  categories: string[]; // ['*'] means all, or specific slugs like ['media-buying']
+  categories: string[];
   name: string;
   createdAt: string;
 }
@@ -21,90 +20,187 @@ export interface Category {
   accentHex: string;
 }
 
-interface DB {
-  users: User[];
-  categories?: Category[];
+interface UserRow {
+  id: string;
+  email: string;
+  password_hash: string;
+  role: UserRole;
+  categories: string[];
+  name: string;
+  created_at: string;
 }
 
-const DB_PATH = path.join(process.cwd(), 'data', 'db.json');
-
-function readDB(): DB {
-  if (!fs.existsSync(DB_PATH)) {
-    const initial: DB = { users: [] };
-    fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
-    fs.writeFileSync(DB_PATH, JSON.stringify(initial, null, 2));
-    return initial;
-  }
-  return JSON.parse(fs.readFileSync(DB_PATH, 'utf-8'));
+interface CategoryRow {
+  slug: string;
+  name: string;
+  department: string;
+  description: string;
+  accent_hex: string;
 }
 
-function writeDB(db: DB): void {
-  fs.writeFileSync(DB_PATH, JSON.stringify(db, null, 2));
-}
-
-export function getUsers(): User[] {
-  return readDB().users;
-}
-
-export function getUserById(id: string): User | undefined {
-  return readDB().users.find(u => u.id === id);
-}
-
-export function getUserByEmail(email: string): User | undefined {
-  return readDB().users.find(u => u.email.toLowerCase() === email.toLowerCase());
-}
-
-export function createUser(user: Omit<User, 'id' | 'createdAt'>): User {
-  const db = readDB();
-  const newUser: User = {
-    ...user,
-    id: Date.now().toString(),
-    createdAt: new Date().toISOString(),
+function mapUserRow(row: UserRow): User {
+  return {
+    id: row.id,
+    email: row.email,
+    passwordHash: row.password_hash,
+    role: row.role,
+    categories: row.categories,
+    name: row.name,
+    createdAt: row.created_at,
   };
-  db.users.push(newUser);
-  writeDB(db);
-  return newUser;
 }
 
-export function updateUser(id: string, updates: Partial<Omit<User, 'id' | 'createdAt'>>): User | null {
-  const db = readDB();
-  const idx = db.users.findIndex(u => u.id === id);
-  if (idx === -1) return null;
-  db.users[idx] = { ...db.users[idx], ...updates };
-  writeDB(db);
-  return db.users[idx];
+function mapCategoryRow(row: CategoryRow): Category {
+  return {
+    slug: row.slug,
+    name: row.name,
+    department: row.department,
+    description: row.description,
+    accentHex: row.accent_hex,
+  };
 }
 
-export function deleteUser(id: string): boolean {
-  const db = readDB();
-  const idx = db.users.findIndex(u => u.id === id);
-  if (idx === -1) return false;
-  db.users.splice(idx, 1);
-  writeDB(db);
-  return true;
+export async function getUsers(): Promise<User[]> {
+  const { data, error } = await supabase
+    .from("users")
+    .select("id,email,password_hash,role,categories,name,created_at")
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    throw new Error(`Failed to fetch users: ${error.message}`);
+  }
+
+  return (data ?? []).map((row) => mapUserRow(row as UserRow));
+}
+
+export async function getUserById(id: string): Promise<User | undefined> {
+  const { data, error } = await supabase
+    .from("users")
+    .select("id,email,password_hash,role,categories,name,created_at")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(`Failed to fetch user by id: ${error.message}`);
+  }
+
+  return data ? mapUserRow(data as UserRow) : undefined;
+}
+
+export async function getUserByEmail(email: string): Promise<User | undefined> {
+  const { data, error } = await supabase
+    .from("users")
+    .select("id,email,password_hash,role,categories,name,created_at")
+    .ilike("email", email)
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(`Failed to fetch user by email: ${error.message}`);
+  }
+
+  return data ? mapUserRow(data as UserRow) : undefined;
+}
+
+export async function createUser(user: Omit<User, "id" | "createdAt">): Promise<User> {
+  const { data, error } = await supabase
+    .from("users")
+    .insert({
+      email: user.email,
+      password_hash: user.passwordHash,
+      role: user.role,
+      categories: user.categories,
+      name: user.name,
+    })
+    .select("id,email,password_hash,role,categories,name,created_at")
+    .single();
+
+  if (error) {
+    throw new Error(`Failed to create user: ${error.message}`);
+  }
+
+  return mapUserRow(data as UserRow);
+}
+
+export async function updateUser(
+  id: string,
+  updates: Partial<Omit<User, "id" | "createdAt">>,
+): Promise<User | null> {
+  const payload: Partial<UserRow> = {};
+  if (typeof updates.name === "string") payload.name = updates.name;
+  if (typeof updates.role === "string") payload.role = updates.role;
+  if (Array.isArray(updates.categories)) payload.categories = updates.categories;
+  if (typeof updates.passwordHash === "string") payload.password_hash = updates.passwordHash;
+
+  const { data, error } = await supabase
+    .from("users")
+    .update(payload)
+    .eq("id", id)
+    .select("id,email,password_hash,role,categories,name,created_at")
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(`Failed to update user: ${error.message}`);
+  }
+
+  return data ? mapUserRow(data as UserRow) : null;
+}
+
+export async function deleteUser(id: string): Promise<boolean> {
+  const { error, count } = await supabase.from("users").delete({ count: "exact" }).eq("id", id);
+  if (error) {
+    throw new Error(`Failed to delete user: ${error.message}`);
+  }
+  return (count ?? 0) > 0;
 }
 
 export function userHasAccess(user: User, categorySlug: string): boolean {
-  return user.categories.includes('*') || user.categories.includes(categorySlug);
+  return user.categories.includes("*") || user.categories.includes(categorySlug);
 }
 
-export function getCategories(): Category[] {
-  const db = readDB();
-  return db.categories || [];
+export async function getCategories(): Promise<Category[]> {
+  const { data, error } = await supabase
+    .from("categories")
+    .select("slug,name,department,description,accent_hex")
+    .order("name", { ascending: true });
+
+  if (error) {
+    throw new Error(`Failed to fetch categories: ${error.message}`);
+  }
+
+  return (data ?? []).map((row) => mapCategoryRow(row as CategoryRow));
 }
 
-export function getCategoryBySlug(slug: string): Category | undefined {
-  const db = readDB();
-  return (db.categories || []).find(c => c.slug === slug);
+export async function getCategoryBySlug(slug: string): Promise<Category | undefined> {
+  const { data, error } = await supabase
+    .from("categories")
+    .select("slug,name,department,description,accent_hex")
+    .eq("slug", slug)
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(`Failed to fetch category by slug: ${error.message}`);
+  }
+
+  return data ? mapCategoryRow(data as CategoryRow) : undefined;
 }
 
-export function updateCategory(slug: string, updates: Partial<Omit<Category, 'slug' | 'accentHex'>>): boolean {
-  const db = readDB();
-  const categories = db.categories || [];
-  const idx = categories.findIndex(c => c.slug === slug);
-  if (idx === -1) return false;
-  categories[idx] = { ...categories[idx], ...updates };
-  db.categories = categories;
-  writeDB(db as any);
-  return true;
+export async function updateCategory(
+  slug: string,
+  updates: Partial<Omit<Category, "slug" | "accentHex">>,
+): Promise<boolean> {
+  const payload: Partial<CategoryRow> = {};
+  if (typeof updates.name === "string") payload.name = updates.name;
+  if (typeof updates.department === "string") payload.department = updates.department;
+  if (typeof updates.description === "string") payload.description = updates.description;
+
+  const { error, count } = await supabase
+    .from("categories")
+    .update(payload, { count: "exact" })
+    .eq("slug", slug);
+
+  if (error) {
+    throw new Error(`Failed to update category: ${error.message}`);
+  }
+
+  return (count ?? 0) > 0;
 }
