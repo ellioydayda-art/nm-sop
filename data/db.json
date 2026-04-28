@@ -1,0 +1,64 @@
+{
+  "users": [
+    {
+      "id": "1777360095023",
+      "email": "admin@company.com",
+      "passwordHash": "$2a$10$y8qO1BL9f/0F1qNTfARWZeRO4ZtMgyFjziM1EsGpMb4/Hm6rItnOe",
+      "name": "Admin",
+      "role": "admin",
+      "categories": [
+        "*"
+      ],
+      "createdAt": "2026-04-28T07:08:15.023Z"
+    },
+    {
+      "email": "testuser@gmail.com",
+      "passwordHash": "$2a$10$3OJj79NQLfv4lwBCFVWcJerHBwTm8qfb/gC5UBbifqZzojqxSLZgS",
+      "name": "test",
+      "role": "user",
+      "categories": [
+        "sales-closing",
+        "client-onboarding"
+      ],
+      "id": "1777362848525",
+      "createdAt": "2026-04-28T07:54:08.525Z"
+    }
+  ],
+  "categories": [
+    {
+      "slug": "media-buying",
+      "name": "Media Buying",
+      "department": "Marketing",
+      "description": "Meta Ads setup, campaign structure, testing phases, and scaling strategy.",
+      "accentHex": "#8b7ff8"
+    },
+    {
+      "slug": "image-ads",
+      "name": "Straight to Kill — Image Ads",
+      "department": "Creative",
+      "description": "High-conversion image ad strategy, design specs, and copy frameworks.",
+      "accentHex": "#06d6a0"
+    },
+    {
+      "slug": "sales-closing",
+      "name": "Sales Closing",
+      "department": "Sales",
+      "description": "Consultative sales process, objection handling, and closing techniques.",
+      "accentHex": "#f97316"
+    },
+    {
+      "slug": "content-creation",
+      "name": "Content Creation",
+      "department": "Creative",
+      "description": "Video production workflow, scriptwriting, editing guidelines, and publishing.",
+      "accentHex": "#ec4899"
+    },
+    {
+      "slug": "client-onboarding",
+      "name": "Client Onboarding",
+      "department": "Operations",
+      "description": "Step-by-step client intake, access handover, and first-week checklist.",
+      "accentHex": "#0ea5e9"
+    }
+  ]
+}
