@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTheme } from './ThemeProvider';
 import { IconSettings, IconSun, IconMoon, IconLogOut } from './Icons';
-import KoiBrandMark from './KoiBrandMark';
+import CogVaultMark from './CogVaultMark';
 
 interface NavbarProps {
   user: { name: string; email: string; role: string };
@@ -27,7 +27,7 @@ export default function Navbar({ user }: NavbarProps) {
         {/* Brand */}
         <Link href="/dashboard" className="flex items-center gap-2.5 group">
           <div className="w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-200 relative overflow-hidden group-hover:scale-105">
-            <KoiBrandMark size={30} />
+            <CogVaultMark size={30} />
           </div>
           <div className="flex flex-col leading-none">
             <span className="font-bold text-[var(--text)] text-sm tracking-tight">NM MEDIA</span>
