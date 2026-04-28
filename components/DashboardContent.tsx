@@ -101,10 +101,10 @@ export default function DashboardContent({ user, initialCategories }: DashboardC
   }, [categories]);
 
   return (
-    <div className="min-h-screen bg-[var(--bg)]">
+    <div className="min-h-screen bg-[var(--bg)] relative overflow-hidden">
       <Navbar user={{ name: user.name, email: user.email, role: user.role }} />
 
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="orb w-[600px] h-[600px] bg-brand/8 top-[-20%] right-[-15%] animate-float-slow" />
         <div className="orb w-[350px] h-[350px] bg-accent/6 bottom-[-15%] left-[-5%] animate-float" style={{ animationDelay: '-4s' }} />
         <div
