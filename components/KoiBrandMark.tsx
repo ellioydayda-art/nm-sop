@@ -9,20 +9,24 @@ export default function KoiBrandMark({ size = 30 }: { size?: number }) {
     >
       <div className="koiWater" />
       <div className="koiFish koiFishOne">
-        <svg width="18" height="11" viewBox="0 0 56 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <ellipse cx="23" cy="16" rx="15" ry="9.5" fill="#F7F7FF" />
-          <ellipse cx="27" cy="16" rx="7" ry="4.2" fill="#8BB4FF" opacity="0.9" />
-          <path d="M37 16L54 6V26L37 16Z" fill="#8BB4FF" />
-          <circle cx="14" cy="14" r="1.4" fill="#0B1220" />
-        </svg>
+        <div className="koiBody">
+          <svg width="18" height="11" viewBox="0 0 56 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="23" cy="16" rx="15" ry="9.5" fill="#F7F7FF" />
+            <ellipse cx="27" cy="16" rx="7" ry="4.2" fill="#8BB4FF" opacity="0.9" />
+            <path d="M37 16L54 6V26L37 16Z" fill="#8BB4FF" />
+            <circle cx="14" cy="14" r="1.4" fill="#0B1220" />
+          </svg>
+        </div>
       </div>
       <div className="koiFish koiFishTwo">
-        <svg width="18" height="11" viewBox="0 0 56 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <ellipse cx="23" cy="16" rx="15" ry="9.5" fill="#FFD8D8" />
-          <ellipse cx="27" cy="16" rx="7" ry="4.2" fill="#FF8FA3" opacity="0.9" />
-          <path d="M37 16L54 6V26L37 16Z" fill="#FF8FA3" />
-          <circle cx="14" cy="14" r="1.4" fill="#0B1220" />
-        </svg>
+        <div className="koiBody">
+          <svg width="18" height="11" viewBox="0 0 56 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="23" cy="16" rx="15" ry="9.5" fill="#FFD8D8" />
+            <ellipse cx="27" cy="16" rx="7" ry="4.2" fill="#FF8FA3" opacity="0.9" />
+            <path d="M37 16L54 6V26L37 16Z" fill="#FF8FA3" />
+            <circle cx="14" cy="14" r="1.4" fill="#0B1220" />
+          </svg>
+        </div>
       </div>
 
       <style jsx>{`
@@ -55,16 +59,24 @@ export default function KoiBrandMark({ size = 30 }: { size?: number }) {
           filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.16));
         }
 
+        .koiBody {
+          animation: tailPulse 0.45s ease-in-out infinite alternate;
+        }
+
         .koiFishOne {
-          left: -1px;
-          top: 2px;
-          animation: swimOne 7s ease-in-out infinite, tailPulse 0.45s ease-in-out infinite alternate;
+          left: -2px;
+          top: 1px;
+          animation: swimOne 5.8s ease-in-out infinite;
         }
 
         .koiFishTwo {
-          left: 11px;
-          top: 16px;
-          animation: swimTwo 8s ease-in-out infinite, tailPulse 0.5s ease-in-out infinite alternate;
+          left: 10px;
+          top: 15px;
+          animation: swimTwo 6.4s ease-in-out infinite;
+        }
+
+        .koiFishTwo .koiBody {
+          animation-duration: 0.52s;
         }
 
         @keyframes waterDrift {
@@ -79,16 +91,18 @@ export default function KoiBrandMark({ size = 30 }: { size?: number }) {
 
         @keyframes swimOne {
           0% { transform: translate(0, 0) rotate(18deg); }
-          28% { transform: translate(8px, 1px) rotate(-25deg); }
-          57% { transform: translate(9px, 9px) rotate(95deg); }
-          100% { transform: translate(0, 0) rotate(210deg); }
+          25% { transform: translate(9px, 0px) rotate(-35deg); }
+          50% { transform: translate(10px, 9px) rotate(95deg); }
+          75% { transform: translate(1px, 10px) rotate(170deg); }
+          100% { transform: translate(0, 0) rotate(260deg); }
         }
 
         @keyframes swimTwo {
           0% { transform: translate(0, 0) rotate(210deg); }
-          33% { transform: translate(-9px, -4px) rotate(140deg); }
-          66% { transform: translate(-10px, -10px) rotate(45deg); }
-          100% { transform: translate(0, 0) rotate(-65deg); }
+          28% { transform: translate(-10px, -3px) rotate(130deg); }
+          52% { transform: translate(-11px, -11px) rotate(45deg); }
+          78% { transform: translate(-1px, -12px) rotate(-20deg); }
+          100% { transform: translate(0, 0) rotate(-80deg); }
         }
       `}</style>
     </div>
