@@ -21,11 +21,12 @@ interface SopViewerProps {
   isAdmin: boolean;
 }
 
-type SaveStatus = 'idle' | 'saving' | 'saved' | 'failed';
+type SaveStatus = 'saving' | 'saved' | 'failed' | 'dirty';
 
 interface SopRealtimeRow {
   slug: string;
   content: SOPDoc;
+  updated_at?: string;
 }
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -35,13 +36,19 @@ export default function SopViewer({ sop, category, isAdmin }: SopViewerProps) {
   const [doc, setDoc] = useState<SOPDoc>(sop);
   const [activeSection, setActiveSection] = useState(sop.sections[0]?.id ?? '');
   const [progress, setProgress] = useState(0);
-  const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>('saved');
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const revisionRef = useRef(0);
+  const savedRevisionRef = useRef(0);
+  const requestCounterRef = useRef(0);
 
   useEffect(() => {
     setDoc(sop);
     setActiveSection(sop.sections[0]?.id ?? '');
+    setSaveStatus('saved');
+    revisionRef.current = 0;
+    savedRevisionRef.current = 0;
   }, [sop]);
 
   useEffect(() => {
@@ -76,11 +83,17 @@ export default function SopViewer({ sop, category, isAdmin }: SopViewerProps) {
       .channel(`sop-live-${category.slug}`)
       .on(
         'postgres_changes',
-        { event: 'UPDATE', schema: 'public', table: 'sop_documents', filter: `slug=eq.${category.slug}` },
+        { event: '*', schema: 'public', table: 'sop_documents', filter: `slug=eq.${category.slug}` },
         payload => {
           const row = payload.new as SopRealtimeRow;
           if (!row?.content) return;
+          // Ignore older remote snapshots while local edits are not acknowledged yet.
+          if (savedRevisionRef.current < revisionRef.current) return;
           setDoc(row.content);
+          if (row.updated_at) {
+            setLastSavedAt(new Date(row.updated_at).toLocaleTimeString());
+          }
+          setSaveStatus('saved');
         }
       )
       .subscribe();
@@ -111,8 +124,11 @@ export default function SopViewer({ sop, category, isAdmin }: SopViewerProps) {
       void fetch(`/api/admin/sop/${category.slug}`)
         .then(response => response.json())
         .then(data => {
-          if (data.content) {
+          if (data.content && savedRevisionRef.current >= revisionRef.current) {
             setDoc(data.content as SOPDoc);
+            if (typeof data.updatedAt === 'string') {
+              setLastSavedAt(new Date(data.updatedAt).toLocaleTimeString());
+            }
           }
         })
         .catch(() => {
@@ -142,8 +158,10 @@ export default function SopViewer({ sop, category, isAdmin }: SopViewerProps) {
     return clone;
   }
 
-  async function saveDoc(nextDoc: SOPDoc) {
+  async function saveDoc(nextDoc: SOPDoc, saveRevision: number) {
     if (!isAdmin) return;
+    const requestId = requestCounterRef.current + 1;
+    requestCounterRef.current = requestId;
     setSaveStatus('saving');
     try {
       const response = await fetch(`/api/admin/sop/${category.slug}`, {
@@ -154,10 +172,21 @@ export default function SopViewer({ sop, category, isAdmin }: SopViewerProps) {
       if (!response.ok) {
         throw new Error('Save failed');
       }
+      const data = (await response.json()) as { updatedAt?: string };
+      if (requestId !== requestCounterRef.current) {
+        return;
+      }
+      savedRevisionRef.current = saveRevision;
       setSaveStatus('saved');
-      setLastSavedAt(new Date().toLocaleTimeString());
-      setTimeout(() => setSaveStatus('idle'), 1400);
+      if (typeof data.updatedAt === 'string') {
+        setLastSavedAt(new Date(data.updatedAt).toLocaleTimeString());
+      } else {
+        setLastSavedAt(new Date().toLocaleTimeString());
+      }
     } catch {
+      if (requestId !== requestCounterRef.current) {
+        return;
+      }
       setSaveStatus('failed');
     }
   }
@@ -165,13 +194,20 @@ export default function SopViewer({ sop, category, isAdmin }: SopViewerProps) {
   function updateText(path: string, value: string) {
     const nextDoc = writePath(doc, path, value);
     setDoc(nextDoc);
-    setSaveStatus('idle');
+    const nextRevision = revisionRef.current + 1;
+    revisionRef.current = nextRevision;
+    setSaveStatus('dirty');
     if (saveTimerRef.current) {
       clearTimeout(saveTimerRef.current);
     }
     saveTimerRef.current = setTimeout(() => {
-      void saveDoc(nextDoc);
+      void saveDoc(nextDoc, nextRevision);
     }, 700);
+  }
+
+  function retrySave() {
+    if (!isAdmin) return;
+    void saveDoc(doc, revisionRef.current);
   }
 
   return (
@@ -211,8 +247,24 @@ export default function SopViewer({ sop, category, isAdmin }: SopViewerProps) {
           <p className={styles.heroDept}>{doc.sections.length} sections · {category.department}</p>
           {isAdmin && (
             <p className={styles.heroDept} style={{ marginTop: 8 }}>
-              {saveStatus === 'saving' ? 'Saving...' : saveStatus === 'saved' ? `Saved at ${lastSavedAt ?? ''}` : saveStatus === 'failed' ? 'Save failed' : 'All changes synced'}
+              {saveStatus === 'saving'
+                ? 'Saving...'
+                : saveStatus === 'saved'
+                  ? `Saved${lastSavedAt ? ` at ${lastSavedAt}` : ''}`
+                  : saveStatus === 'failed'
+                    ? 'Save failed. Changes are local until retry succeeds.'
+                    : 'Unsaved changes'}
             </p>
+          )}
+          {isAdmin && saveStatus === 'failed' && (
+            <button
+              type="button"
+              onClick={retrySave}
+              className={styles.sidebarBack}
+              style={{ marginTop: 8, width: 'fit-content' }}
+            >
+              Retry save
+            </button>
           )}
         </div>
 

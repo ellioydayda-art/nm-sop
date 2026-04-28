@@ -28,8 +28,8 @@ export async function PUT(req: NextRequest, { params }: { params: { slug: string
       return NextResponse.json({ error: 'Missing content' }, { status: 400 });
     }
 
-    await upsertSopDocument(params.slug, body.content);
-    return NextResponse.json({ ok: true });
+    const row = await upsertSopDocument(params.slug, body.content);
+    return NextResponse.json({ ok: true, updatedAt: row.updated_at });
   } catch (err: unknown) {
     return NextResponse.json(
       { error: err instanceof Error ? err.message : 'Failed to save SOP content' },

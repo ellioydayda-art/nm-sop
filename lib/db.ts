@@ -38,7 +38,7 @@ interface CategoryRow {
   accent_hex: string;
 }
 
-interface SopContentRow {
+export interface SopContentRow {
   slug: string;
   content: unknown;
   updated_at: string;
@@ -80,6 +80,9 @@ export async function getUsers(): Promise<User[]> {
 }
 
 export async function getUserById(id: string): Promise<User | undefined> {
+  // #region agent log
+  fetch('http://127.0.0.1:7385/ingest/09dde936-f35e-4298-82b6-8f46c80527c2',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'fbc59d'},body:JSON.stringify({sessionId:'fbc59d',runId:'initial',hypothesisId:'H8',location:'lib/db.ts:getUserById:entry',message:'getUserById called',data:{id,idType:typeof id},timestamp:Date.now()})}).catch(()=>{});
+  // #endregion
   const { data, error } = await supabase
     .from("users")
     .select("id,email,password_hash,role,categories,name,created_at")
@@ -87,6 +90,9 @@ export async function getUserById(id: string): Promise<User | undefined> {
     .maybeSingle();
 
   if (error) {
+    // #region agent log
+    fetch('http://127.0.0.1:7385/ingest/09dde936-f35e-4298-82b6-8f46c80527c2',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'fbc59d'},body:JSON.stringify({sessionId:'fbc59d',runId:'initial',hypothesisId:'H8',location:'lib/db.ts:getUserById:error',message:'getUserById supabase error',data:{id,errorMessage:error.message,errorCode:error.code ?? null},timestamp:Date.now()})}).catch(()=>{});
+    // #endregion
     throw new Error(`Failed to fetch user by id: ${error.message}`);
   }
 
@@ -220,18 +226,29 @@ export async function getSopDocumentBySlug(slug: string): Promise<SopContentRow 
     .maybeSingle();
 
   if (error) {
+    // #region agent log
+    fetch('http://127.0.0.1:7385/ingest/09dde936-f35e-4298-82b6-8f46c80527c2',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'fbc59d'},body:JSON.stringify({sessionId:'fbc59d',runId:'initial',hypothesisId:'H1',location:'lib/db.ts:getSopDocumentBySlug:error',message:'Supabase error while fetching sop_documents',data:{slug,errorMessage:error.message,errorCode:error.code ?? null,errorHint:error.hint ?? null},timestamp:Date.now()})}).catch(()=>{});
+    // #endregion
     throw new Error(`Failed to fetch SOP document: ${error.message}`);
   }
+
+  // #region agent log
+  fetch('http://127.0.0.1:7385/ingest/09dde936-f35e-4298-82b6-8f46c80527c2',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'fbc59d'},body:JSON.stringify({sessionId:'fbc59d',runId:'initial',hypothesisId:'H2',location:'lib/db.ts:getSopDocumentBySlug:success',message:'Fetched sop_documents row state',data:{slug,hasData:Boolean(data)},timestamp:Date.now()})}).catch(()=>{});
+  // #endregion
 
   return data ? (data as SopContentRow) : null;
 }
 
-export async function upsertSopDocument(slug: string, content: unknown): Promise<void> {
-  const { error } = await supabase
+export async function upsertSopDocument(slug: string, content: unknown): Promise<SopContentRow> {
+  const { data, error } = await supabase
     .from("sop_documents")
-    .upsert({ slug, content, updated_at: new Date().toISOString() }, { onConflict: "slug" });
+    .upsert({ slug, content, updated_at: new Date().toISOString() }, { onConflict: "slug" })
+    .select("slug,content,updated_at")
+    .single();
 
   if (error) {
     throw new Error(`Failed to save SOP document: ${error.message}`);
   }
+
+  return data as SopContentRow;
 }
