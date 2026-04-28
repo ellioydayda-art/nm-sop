@@ -11,40 +11,44 @@ export default function CogVaultMark({ size = 30 }: { size?: number }) {
       aria-hidden="true"
     >
       <defs>
-        <linearGradient id="cog-stroke" x1="10" y1="10" x2="54" y2="54">
+        <linearGradient id="cog-stroke" x1="8" y1="8" x2="56" y2="56">
           <stop stopColor="#9B8DFF" />
           <stop offset="1" stopColor="#00E5A8" />
         </linearGradient>
-        <radialGradient id="cog-bg" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(32 32) rotate(90) scale(32)">
-          <stop stopColor="#131A30" />
-          <stop offset="1" stopColor="#090C16" />
-        </radialGradient>
       </defs>
 
-      <rect x="6.5" y="6.5" width="51" height="51" rx="12" fill="url(#cog-bg)" />
-      <rect x="6.5" y="6.5" width="51" height="51" rx="12" stroke="#2A2D45" />
-
-      <g stroke="url(#cog-stroke)" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="32" cy="32" r="17.5" />
-        <circle cx="32" cy="32" r="8.2" />
-        <path d="M32 14.5V20.2" />
-        <path d="M32 43.8V49.5" />
-        <path d="M14.5 32H20.2" />
-        <path d="M43.8 32H49.5" />
-        <path d="M19.3 19.3L23.3 23.3" />
-        <path d="M40.7 40.7L44.7 44.7" />
-        <path d="M44.7 19.3L40.7 23.3" />
-        <path d="M23.3 40.7L19.3 44.7" />
+      <g fill="url(#cog-stroke)">
+        {/* Gear teeth */}
+        {Array.from({ length: 12 }).map((_, i) => (
+          <rect
+            key={i}
+            x="30.5"
+            y="3"
+            width="3"
+            height="8"
+            rx="1"
+            transform={`rotate(${i * 30} 32 32)`}
+          />
+        ))}
       </g>
 
-      <g stroke="url(#cog-stroke)" strokeWidth="2.6" strokeLinecap="round">
-        <path d="M22 22L30.2 30.2" />
-        <path d="M42 22L33.8 30.2" />
-        <path d="M22 42L30.2 33.8" />
-        <path d="M42 42L33.8 33.8" />
+      {/* Outer and inner gear rings */}
+      <circle cx="32" cy="32" r="22" stroke="url(#cog-stroke)" strokeWidth="4" fill="none" />
+      <circle cx="32" cy="32" r="13.5" stroke="url(#cog-stroke)" strokeWidth="3.6" fill="none" />
+
+      {/* 6 spokes to mimic provided style */}
+      <g stroke="url(#cog-stroke)" strokeWidth="3.8" strokeLinecap="round">
+        <path d="M32 20V12.5" />
+        <path d="M32 51.5V44" />
+        <path d="M20 32H12.5" />
+        <path d="M51.5 32H44" />
+        <path d="M23.5 23.5L18 18" />
+        <path d="M46 46L40.5 40.5" />
+        <path d="M40.5 23.5L46 18" />
+        <path d="M18 46L23.5 40.5" />
       </g>
 
-      <circle cx="32" cy="32" r="2.3" fill="#00E5A8" />
+      <circle cx="32" cy="32" r="5.6" fill="url(#cog-stroke)" />
     </svg>
   );
 }

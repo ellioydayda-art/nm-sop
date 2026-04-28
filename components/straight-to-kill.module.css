@@ -7,7 +7,7 @@
   --sop-text:   #1a1a2e;
   --sop-muted:  #666688;
   flex: 1;
-  overflow-y: auto;
+  overflow: visible;
   font-family: 'Inter', sans-serif;
   color: var(--sop-text);
   background: #f7f7fb;
