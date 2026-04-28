@@ -70,6 +70,120 @@ function ConceptD({ size = 96 }: { size?: number }) {
   );
 }
 
+function ConceptE({ size = 96 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect x="8" y="8" width="48" height="48" rx="24" fill="#111827" />
+      <circle cx="32" cy="32" r="18" stroke="#F59E0B" strokeWidth="4" />
+      <path d="M22 38V26L32 34L42 26V38" stroke="#FCD34D" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="32" cy="32" r="2.5" fill="#F59E0B" />
+    </svg>
+  );
+}
+
+function ConceptF({ size = 96 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect x="10" y="10" width="44" height="44" rx="8" fill="#0A0A0A" />
+      <path d="M18 44L26 20L32 34L38 20L46 44" stroke="#E5E7EB" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M18 50H46" stroke="#9CA3AF" strokeWidth="2.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function ConceptG({ size = 96 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect x="8" y="8" width="48" height="48" rx="14" fill="#052E2B" />
+      <path d="M16 22L32 14L48 22V42L32 50L16 42V22Z" stroke="#34D399" strokeWidth="3" />
+      <path d="M22 40V24L32 32L42 24V40" stroke="#6EE7B7" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function ConceptH({ size = 96 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect x="8" y="8" width="48" height="48" rx="16" fill="#1E1B4B" />
+      <path d="M16 38C16 25 25 16 38 16H48V26C48 39 39 48 26 48H16V38Z" fill="#818CF8" />
+      <path d="M22 40L30 24L38 40" stroke="#EEF2FF" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function ConceptI({ size = 96 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect x="8" y="8" width="48" height="48" rx="12" fill="#3F0D12" />
+      <rect x="15" y="15" width="34" height="34" rx="10" stroke="#FB7185" strokeWidth="3" />
+      <path d="M22 40V24L32 32L42 24V40" stroke="#FBCFE8" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="48" cy="16" r="3" fill="#FB7185" />
+    </svg>
+  );
+}
+
+function ConceptJ({ size = 96 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <linearGradient id="j-bg" x1="8" y1="8" x2="56" y2="56">
+          <stop stopColor="#0EA5E9" />
+          <stop offset="1" stopColor="#22D3EE" />
+        </linearGradient>
+      </defs>
+      <rect x="8" y="8" width="48" height="48" rx="18" fill="url(#j-bg)" />
+      <path d="M18 40L25 24L32 36L39 24L46 40" stroke="#082F49" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M18 45H46" stroke="#0C4A6E" strokeWidth="3" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function ConceptK({ size = 96 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect x="8" y="8" width="48" height="48" rx="24" fill="#172554" />
+      <path d="M20 20H44V44H20V20Z" stroke="#93C5FD" strokeWidth="3" />
+      <path d="M20 44L32 28L44 44" stroke="#BFDBFE" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="32" cy="28" r="2.5" fill="#93C5FD" />
+    </svg>
+  );
+}
+
+function ConceptL({ size = 96 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect x="8" y="8" width="48" height="48" rx="10" fill="#18181B" />
+      <path d="M16 24H48" stroke="#A1A1AA" strokeWidth="2.5" />
+      <path d="M16 32H48" stroke="#A1A1AA" strokeWidth="2.5" />
+      <path d="M16 40H48" stroke="#A1A1AA" strokeWidth="2.5" />
+      <path d="M20 44V20L32 32L44 20V44" stroke="#FAFAFA" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function ConceptM({ size = 96 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect x="8" y="8" width="48" height="48" rx="16" fill="#2A0E2E" />
+      <path d="M14 34C14 22.95 22.95 14 34 14H50V30C50 41.05 41.05 50 30 50H14V34Z" fill="#E879F9" fillOpacity="0.9" />
+      <path d="M22 40V24L32 34L42 24V40" stroke="#FAE8FF" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="50" cy="14" r="3" fill="#C084FC" />
+    </svg>
+  );
+}
+
+function ConceptN({ size = 96 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect x="8" y="8" width="48" height="48" rx="18" fill="#052E16" />
+      <path d="M16 40L24 24L32 36L40 24L48 40" stroke="#4ADE80" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M20 46H44" stroke="#86EFAC" strokeWidth="3" strokeLinecap="round" />
+      <circle cx="16" cy="22" r="2.5" fill="#22C55E" />
+      <circle cx="48" cy="22" r="2.5" fill="#22C55E" />
+    </svg>
+  );
+}
+
 export default async function LogoPreviewPage() {
   const session = await getSession();
   if (!session) redirect('/login');
@@ -82,6 +196,16 @@ export default async function LogoPreviewPage() {
     { id: 'B', name: 'Geometric Vault Core', description: 'Best if you want clean + corporate.', Preview: ConceptB },
     { id: 'C', name: 'Playful Neon Badge', description: 'Best if you want fun + startup vibe.', Preview: ConceptC },
     { id: 'D', name: 'Minimal Lock Glyph', description: 'Best if you want modern + minimal.', Preview: ConceptD },
+    { id: 'E', name: 'Amber Solar Ring', description: 'Bold warm palette, energetic and memorable.', Preview: ConceptE },
+    { id: 'F', name: 'Monochrome Editorial', description: 'High-contrast black/white, timeless premium.', Preview: ConceptF },
+    { id: 'G', name: 'Emerald Hex Vault', description: 'Security-first hex style with green trust tones.', Preview: ConceptG },
+    { id: 'H', name: 'Indigo Blob Mark', description: 'Soft modern blob form, artistic tech feel.', Preview: ConceptH },
+    { id: 'I', name: 'Rose Neon Frame', description: 'Fashion-forward magenta/rose identity.', Preview: ConceptI },
+    { id: 'J', name: 'Sky Gradient Wave', description: 'Fresh cyan/blue gradient with confident feel.', Preview: ConceptJ },
+    { id: 'K', name: 'Blueprint Grid', description: 'Structured engineering look, very clean.', Preview: ConceptK },
+    { id: 'L', name: 'Brutalist Lines', description: 'Minimal industrial style with strong geometry.', Preview: ConceptL },
+    { id: 'M', name: 'Violet Pop Badge', description: 'Playful purple mark with standout contrast.', Preview: ConceptM },
+    { id: 'N', name: 'Forest Pulse', description: 'Natural green identity, calm but modern.', Preview: ConceptN },
   ] as const;
 
   return (
