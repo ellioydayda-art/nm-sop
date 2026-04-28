@@ -192,28 +192,28 @@ export default async function LogoPreviewPage() {
   if (!user) redirect('/login');
 
   const options = [
-    { id: 'A', name: 'Futuristic Orbit NM', description: 'Best if you want energetic + premium.', Preview: ConceptA },
-    { id: 'B', name: 'Geometric Vault Core', description: 'Best if you want clean + corporate.', Preview: ConceptB },
-    { id: 'C', name: 'Playful Neon Badge', description: 'Best if you want fun + startup vibe.', Preview: ConceptC },
-    { id: 'D', name: 'Minimal Lock Glyph', description: 'Best if you want modern + minimal.', Preview: ConceptD },
-    { id: 'E', name: 'Amber Solar Ring', description: 'Bold warm palette, energetic and memorable.', Preview: ConceptE },
-    { id: 'F', name: 'Monochrome Editorial', description: 'High-contrast black/white, timeless premium.', Preview: ConceptF },
-    { id: 'G', name: 'Emerald Hex Vault', description: 'Security-first hex style with green trust tones.', Preview: ConceptG },
-    { id: 'H', name: 'Indigo Blob Mark', description: 'Soft modern blob form, artistic tech feel.', Preview: ConceptH },
-    { id: 'I', name: 'Rose Neon Frame', description: 'Fashion-forward magenta/rose identity.', Preview: ConceptI },
-    { id: 'J', name: 'Sky Gradient Wave', description: 'Fresh cyan/blue gradient with confident feel.', Preview: ConceptJ },
-    { id: 'K', name: 'Blueprint Grid', description: 'Structured engineering look, very clean.', Preview: ConceptK },
-    { id: 'L', name: 'Brutalist Lines', description: 'Minimal industrial style with strong geometry.', Preview: ConceptL },
-    { id: 'M', name: 'Violet Pop Badge', description: 'Playful purple mark with standout contrast.', Preview: ConceptM },
-    { id: 'N', name: 'Forest Pulse', description: 'Natural green identity, calm but modern.', Preview: ConceptN },
+    { id: 'A', name: 'Orbit Vault Door', description: 'Circular vault door with orbit arcs and premium glow.', Preview: ConceptA },
+    { id: 'B', name: 'Blueprint Vault Lock', description: 'Technical vault lock inspired by architectural schematics.', Preview: ConceptB },
+    { id: 'C', name: 'Neon Vault Shield', description: 'Playful shield-vault hybrid with bright startup energy.', Preview: ConceptC },
+    { id: 'D', name: 'Minimal Keyhole Vault', description: 'Clean lock silhouette with tiny keyhole accent.', Preview: ConceptD },
+    { id: 'E', name: 'Amber Safe Wheel', description: 'Warm gold safe-wheel look with bold vault personality.', Preview: ConceptE },
+    { id: 'F', name: 'Mono Vault Monogram', description: 'Black-and-white vault monogram for premium branding.', Preview: ConceptF },
+    { id: 'G', name: 'Hexa Security Vault', description: 'Hexagonal vault casing with security-first geometry.', Preview: ConceptG },
+    { id: 'H', name: 'Indigo Core Safe', description: 'Rounded safe icon with modern indigo identity.', Preview: ConceptH },
+    { id: 'I', name: 'Rose Vault Frame', description: 'Framed vault mark with edgy magenta neon vibe.', Preview: ConceptI },
+    { id: 'J', name: 'Aqua Vault Ring', description: 'Fluid cyan vault ring for fresh modern tech feel.', Preview: ConceptJ },
+    { id: 'K', name: 'Grid Vault Panel', description: 'Industrial vault panel inspired by reinforced doors.', Preview: ConceptK },
+    { id: 'L', name: 'Linework Vault Bar', description: 'Brutalist vault line icon with strong horizontal bars.', Preview: ConceptL },
+    { id: 'M', name: 'Pop Vault Badge', description: 'High-contrast badge that still keeps clear vault meaning.', Preview: ConceptM },
+    { id: 'N', name: 'Forest Vault Pulse', description: 'Green vault icon with calm trustworthy presence.', Preview: ConceptN },
   ] as const;
 
   return (
     <div className="min-h-screen bg-[var(--bg)]">
       <Navbar user={{ name: user.name, email: user.email, role: user.role }} />
       <main className="max-w-6xl mx-auto px-6 py-12">
-        <h1 className="text-3xl font-bold mb-2">Logo Preview</h1>
-        <p className="text-[var(--muted)] mb-8">Pick one option and tell me the letter. I will apply it everywhere.</p>
+        <h1 className="text-3xl font-bold mb-2">Vault Logo Preview</h1>
+        <p className="text-[var(--muted)] mb-8">All options are vault-focused, each with a different style language. Pick one letter and I will apply it to dashboard/navbar.</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {options.map(({ id, name, description, Preview }) => (
