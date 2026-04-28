@@ -3,7 +3,48 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { IconWarning } from '@/components/Icons';
-import BrandMark from '@/components/BrandMark';
+
+function NMLogo() {
+  return (
+    <div className="relative w-20 h-20 mx-auto mb-6">
+      {/* Spinning conic gradient ring */}
+      <div
+        className="absolute inset-0 rounded-[22px] animate-spin-slow"
+        style={{
+          background: 'conic-gradient(from 0deg, #9b8dff, #00e5a8, #ff6b6b, #9b8dff)',
+          filter: 'blur(2px)',
+          opacity: 0.9,
+        }}
+      />
+      {/* Static inner glow */}
+      <div
+        className="absolute inset-0 rounded-[22px] opacity-60"
+        style={{ background: 'conic-gradient(from 180deg, #7c6ff5, #00d49a)' }}
+      />
+      {/* Inner surface */}
+      <div
+        className="absolute inset-[3px] rounded-[19px] flex items-center justify-center"
+        style={{ background: 'linear-gradient(145deg, #0d0d1a, #13132a)' }}
+      >
+        <span
+          className="text-[26px] font-black tracking-tight select-none"
+          style={{
+            background: 'linear-gradient(120deg, #c4bcff 0%, #00e5a8 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+            fontFamily: 'Inter, sans-serif',
+          }}
+        >
+          NM
+        </span>
+      </div>
+      {/* Corner dot accents */}
+      <div className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[#00e5a8] shadow-[0_0_8px_#00e5a8]" />
+      <div className="absolute -bottom-1 -left-1 w-2 h-2 rounded-full bg-[#9b8dff] shadow-[0_0_8px_#9b8dff]" />
+    </div>
+  );
+}
 
 export default function LoginPage() {
   const router = useRouter();
@@ -70,9 +111,7 @@ export default function LoginPage() {
 
         {/* Brand mark */}
         <div className="text-center mb-8 animate-slide-up">
-          <div className="mx-auto mb-6 w-20 h-20 rounded-[22px] flex items-center justify-center bg-[#0d0d1a]/85 border border-[#9b8dff]/25 shadow-[0_12px_30px_rgba(0,0,0,0.45)]">
-            <BrandMark size={68} className="drop-shadow-[0_0_16px_rgba(155,141,255,0.35)]" />
-          </div>
+          <NMLogo />
           <div className="space-y-1.5">
             <h1 className="text-3xl font-black text-white tracking-tight">
               NM MEDIA{' '}
