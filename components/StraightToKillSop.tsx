@@ -114,6 +114,8 @@ export default function StraightToKillSop({ category, isAdmin }: Props) {
   const [doc, setDoc] = useState<StraightToKillDoc>(DEFAULT_DOC);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('saved');
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const revisionRef = useRef(0);
   const savedRevisionRef = useRef(0);
@@ -244,7 +246,8 @@ export default function StraightToKillSop({ category, isAdmin }: Props) {
         body: JSON.stringify({ content: nextDoc }),
       });
       if (!response.ok) {
-        throw new Error('Save failed');
+        const errorBody = (await response.json().catch(() => ({}))) as { error?: string };
+        throw new Error(errorBody.error ?? 'Save failed');
       }
       const data = (await response.json()) as { updatedAt?: string };
       if (requestId !== requestCounterRef.current) {
@@ -252,13 +255,15 @@ export default function StraightToKillSop({ category, isAdmin }: Props) {
       }
       savedRevisionRef.current = saveRevision;
       setSaveStatus('saved');
+      setSaveError(null);
       if (typeof data.updatedAt === 'string') {
         setLastSavedAt(new Date(data.updatedAt).toLocaleTimeString());
       }
-    } catch {
+    } catch (error: unknown) {
       if (requestId !== requestCounterRef.current) {
         return;
       }
+      setSaveError(error instanceof Error ? error.message : 'Unable to sync to server.');
       setSaveStatus('failed');
     }
   }
@@ -269,6 +274,7 @@ export default function StraightToKillSop({ category, isAdmin }: Props) {
     const nextRevision = revisionRef.current + 1;
     revisionRef.current = nextRevision;
     setSaveStatus('dirty');
+    setSaveError(null);
     if (saveTimerRef.current) {
       clearTimeout(saveTimerRef.current);
     }
@@ -281,6 +287,14 @@ export default function StraightToKillSop({ category, isAdmin }: Props) {
     if (!isAdmin) return;
     void saveDoc(doc, revisionRef.current);
   }
+
+  useEffect(() => {
+    if (!isAdmin || saveStatus !== 'failed') return;
+    const timer = setTimeout(() => {
+      void saveDoc(doc, revisionRef.current);
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [doc, isAdmin, saveStatus]);
 
   return (
     <>
@@ -371,7 +385,7 @@ export default function StraightToKillSop({ category, isAdmin }: Props) {
             <h1 className={styles.heroTitle}>
               <InlineEditable
                 value={doc.heroTitle}
-                isAdmin={isAdmin}
+                isAdmin={isAdmin && !isPreviewMode}
                 multiline={false}
                 onChange={(value) => updateDocField('heroTitle', value)}
               />
@@ -379,7 +393,7 @@ export default function StraightToKillSop({ category, isAdmin }: Props) {
               <span className={styles.heroAccent}>
                 <InlineEditable
                   value={doc.heroAccent}
-                  isAdmin={isAdmin}
+                  isAdmin={isAdmin && !isPreviewMode}
                   multiline={false}
                   onChange={(value) => updateDocField('heroAccent', value)}
                 />
@@ -388,7 +402,7 @@ export default function StraightToKillSop({ category, isAdmin }: Props) {
             <p className={styles.heroSub}>
               <InlineEditable
                 value={doc.heroSub}
-                isAdmin={isAdmin}
+                isAdmin={isAdmin && !isPreviewMode}
                 onChange={(value) => updateDocField('heroSub', value)}
               />
             </p>
@@ -402,6 +416,16 @@ export default function StraightToKillSop({ category, isAdmin }: Props) {
                       ? 'Save failed. Changes are local until retry succeeds.'
                       : 'Unsaved changes'}
               </p>
+            )}
+            {isAdmin && saveStatus === 'failed' && saveError && (
+              <p className={styles.kern} style={{ color: '#c62828' }}>
+                {saveError}
+              </p>
+            )}
+            {isAdmin && (
+              <button className={styles.copyBtn} onClick={() => setIsPreviewMode((value) => !value)} type="button">
+                {isPreviewMode ? 'Back to edit' : 'Preview'}
+              </button>
             )}
             {isAdmin && saveStatus === 'failed' && (
               <button className={styles.copyBtn} onClick={retrySave} type="button">
@@ -419,7 +443,7 @@ export default function StraightToKillSop({ category, isAdmin }: Props) {
               <p className={styles.bodyText}>
                 <InlineEditable
                   value={doc.overviewText}
-                  isAdmin={isAdmin}
+                  isAdmin={isAdmin && !isPreviewMode}
                   onChange={(value) => updateDocField('overviewText', value)}
                 />
               </p>
@@ -474,7 +498,7 @@ export default function StraightToKillSop({ category, isAdmin }: Props) {
                 <div className={styles.promptText}>
                   <InlineEditable
                     value={doc.prompt1}
-                    isAdmin={isAdmin}
+                    isAdmin={isAdmin && !isPreviewMode}
                     onChange={(value) => updateDocField('prompt1', value)}
                   />
                 </div>
@@ -523,7 +547,7 @@ export default function StraightToKillSop({ category, isAdmin }: Props) {
                 <div className={styles.promptText}>
                   <InlineEditable
                     value={doc.prompt2}
-                    isAdmin={isAdmin}
+                    isAdmin={isAdmin && !isPreviewMode}
                     onChange={(value) => updateDocField('prompt2', value)}
                   />
                 </div>

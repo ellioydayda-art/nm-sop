@@ -38,6 +38,8 @@ export default function SopViewer({ sop, category, isAdmin }: SopViewerProps) {
   const [progress, setProgress] = useState(0);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('saved');
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const revisionRef = useRef(0);
   const savedRevisionRef = useRef(0);
@@ -170,7 +172,8 @@ export default function SopViewer({ sop, category, isAdmin }: SopViewerProps) {
         body: JSON.stringify({ content: nextDoc }),
       });
       if (!response.ok) {
-        throw new Error('Save failed');
+        const errorBody = (await response.json().catch(() => ({}))) as { error?: string };
+        throw new Error(errorBody.error ?? 'Save failed');
       }
       const data = (await response.json()) as { updatedAt?: string };
       if (requestId !== requestCounterRef.current) {
@@ -178,15 +181,17 @@ export default function SopViewer({ sop, category, isAdmin }: SopViewerProps) {
       }
       savedRevisionRef.current = saveRevision;
       setSaveStatus('saved');
+      setSaveError(null);
       if (typeof data.updatedAt === 'string') {
         setLastSavedAt(new Date(data.updatedAt).toLocaleTimeString());
       } else {
         setLastSavedAt(new Date().toLocaleTimeString());
       }
-    } catch {
+    } catch (error: unknown) {
       if (requestId !== requestCounterRef.current) {
         return;
       }
+      setSaveError(error instanceof Error ? error.message : 'Unable to sync to server.');
       setSaveStatus('failed');
     }
   }
@@ -197,6 +202,7 @@ export default function SopViewer({ sop, category, isAdmin }: SopViewerProps) {
     const nextRevision = revisionRef.current + 1;
     revisionRef.current = nextRevision;
     setSaveStatus('dirty');
+    setSaveError(null);
     if (saveTimerRef.current) {
       clearTimeout(saveTimerRef.current);
     }
@@ -209,6 +215,14 @@ export default function SopViewer({ sop, category, isAdmin }: SopViewerProps) {
     if (!isAdmin) return;
     void saveDoc(doc, revisionRef.current);
   }
+
+  useEffect(() => {
+    if (!isAdmin || saveStatus !== 'failed') return;
+    const timer = setTimeout(() => {
+      void saveDoc(doc, revisionRef.current);
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [doc, isAdmin, saveStatus]);
 
   return (
     <>
@@ -233,7 +247,7 @@ export default function SopViewer({ sop, category, isAdmin }: SopViewerProps) {
           <h1 className={styles.heroTitle}>
             <EditableText
               value={doc.title}
-              isAdmin={isAdmin}
+              isAdmin={isAdmin && !isPreviewMode}
               path="title"
               onChange={updateText}
               className={styles.heroTitle}
@@ -255,6 +269,21 @@ export default function SopViewer({ sop, category, isAdmin }: SopViewerProps) {
                     ? 'Save failed. Changes are local until retry succeeds.'
                     : 'Unsaved changes'}
             </p>
+          )}
+          {isAdmin && saveStatus === 'failed' && saveError && (
+            <p className={styles.heroDept} style={{ marginTop: 4, color: '#c62828' }}>
+              {saveError}
+            </p>
+          )}
+          {isAdmin && (
+            <button
+              type="button"
+              onClick={() => setIsPreviewMode((value) => !value)}
+              className={styles.sidebarBack}
+              style={{ marginTop: 8, width: 'fit-content' }}
+            >
+              {isPreviewMode ? 'Back to edit' : 'Preview'}
+            </button>
           )}
           {isAdmin && saveStatus === 'failed' && (
             <button
@@ -339,7 +368,7 @@ export default function SopViewer({ sop, category, isAdmin }: SopViewerProps) {
                   <div>
                     <EditableText
                       value={section.title}
-                      isAdmin={isAdmin}
+                      isAdmin={isAdmin && !isPreviewMode}
                       path={`sections.${i}.title`}
                       onChange={updateText}
                       className={styles.sectionTitle}
@@ -354,7 +383,7 @@ export default function SopViewer({ sop, category, isAdmin }: SopViewerProps) {
 
                 <div style={{ paddingLeft: 70 }}>
                   {section.blocks.map((block, bi) => (
-                    <Block key={bi} block={block} accentHex={category.accentHex} isAdmin={isAdmin} sectionIndex={i} blockIndex={bi} onChange={updateText} />
+                    <Block key={bi} block={block} accentHex={category.accentHex} isAdmin={isAdmin && !isPreviewMode} sectionIndex={i} blockIndex={bi} onChange={updateText} />
                   ))}
                 </div>
               </section>
