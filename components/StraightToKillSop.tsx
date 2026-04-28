@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { IconArrowLeft, IconChevronRight } from './Icons';
 import styles from './straight-to-kill.module.css';
+import { createClient } from '@supabase/supabase-js';
 
 const SECTIONS = [
   { id: 'overview',  label: 'Overview',               num: '00' },
@@ -72,12 +73,59 @@ interface StraightToKillCategory {
   accentHex: string;
 }
 
-interface Props { category: StraightToKillCategory }
+interface Props {
+  category: StraightToKillCategory;
+  isAdmin: boolean;
+}
 
-export default function StraightToKillSop({ category }: Props) {
+type SaveStatus = 'saving' | 'saved' | 'failed' | 'dirty';
+
+interface StraightToKillDoc {
+  heroTitle: string;
+  heroAccent: string;
+  heroSub: string;
+  overviewText: string;
+  prompt1: string;
+  prompt2: string;
+}
+
+const DEFAULT_DOC: StraightToKillDoc = {
+  heroTitle: 'Straight To Kill',
+  heroAccent: 'Ad Creative',
+  heroSub: 'A repeatable system to produce scroll-stopping social media image creatives for any webinar, live event, or free workshop campaign.',
+  overviewText: 'This playbook walks your team through 4 clear steps to produce a batch of 8 high-impact ad creatives for any campaign. No design experience needed. Just follow the steps.',
+  prompt1: PROMPT_1,
+  prompt2: PROMPT_2,
+};
+
+interface SopRealtimeRow {
+  slug: string;
+  content: unknown;
+  updated_at?: string;
+}
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+export default function StraightToKillSop({ category, isAdmin }: Props) {
   const [activeSection, setActiveSection] = useState('overview');
   const [progress, setProgress] = useState(0);
   const [copied, setCopied] = useState<string | null>(null);
+  const [doc, setDoc] = useState<StraightToKillDoc>(DEFAULT_DOC);
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>('saved');
+  const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const revisionRef = useRef(0);
+  const savedRevisionRef = useRef(0);
+  const requestCounterRef = useRef(0);
+
+  useEffect(() => {
+    return () => {
+      if (saveTimerRef.current) {
+        clearTimeout(saveTimerRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -117,6 +165,122 @@ export default function StraightToKillSop({ category }: Props) {
   }
 
   const activeIdx = SECTIONS.findIndex(s => s.id === activeSection);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    void fetch(`/api/admin/sop/${category.slug}`, { signal: controller.signal })
+      .then(response => response.json())
+      .then((data: { content?: unknown; updatedAt?: string }) => {
+        const content = data.content;
+        if (!content || typeof content !== 'object') return;
+        const incoming = content as Partial<StraightToKillDoc>;
+        if (
+          typeof incoming.heroTitle === 'string' &&
+          typeof incoming.heroAccent === 'string' &&
+          typeof incoming.heroSub === 'string' &&
+          typeof incoming.overviewText === 'string' &&
+          typeof incoming.prompt1 === 'string' &&
+          typeof incoming.prompt2 === 'string'
+        ) {
+          setDoc(incoming as StraightToKillDoc);
+          if (typeof data.updatedAt === 'string') {
+            setLastSavedAt(new Date(data.updatedAt).toLocaleTimeString());
+          }
+        }
+      })
+      .catch(() => {
+        // Keep defaults if initial sync fails.
+      });
+
+    return () => controller.abort();
+  }, [category.slug]);
+
+  useEffect(() => {
+    if (!supabaseUrl || !supabaseAnonKey) return;
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+    const channel = supabase
+      .channel(`stk-live-${category.slug}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'sop_documents', filter: `slug=eq.${category.slug}` },
+        payload => {
+          if (savedRevisionRef.current < revisionRef.current) return;
+          const row = payload.new as SopRealtimeRow;
+          if (!row?.content || typeof row.content !== 'object') return;
+          const incoming = row.content as Partial<StraightToKillDoc>;
+          if (
+            typeof incoming.heroTitle === 'string' &&
+            typeof incoming.heroAccent === 'string' &&
+            typeof incoming.heroSub === 'string' &&
+            typeof incoming.overviewText === 'string' &&
+            typeof incoming.prompt1 === 'string' &&
+            typeof incoming.prompt2 === 'string'
+          ) {
+            setDoc(incoming as StraightToKillDoc);
+            setSaveStatus('saved');
+            if (row.updated_at) {
+              setLastSavedAt(new Date(row.updated_at).toLocaleTimeString());
+            }
+          }
+        }
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [category.slug]);
+
+  async function saveDoc(nextDoc: StraightToKillDoc, saveRevision: number) {
+    if (!isAdmin) return;
+    const requestId = requestCounterRef.current + 1;
+    requestCounterRef.current = requestId;
+    setSaveStatus('saving');
+    try {
+      const response = await fetch(`/api/admin/sop/${category.slug}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: nextDoc }),
+      });
+      if (!response.ok) {
+        throw new Error('Save failed');
+      }
+      const data = (await response.json()) as { updatedAt?: string };
+      if (requestId !== requestCounterRef.current) {
+        return;
+      }
+      savedRevisionRef.current = saveRevision;
+      setSaveStatus('saved');
+      if (typeof data.updatedAt === 'string') {
+        setLastSavedAt(new Date(data.updatedAt).toLocaleTimeString());
+      }
+    } catch {
+      if (requestId !== requestCounterRef.current) {
+        return;
+      }
+      setSaveStatus('failed');
+    }
+  }
+
+  function updateDocField<K extends keyof StraightToKillDoc>(field: K, value: StraightToKillDoc[K]) {
+    const nextDoc: StraightToKillDoc = { ...doc, [field]: value };
+    setDoc(nextDoc);
+    const nextRevision = revisionRef.current + 1;
+    revisionRef.current = nextRevision;
+    setSaveStatus('dirty');
+    if (saveTimerRef.current) {
+      clearTimeout(saveTimerRef.current);
+    }
+    saveTimerRef.current = setTimeout(() => {
+      void saveDoc(nextDoc, nextRevision);
+    }, 700);
+  }
+
+  function retrySave() {
+    if (!isAdmin) return;
+    void saveDoc(doc, revisionRef.current);
+  }
 
   return (
     <>
@@ -205,12 +369,45 @@ export default function StraightToKillSop({ category }: Props) {
           <div className={styles.hero}>
             <div className={styles.badge}>Marketing SOP v1.0</div>
             <h1 className={styles.heroTitle}>
-              Straight To Kill<br />
-              <span className={styles.heroAccent}>Ad Creative</span>
+              <InlineEditable
+                value={doc.heroTitle}
+                isAdmin={isAdmin}
+                multiline={false}
+                onChange={(value) => updateDocField('heroTitle', value)}
+              />
+              <br />
+              <span className={styles.heroAccent}>
+                <InlineEditable
+                  value={doc.heroAccent}
+                  isAdmin={isAdmin}
+                  multiline={false}
+                  onChange={(value) => updateDocField('heroAccent', value)}
+                />
+              </span>
             </h1>
             <p className={styles.heroSub}>
-              A repeatable system to produce scroll-stopping social media image creatives for any webinar, live event, or free workshop campaign.
+              <InlineEditable
+                value={doc.heroSub}
+                isAdmin={isAdmin}
+                onChange={(value) => updateDocField('heroSub', value)}
+              />
             </p>
+            {isAdmin && (
+              <p className={styles.kern}>
+                {saveStatus === 'saving'
+                  ? 'Saving...'
+                  : saveStatus === 'saved'
+                    ? `Saved${lastSavedAt ? ` at ${lastSavedAt}` : ''}`
+                    : saveStatus === 'failed'
+                      ? 'Save failed. Changes are local until retry succeeds.'
+                      : 'Unsaved changes'}
+              </p>
+            )}
+            {isAdmin && saveStatus === 'failed' && (
+              <button className={styles.copyBtn} onClick={retrySave} type="button">
+                Retry save
+              </button>
+            )}
             <div className={styles.kern}>Inspired by Frank Kern</div>
           </div>
 
@@ -220,7 +417,11 @@ export default function StraightToKillSop({ category }: Props) {
             <div id="overview" data-stk-section className={`${styles.section} ${styles.sectionFirst}`}>
               <div className={styles.divider} />
               <p className={styles.bodyText}>
-                This playbook walks your team through 4 clear steps to produce a batch of 8 high-impact ad creatives for any campaign. No design experience needed. Just follow the steps.
+                <InlineEditable
+                  value={doc.overviewText}
+                  isAdmin={isAdmin}
+                  onChange={(value) => updateDocField('overviewText', value)}
+                />
               </p>
               <div className={styles.infoRow}>
                 <div className={styles.infoCard}>
@@ -266,12 +467,16 @@ export default function StraightToKillSop({ category }: Props) {
                 <div className={styles.promptLabel}>Step 1 Prompt — Copy and Paste This</div>
                 <button
                   className={`${styles.copyBtn} ${copied === 'p1' ? styles.copyBtnDone : ''}`}
-                  onClick={() => copyText('p1', PROMPT_1)}
+                  onClick={() => copyText('p1', doc.prompt1)}
                 >
                   {copied === 'p1' ? 'Copied!' : 'Copy'}
                 </button>
                 <div className={styles.promptText}>
-                  {`I'm running a `}<span className={styles.bracket}>[webinar / live workshop / free event]</span>{` called `}<span className={styles.bracket}>[EVENT NAME]</span>{` for `}<span className={styles.bracket}>[TARGET AUDIENCE]</span>{`.\n\nI've attached the landing page design (screenshot) and the full copy below.\n\nPlease read both carefully and understand:\n- The main promise or transformation\n- The pain points the audience faces\n- What makes this event unique\n- The credibility of the host\n\nI'll use this context in the next step to generate ad creative headlines.\n\n`}<span className={styles.bracket}>[PASTE YOUR LANDING PAGE COPY HERE]</span>
+                  <InlineEditable
+                    value={doc.prompt1}
+                    isAdmin={isAdmin}
+                    onChange={(value) => updateDocField('prompt1', value)}
+                  />
                 </div>
               </div>
 
@@ -311,28 +516,16 @@ export default function StraightToKillSop({ category }: Props) {
                 <div className={styles.promptLabel}>Step 2 Prompt — Copy and Paste This</div>
                 <button
                   className={`${styles.copyBtn} ${copied === 'p2' ? styles.copyBtnDone : ''}`}
-                  onClick={() => copyText('p2', PROMPT_2)}
+                  onClick={() => copyText('p2', doc.prompt2)}
                 >
                   {copied === 'p2' ? 'Copied!' : 'Copy'}
                 </button>
                 <div className={styles.promptText}>
-                  {`Using the event context you just read, generate 10 bold ad creative headlines for my `}<span className={styles.bracket}>[EVENT NAME]</span>{`.\n\nUse these proven fill-in-the-blank templates. Replace [TOPIC], [AUDIENCE], [OUTCOME] with relevant terms from the landing page:\n\n`}
-                  {[
-                    'WHAT IF EVERYTHING YOU THOUGHT YOU KNEW ABOUT [TOPIC] WAS WRONG?',
-                    'THE REAL REASON YOUR [TOPIC] ISN\'T WORKING IN 2026',
-                    'YOUR [TOPIC] STRATEGY IS BROKEN (HERE\'S WHY)',
-                    'HERE\'S WHAT NOBODY TELLS YOU ABOUT [TOPIC]',
-                    'THE BIGGEST MISTAKE [AUDIENCE] MAKE WITH [TOPIC]',
-                    'WHY [TOPIC] FEELS HARD (AND HOW TO FIX IT)',
-                    'WHAT ACTUALLY MAKES [TOPIC] WORK IN 2026',
-                    'WANT MASSIVE [OUTCOME] IN 2026? READ THIS.',
-                    'FREE [EVENT TYPE]: HOW TO [ACHIEVE OUTCOME] WITHOUT [PAIN POINT]',
-                    'FINALLY: [BENEFIT] WITHOUT [PAIN POINT]',
-                  ].map((t, i) => (
-                    <span key={i}>{`${i + 1}. `}<span className={styles.bracket}>{t.replace(/\[([^\]]+)\]/g, '') && ''}</span>{t.split(/(\[[^\]]+\])/).map((part, j) =>
-                      part.startsWith('[') ? <span key={j} className={styles.bracket}>{part}</span> : part
-                    )}{'\n'}</span>
-                  ))}
+                  <InlineEditable
+                    value={doc.prompt2}
+                    isAdmin={isAdmin}
+                    onChange={(value) => updateDocField('prompt2', value)}
+                  />
                 </div>
               </div>
 
@@ -553,5 +746,40 @@ export default function StraightToKillSop({ category }: Props) {
         </main>
       </div>
     </>
+  );
+}
+
+function InlineEditable({
+  value,
+  isAdmin,
+  onChange,
+  multiline = true,
+}: {
+  value: string;
+  isAdmin: boolean;
+  onChange: (value: string) => void;
+  multiline?: boolean;
+}) {
+  if (!isAdmin) {
+    return <>{value}</>;
+  }
+
+  if (!multiline) {
+    return (
+      <input
+        className="input"
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+      />
+    );
+  }
+
+  return (
+    <textarea
+      className="input"
+      value={value}
+      onChange={(event) => onChange(event.target.value)}
+      rows={Math.max(2, value.split('\n').length)}
+    />
   );
 }

@@ -34,7 +34,7 @@ export default async function SopPage({ params }: { params: { category: string }
     return (
       <div className="min-h-screen bg-[var(--bg)]">
         <Navbar user={{ name: user.name, email: user.email, role: user.role }} />
-        <StraightToKillSop category={category} />
+        <StraightToKillSop category={category} isAdmin={user.role === 'admin'} />
       </div>
     );
   }
@@ -43,8 +43,10 @@ export default async function SopPage({ params }: { params: { category: string }
   let override: Awaited<ReturnType<typeof getSopDocumentBySlug>> = null;
   try {
     override = await getSopDocumentBySlug(params.category);
-  } catch (error: unknown) {
-    throw error;
+  } catch {
+    // Fail open: if the editable override store is unavailable,
+    // still render the bundled SOP instead of crashing the page.
+    override = null;
   }
   const sop = (override?.content as SOPDoc | undefined) ?? baseSop;
   if (!sop) notFound();
