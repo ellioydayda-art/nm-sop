@@ -18,10 +18,6 @@ const SOP_MAP: Record<string, SOPDoc> = {
 };
 
 export default async function SopPage({ params }: { params: { category: string } }) {
-  // #region agent log
-  fetch('http://127.0.0.1:7385/ingest/09dde936-f35e-4298-82b6-8f46c80527c2',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'fbc59d'},body:JSON.stringify({sessionId:'fbc59d',runId:'initial',hypothesisId:'H3',location:'app/sop/[category]/page.tsx:entry',message:'Entered SOP route',data:{category:params.category},timestamp:Date.now()})}).catch(()=>{});
-  // #endregion
-
   const session = await getSession();
   if (!session) redirect('/login');
 
@@ -48,15 +44,9 @@ export default async function SopPage({ params }: { params: { category: string }
   try {
     override = await getSopDocumentBySlug(params.category);
   } catch (error: unknown) {
-    // #region agent log
-    fetch('http://127.0.0.1:7385/ingest/09dde936-f35e-4298-82b6-8f46c80527c2',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'fbc59d'},body:JSON.stringify({sessionId:'fbc59d',runId:'initial',hypothesisId:'H1',location:'app/sop/[category]/page.tsx:getSopDocumentBySlug:catch',message:'Error while loading override SOP content',data:{category:params.category,errorMessage:error instanceof Error ? error.message : 'unknown'},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion
     throw error;
   }
   const sop = (override?.content as SOPDoc | undefined) ?? baseSop;
-  // #region agent log
-  fetch('http://127.0.0.1:7385/ingest/09dde936-f35e-4298-82b6-8f46c80527c2',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'fbc59d'},body:JSON.stringify({sessionId:'fbc59d',runId:'initial',hypothesisId:'H4',location:'app/sop/[category]/page.tsx:sop-selected',message:'Resolved SOP source',data:{category:params.category,hasBaseSop:Boolean(baseSop),hasOverride:Boolean(override?.content),resolved:Boolean(sop)},timestamp:Date.now()})}).catch(()=>{});
-  // #endregion
   if (!sop) notFound();
 
   return (
