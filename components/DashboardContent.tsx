@@ -108,18 +108,18 @@ export default function DashboardContent({ user, initialCategories }: DashboardC
         <div className="orb w-[600px] h-[600px] bg-brand/8 top-[-20%] right-[-15%] animate-float-slow" />
         <div className="orb w-[350px] h-[350px] bg-accent/6 bottom-[-15%] left-[-5%] animate-float" style={{ animationDelay: '-4s' }} />
         <div
-          className="absolute inset-0 opacity-[0.04]"
+          className="absolute inset-0 opacity-[0.12]"
           style={{
             backgroundImage:
-              "linear-gradient(rgba(155,141,255,0.42) 1px, transparent 1px), linear-gradient(90deg, rgba(155,141,255,0.42) 1px, transparent 1px)",
-            backgroundSize: "54px 54px",
+              "linear-gradient(rgba(155,141,255,0.7) 1px, transparent 1px), linear-gradient(90deg, rgba(155,141,255,0.7) 1px, transparent 1px)",
+            backgroundSize: "44px 44px",
           }}
         />
         <div
-          className="absolute inset-0 opacity-[0.02]"
+          className="absolute inset-0 opacity-[0.08]"
           style={{
             backgroundImage:
-              "repeating-linear-gradient(45deg, rgba(0,229,168,0.6) 0px, rgba(0,229,168,0.6) 1px, transparent 1px, transparent 44px)",
+              "repeating-linear-gradient(45deg, rgba(0,229,168,0.75) 0px, rgba(0,229,168,0.75) 1px, transparent 1px, transparent 36px)",
           }}
         />
       </div>

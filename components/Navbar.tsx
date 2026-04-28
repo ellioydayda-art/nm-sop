@@ -3,8 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTheme } from './ThemeProvider';
-import { IconSettings, IconSun, IconMoon, IconLogOut } from './Icons';
-import BrandMark from './BrandMark';
+import { IconVault, IconSettings, IconSun, IconMoon, IconLogOut } from './Icons';
 
 interface NavbarProps {
   user: { name: string; email: string; role: string };
@@ -26,8 +25,15 @@ export default function Navbar({ user }: NavbarProps) {
 
         {/* Brand */}
         <Link href="/dashboard" className="flex items-center gap-2.5 group">
-          <div className="w-8 h-8 bg-brand/10 border border-brand/20 rounded-xl flex items-center justify-center transition-all duration-200 group-hover:bg-brand/20 overflow-hidden">
-            <BrandMark size={30} className="scale-[0.88]" />
+          <div className="w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-200 relative overflow-hidden border border-brand/20 group-hover:scale-105">
+            <div
+              className="absolute inset-0"
+              style={{
+                background: 'linear-gradient(145deg, rgba(155,141,255,0.26), rgba(0,229,168,0.18))',
+              }}
+            />
+            <div className="absolute -top-1.5 -right-1.5 w-3 h-3 rounded-full bg-accent/60 blur-[1px]" />
+            <IconVault className="text-brand relative z-10" size={14} />
           </div>
           <div className="flex flex-col leading-none">
             <span className="font-bold text-[var(--text)] text-sm tracking-tight">NM MEDIA</span>
