@@ -107,6 +107,21 @@ export default function DashboardContent({ user, initialCategories }: DashboardC
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <div className="orb w-[600px] h-[600px] bg-brand/8 top-[-20%] right-[-15%] animate-float-slow" />
         <div className="orb w-[350px] h-[350px] bg-accent/6 bottom-[-15%] left-[-5%] animate-float" style={{ animationDelay: '-4s' }} />
+        <div
+          className="absolute inset-0 opacity-[0.04]"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(155,141,255,0.42) 1px, transparent 1px), linear-gradient(90deg, rgba(155,141,255,0.42) 1px, transparent 1px)",
+            backgroundSize: "54px 54px",
+          }}
+        />
+        <div
+          className="absolute inset-0 opacity-[0.02]"
+          style={{
+            backgroundImage:
+              "repeating-linear-gradient(45deg, rgba(0,229,168,0.6) 0px, rgba(0,229,168,0.6) 1px, transparent 1px, transparent 44px)",
+          }}
+        />
       </div>
 
       <main className="relative max-w-6xl mx-auto px-6 py-12 z-10">
