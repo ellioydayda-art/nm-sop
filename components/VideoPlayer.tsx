@@ -102,6 +102,8 @@ export default function VideoPlayer({ url, title }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const speedMenuRef = useRef<HTMLDivElement>(null);
   const errorConfirmTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  /** Only show errors after the user has clicked play at least once. */
+  const hasAttemptedPlay = useRef(false);
   const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -197,12 +199,17 @@ export default function VideoPlayer({ url, title }: VideoPlayerProps) {
     const err = el?.error;
     if (!el || !err) return;
     const code = err.code;
-    if (code === MEDIA_ERR_ABORTED) {
-      return;
-    }
+    if (code === MEDIA_ERR_ABORTED) return;
+
+    /* Never surface an error if the user has not tried to play yet.
+       preload="metadata" can fire error on slow / restricted networks
+       before any interaction — those are false alarms we must hide. */
+    if (!hasAttemptedPlay.current) return;
+
     clearPendingErrorConfirmation();
     errorConfirmTimerRef.current = setTimeout(() => {
       errorConfirmTimerRef.current = null;
+      if (!hasAttemptedPlay.current) return;
       const v = videoRef.current;
       const pending = v?.error;
       if (!v || !pending) return;
@@ -216,6 +223,7 @@ export default function VideoPlayer({ url, title }: VideoPlayerProps) {
   function retryVideoLoad() {
     clearPendingErrorConfirmation();
     setMediaError(null);
+    hasAttemptedPlay.current = false;
     const v = videoRef.current;
     if (v) {
       v.load();
@@ -229,6 +237,7 @@ export default function VideoPlayer({ url, title }: VideoPlayerProps) {
       v.pause();
       return;
     }
+    hasAttemptedPlay.current = true;
     setMediaError(null);
     const tryPlay = () => v.play();
 
@@ -348,6 +357,7 @@ export default function VideoPlayer({ url, title }: VideoPlayerProps) {
         <video
           key={url}
           ref={videoRef}
+          src={url}
           className={`w-full bg-black object-contain ${
             isFullscreen
               ? 'max-h-[calc(100dvh-7.5rem)] min-h-0 max-w-full'
@@ -372,9 +382,7 @@ export default function VideoPlayer({ url, title }: VideoPlayerProps) {
           onError={handleVideoError}
           preload="metadata"
           playsInline
-        >
-          <source src={url} type="video/mp4" />
-        </video>
+        />
 
         <div
           className={`pointer-events-none absolute inset-0 flex items-center justify-center transition-opacity duration-200 ${
