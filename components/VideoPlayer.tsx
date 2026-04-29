@@ -103,6 +103,7 @@ export default function VideoPlayer({ url, title }: VideoPlayerProps) {
   const [volume, setVolume] = useState(1);
   const [muted, setMuted] = useState(false);
   const [volumePopoverOpen, setVolumePopoverOpen] = useState(false);
+  const [mediaError, setMediaError] = useState<string | null>(null);
 
   const syncFullscreenState = useCallback(() => {
     const root = containerRef.current;
@@ -126,11 +127,13 @@ export default function VideoPlayer({ url, title }: VideoPlayerProps) {
   useEffect(() => {
     if (!speedMenuOpen) return;
     function onDocMouseDown(e: MouseEvent) {
-      const root = speedMenuRef.current;
       const t = e.target;
-      if (root && t instanceof Node && !root.contains(t)) {
-        setSpeedMenuOpen(false);
-      }
+      if (!(t instanceof Node)) return;
+      const player = containerRef.current;
+      const sm = speedMenuRef.current;
+      if (sm && sm.contains(t)) return;
+      if (player && player.contains(t)) return;
+      setSpeedMenuOpen(false);
     }
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === 'Escape') {
@@ -152,15 +155,42 @@ export default function VideoPlayer({ url, title }: VideoPlayerProps) {
     el.muted = muted;
   }, [volume, muted]);
 
+  function mediaErrorMessage(code: number | undefined): string {
+    switch (code) {
+      case MediaError.MEDIA_ERR_ABORTED:
+        return 'Playback was interrupted.';
+      case MediaError.MEDIA_ERR_NETWORK:
+        return 'Network error while loading the video. Try again or check your connection.';
+      case MediaError.MEDIA_ERR_DECODE:
+        return 'The video could not be decoded in this browser.';
+      case MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED:
+        return 'This video format is not supported in your browser.';
+      default:
+        return 'The video could not be played.';
+    }
+  }
+
   function togglePlay() {
     const v = videoRef.current;
     if (!v) return;
-    if (v.paused) {
-      void v.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
-    } else {
+    if (!v.paused) {
       v.pause();
-      setPlaying(false);
+      return;
     }
+    setMediaError(null);
+    const tryPlay = () => v.play();
+
+    void tryPlay().catch((err: unknown) => {
+      if (err instanceof DOMException && err.name === 'NotAllowedError') {
+        v.muted = true;
+        setMuted(true);
+        void tryPlay().catch(() => {
+          setPlaying(false);
+        });
+        return;
+      }
+      setPlaying(false);
+    });
   }
 
   function onTimeUpdate() {
@@ -174,6 +204,7 @@ export default function VideoPlayer({ url, title }: VideoPlayerProps) {
     if (!v) return;
     setDuration(v.duration);
     v.playbackRate = playbackSpeed;
+    setMediaError(null);
   }
 
   function applyPlaybackSpeed(speed: PlaybackSpeed) {
@@ -252,8 +283,10 @@ export default function VideoPlayer({ url, title }: VideoPlayerProps) {
       }`}
     >
       <div
-        className={`relative flex min-h-0 cursor-pointer items-center justify-center overflow-hidden bg-black ${
-          isFullscreen ? 'min-h-0 flex-1' : 'rounded-t-xl'
+        className={`relative flex cursor-pointer items-center justify-center overflow-hidden bg-black ${
+          isFullscreen
+            ? 'min-h-0 flex-1'
+            : 'min-h-[180px] rounded-t-xl sm:min-h-[220px]'
         }`}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
@@ -270,7 +303,18 @@ export default function VideoPlayer({ url, title }: VideoPlayerProps) {
           onTimeUpdate={onTimeUpdate}
           onLoadedMetadata={onLoadedMetadata}
           onEnded={onEnded}
-          preload="metadata"
+          onPlay={() => {
+            setPlaying(true);
+            setMediaError(null);
+          }}
+          onPause={() => setPlaying(false)}
+          onError={() => {
+            const el = videoRef.current;
+            const code = el?.error?.code;
+            setMediaError(mediaErrorMessage(code));
+            setPlaying(false);
+          }}
+          preload="auto"
           playsInline
         />
 
@@ -298,6 +342,11 @@ export default function VideoPlayer({ url, title }: VideoPlayerProps) {
         }`}
         onClick={(e) => e.stopPropagation()}
       >
+        {mediaError ? (
+          <p className="mb-2 rounded-md border border-amber-500/30 bg-amber-500/10 px-2 py-1.5 text-left text-[11px] leading-snug text-amber-100">
+            {mediaError}
+          </p>
+        ) : null}
         <p className="mb-2 truncate text-left text-[11px] font-medium tracking-wide text-zinc-500">
           {title}
         </p>
