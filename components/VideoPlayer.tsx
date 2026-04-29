@@ -15,6 +15,14 @@ import {
 const PLAYBACK_SPEEDS = [1, 1.25, 1.5, 2] as const;
 type PlaybackSpeed = (typeof PLAYBACK_SPEEDS)[number];
 
+/** MediaError.code — use literals so WebViews without MediaError statics still match. */
+const MEDIA_ERR_ABORTED = 1;
+const MEDIA_ERR_NETWORK = 2;
+const MEDIA_ERR_DECODE = 3;
+const MEDIA_ERR_SRC_NOT_SUPPORTED = 4;
+
+const ERROR_CONFIRM_MS = 400;
+
 type FsDocument = Document & {
   webkitFullscreenElement?: Element | null;
   mozFullScreenElement?: Element | null;
@@ -93,6 +101,7 @@ export default function VideoPlayer({ url, title }: VideoPlayerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const speedMenuRef = useRef<HTMLDivElement>(null);
+  const errorConfirmTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -155,18 +164,61 @@ export default function VideoPlayer({ url, title }: VideoPlayerProps) {
     el.muted = muted;
   }, [volume, muted]);
 
-  function mediaErrorMessage(code: number | undefined): string {
+  useEffect(() => {
+    return () => {
+      if (errorConfirmTimerRef.current) {
+        clearTimeout(errorConfirmTimerRef.current);
+        errorConfirmTimerRef.current = null;
+      }
+    };
+  }, []);
+
+  function clearPendingErrorConfirmation() {
+    if (errorConfirmTimerRef.current) {
+      clearTimeout(errorConfirmTimerRef.current);
+      errorConfirmTimerRef.current = null;
+    }
+  }
+
+  function persistentMediaErrorText(code: number): string {
     switch (code) {
-      case MediaError.MEDIA_ERR_ABORTED:
-        return 'Playback was interrupted.';
-      case MediaError.MEDIA_ERR_NETWORK:
-        return 'Network error while loading the video. Try again or check your connection.';
-      case MediaError.MEDIA_ERR_DECODE:
-        return 'The video could not be decoded in this browser.';
-      case MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED:
-        return 'This video format is not supported in your browser.';
+      case MEDIA_ERR_NETWORK:
+        return 'The video could not finish loading (network or firewall).';
+      case MEDIA_ERR_DECODE:
+      case MEDIA_ERR_SRC_NOT_SUPPORTED:
+        return 'This browser could not play the file in the embedded player.';
       default:
-        return 'The video could not be played.';
+        return 'The video could not be loaded.';
+    }
+  }
+
+  function handleVideoError() {
+    const el = videoRef.current;
+    const err = el?.error;
+    if (!el || !err) return;
+    const code = err.code;
+    if (code === MEDIA_ERR_ABORTED) {
+      return;
+    }
+    clearPendingErrorConfirmation();
+    errorConfirmTimerRef.current = setTimeout(() => {
+      errorConfirmTimerRef.current = null;
+      const v = videoRef.current;
+      const pending = v?.error;
+      if (!v || !pending) return;
+      const confirmed = pending.code;
+      if (confirmed === MEDIA_ERR_ABORTED) return;
+      setMediaError(persistentMediaErrorText(confirmed));
+      setPlaying(false);
+    }, ERROR_CONFIRM_MS);
+  }
+
+  function retryVideoLoad() {
+    clearPendingErrorConfirmation();
+    setMediaError(null);
+    const v = videoRef.current;
+    if (v) {
+      v.load();
     }
   }
 
@@ -200,6 +252,7 @@ export default function VideoPlayer({ url, title }: VideoPlayerProps) {
   }
 
   function onLoadedMetadata() {
+    clearPendingErrorConfirmation();
     const v = videoRef.current;
     if (!v) return;
     setDuration(v.duration);
@@ -293,8 +346,8 @@ export default function VideoPlayer({ url, title }: VideoPlayerProps) {
         onClick={togglePlay}
       >
         <video
+          key={url}
           ref={videoRef}
-          src={url}
           className={`w-full bg-black object-contain ${
             isFullscreen
               ? 'max-h-[calc(100dvh-7.5rem)] min-h-0 max-w-full'
@@ -302,21 +355,26 @@ export default function VideoPlayer({ url, title }: VideoPlayerProps) {
           }`}
           onTimeUpdate={onTimeUpdate}
           onLoadedMetadata={onLoadedMetadata}
+          onLoadedData={() => {
+            clearPendingErrorConfirmation();
+            setMediaError(null);
+          }}
+          onCanPlay={() => {
+            clearPendingErrorConfirmation();
+            setMediaError(null);
+          }}
           onEnded={onEnded}
           onPlay={() => {
             setPlaying(true);
             setMediaError(null);
           }}
           onPause={() => setPlaying(false)}
-          onError={() => {
-            const el = videoRef.current;
-            const code = el?.error?.code;
-            setMediaError(mediaErrorMessage(code));
-            setPlaying(false);
-          }}
-          preload="auto"
+          onError={handleVideoError}
+          preload="metadata"
           playsInline
-        />
+        >
+          <source src={url} type="video/mp4" />
+        </video>
 
         <div
           className={`pointer-events-none absolute inset-0 flex items-center justify-center transition-opacity duration-200 ${
@@ -343,9 +401,26 @@ export default function VideoPlayer({ url, title }: VideoPlayerProps) {
         onClick={(e) => e.stopPropagation()}
       >
         {mediaError ? (
-          <p className="mb-2 rounded-md border border-amber-500/30 bg-amber-500/10 px-2 py-1.5 text-left text-[11px] leading-snug text-amber-100">
-            {mediaError}
-          </p>
+          <div className="mb-2 rounded-md border border-amber-500/30 bg-amber-500/10 px-2 py-2 text-left text-[11px] leading-snug text-amber-100">
+            <p className="mb-2">{mediaError}</p>
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+              <a
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-[#7dd3fc] underline decoration-[#7dd3fc]/50 underline-offset-2 hover:text-white"
+              >
+                Open video in new tab
+              </a>
+              <button
+                type="button"
+                onClick={retryVideoLoad}
+                className="font-medium text-[#7dd3fc] underline decoration-[#7dd3fc]/50 underline-offset-2 hover:text-white"
+              >
+                Reload video
+              </button>
+            </div>
+          </div>
         ) : null}
         <p className="mb-2 truncate text-left text-[11px] font-medium tracking-wide text-zinc-500">
           {title}
