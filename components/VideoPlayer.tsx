@@ -1,13 +1,15 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import {
   IconPlay,
   IconPause,
   IconEnterFullscreen,
   IconExitFullscreen,
-  IconChevronUp,
   IconCheck,
+  IconSettings,
+  IconVolume2,
+  IconVolumeX,
 } from './Icons';
 
 const PLAYBACK_SPEEDS = [1, 1.25, 1.5, 2] as const;
@@ -87,6 +89,7 @@ function speedMenuLabel(speed: PlaybackSpeed): string {
 }
 
 export default function VideoPlayer({ url, title }: VideoPlayerProps) {
+  const volumeInputId = useId();
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const speedMenuRef = useRef<HTMLDivElement>(null);
@@ -97,6 +100,9 @@ export default function VideoPlayer({ url, title }: VideoPlayerProps) {
   const [playbackSpeed, setPlaybackSpeed] = useState<PlaybackSpeed>(1);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [speedMenuOpen, setSpeedMenuOpen] = useState(false);
+  const [volume, setVolume] = useState(1);
+  const [muted, setMuted] = useState(false);
+  const [volumePopoverOpen, setVolumePopoverOpen] = useState(false);
 
   const syncFullscreenState = useCallback(() => {
     const root = containerRef.current;
@@ -139,6 +145,13 @@ export default function VideoPlayer({ url, title }: VideoPlayerProps) {
     };
   }, [speedMenuOpen]);
 
+  useEffect(() => {
+    const el = videoRef.current;
+    if (!el) return;
+    el.volume = volume;
+    el.muted = muted;
+  }, [volume, muted]);
+
   function togglePlay() {
     const v = videoRef.current;
     if (!v) return;
@@ -170,6 +183,25 @@ export default function VideoPlayer({ url, title }: VideoPlayerProps) {
     }
     setPlaybackSpeed(speed);
     setSpeedMenuOpen(false);
+  }
+
+  function toggleMute() {
+    if (muted) {
+      if (volume < 0.05) {
+        setVolume(0.75);
+      }
+      setMuted(false);
+      return;
+    }
+    setMuted(true);
+  }
+
+  function onVolumeSliderChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const v = parseFloat(e.target.value);
+    if (Number.isNaN(v)) return;
+    const clamped = Math.min(1, Math.max(0, v));
+    setVolume(clamped);
+    setMuted(clamped === 0);
   }
 
   function onEnded() {
@@ -282,7 +314,7 @@ export default function VideoPlayer({ url, title }: VideoPlayerProps) {
           </div>
         </div>
 
-        <div className="grid min-h-[2.25rem] grid-cols-[auto_auto_minmax(0,1fr)_auto] items-center gap-x-2 gap-y-1">
+        <div className="flex min-h-[2.25rem] items-center gap-x-2">
           <button
             type="button"
             className={chromeBtn}
@@ -302,34 +334,71 @@ export default function VideoPlayer({ url, title }: VideoPlayerProps) {
             <span>{fmt(duration)}</span>
           </span>
 
-          <div
-            ref={speedMenuRef}
-            className="relative flex min-w-0 justify-center justify-self-center"
-          >
-            <button
-              type="button"
-              className="flex h-9 max-w-full shrink-0 items-center gap-1 rounded-md px-2.5 text-[12px] font-medium tabular-nums text-zinc-100 transition-colors hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#00adef]"
-              aria-haspopup="listbox"
-              aria-expanded={speedMenuOpen}
-              aria-controls="vimeo-speed-menu"
-              id="vimeo-speed-trigger"
-              onClick={() => setSpeedMenuOpen((o) => !o)}
-            >
-              <span>{speedMenuLabel(playbackSpeed)}</span>
-              <IconChevronUp
-                className={`shrink-0 text-zinc-400 transition-transform duration-200 ${
-                  speedMenuOpen ? 'rotate-0' : 'rotate-180'
-                }`}
-                size={14}
-              />
-            </button>
+          <div className="min-w-0 flex-1" aria-hidden />
 
-            {speedMenuOpen ? (
+          <div className="flex shrink-0 items-center gap-0.5">
+            <div
+              className="relative"
+              onMouseEnter={() => {
+                setSpeedMenuOpen(false);
+                setVolumePopoverOpen(true);
+              }}
+              onMouseLeave={() => setVolumePopoverOpen(false)}
+            >
+              <button
+                type="button"
+                className={chromeBtn}
+                onClick={toggleMute}
+                aria-label={muted || volume === 0 ? 'Unmute' : 'Mute'}
+              >
+                {muted || volume === 0 ? (
+                  <IconVolumeX className="text-zinc-100" size={20} />
+                ) : (
+                  <IconVolume2 className="text-zinc-100" size={20} />
+                )}
+              </button>
+              {volumePopoverOpen ? (
+                <div className="absolute bottom-full left-1/2 z-30 mb-1 w-28 -translate-x-1/2 rounded-md border border-white/[0.08] bg-[#2c2c30] px-3 py-2.5 shadow-[0_-8px_24px_rgba(0,0,0,0.4)]">
+                  <label className="sr-only" htmlFor={volumeInputId}>
+                    Volume
+                  </label>
+                  <input
+                    id={volumeInputId}
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.05"
+                    value={muted ? 0 : volume}
+                    onChange={onVolumeSliderChange}
+                    className="h-1.5 w-full cursor-pointer accent-[#00adef]"
+                  />
+                </div>
+              ) : null}
+            </div>
+
+            <div ref={speedMenuRef} className="relative flex shrink-0">
+              <button
+                type="button"
+                className={chromeBtn}
+                aria-haspopup="listbox"
+                aria-expanded={speedMenuOpen}
+                aria-controls="vimeo-speed-menu"
+                id="vimeo-settings-trigger"
+                aria-label="Playback speed"
+                onClick={() => {
+                  setVolumePopoverOpen(false);
+                  setSpeedMenuOpen((o) => !o);
+                }}
+              >
+                <IconSettings className="text-zinc-100" size={20} />
+              </button>
+
+              {speedMenuOpen ? (
               <div
                 id="vimeo-speed-menu"
                 role="listbox"
-                aria-labelledby="vimeo-speed-trigger"
-                className="absolute bottom-full left-1/2 z-30 mb-2 w-[11.5rem] -translate-x-1/2 rounded-lg border border-white/[0.08] bg-[#2c2c30] py-1 shadow-[0_-8px_32px_rgba(0,0,0,0.45)]"
+                aria-labelledby="vimeo-settings-trigger"
+                className="absolute bottom-full right-0 z-30 mb-2 w-[11.5rem] rounded-lg border border-white/[0.08] bg-[#2c2c30] py-1 shadow-[0_-8px_32px_rgba(0,0,0,0.45)]"
               >
                 <p className="px-3 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-[0.08em] text-zinc-500">
                   Speed
@@ -362,20 +431,21 @@ export default function VideoPlayer({ url, title }: VideoPlayerProps) {
                 </div>
               </div>
             ) : null}
-          </div>
+            </div>
 
-          <button
-            type="button"
-            className={chromeBtn}
-            onClick={() => void toggleFullscreen()}
-            aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
-          >
-            {isFullscreen ? (
-              <IconExitFullscreen className="text-zinc-100" size={20} />
-            ) : (
-              <IconEnterFullscreen className="text-zinc-100" size={20} />
-            )}
-          </button>
+            <button
+              type="button"
+              className={chromeBtn}
+              onClick={() => void toggleFullscreen()}
+              aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
+            >
+              {isFullscreen ? (
+                <IconExitFullscreen className="text-zinc-100" size={20} />
+              ) : (
+                <IconEnterFullscreen className="text-zinc-100" size={20} />
+              )}
+            </button>
+          </div>
         </div>
       </div>
     </div>
