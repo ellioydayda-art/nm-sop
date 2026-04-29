@@ -3,6 +3,9 @@
 import { useRef, useState } from 'react';
 import { IconPlay, IconPause } from './Icons';
 
+const PLAYBACK_SPEEDS = [1, 1.25, 1.5, 2] as const;
+type PlaybackSpeed = (typeof PLAYBACK_SPEEDS)[number];
+
 interface VideoPlayerProps {
   url: string;
   title: string;
@@ -14,6 +17,7 @@ export default function VideoPlayer({ url, title }: VideoPlayerProps) {
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
   const [hovered, setHovered] = useState(false);
+  const [playbackSpeed, setPlaybackSpeed] = useState<PlaybackSpeed>(1);
 
   function togglePlay() {
     const v = videoRef.current;
@@ -37,6 +41,15 @@ export default function VideoPlayer({ url, title }: VideoPlayerProps) {
     const v = videoRef.current;
     if (!v) return;
     setDuration(v.duration);
+    v.playbackRate = playbackSpeed;
+  }
+
+  function applyPlaybackSpeed(speed: PlaybackSpeed) {
+    const v = videoRef.current;
+    if (v) {
+      v.playbackRate = speed;
+    }
+    setPlaybackSpeed(speed);
   }
 
   function onEnded() {
@@ -112,9 +125,34 @@ export default function VideoPlayer({ url, title }: VideoPlayerProps) {
           </div>
         </div>
 
-        <div className="flex items-center justify-between text-[11px] text-zinc-600 font-mono">
-          <span>{fmt(currentTime)}</span>
-          <span>{fmt(duration)}</span>
+        <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-x-2 gap-y-2 text-[11px] text-zinc-600 font-mono">
+          <span className="tabular-nums">{fmt(currentTime)}</span>
+          <div
+            className="flex flex-wrap items-center justify-center gap-1"
+            role="group"
+            aria-label="Playback speed"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {PLAYBACK_SPEEDS.map((speed) => {
+              const label = speed === 1 ? '1×' : `${speed}×`;
+              const active = playbackSpeed === speed;
+              return (
+                <button
+                  key={speed}
+                  type="button"
+                  onClick={() => applyPlaybackSpeed(speed)}
+                  className={`rounded px-1.5 py-0.5 text-[10px] font-semibold tabular-nums transition-colors ${
+                    active
+                      ? 'bg-indigo-600 text-white'
+                      : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-zinc-200'
+                  }`}
+                >
+                  {label}
+                </button>
+              );
+            })}
+          </div>
+          <span className="tabular-nums text-right">{fmt(duration)}</span>
         </div>
       </div>
     </div>
