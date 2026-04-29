@@ -358,20 +358,24 @@ export default function VideoPlayer({ url, title }: VideoPlayerProps) {
                 )}
               </button>
               {volumePopoverOpen ? (
-                <div className="absolute bottom-full left-1/2 z-30 mb-1 w-28 -translate-x-1/2 rounded-md border border-white/[0.08] bg-[#2c2c30] px-3 py-2.5 shadow-[0_-8px_24px_rgba(0,0,0,0.4)]">
-                  <label className="sr-only" htmlFor={volumeInputId}>
-                    Volume
-                  </label>
-                  <input
-                    id={volumeInputId}
-                    type="range"
-                    min="0"
-                    max="1"
-                    step="0.05"
-                    value={muted ? 0 : volume}
-                    onChange={onVolumeSliderChange}
-                    className="h-1.5 w-full cursor-pointer accent-[#00adef]"
-                  />
+                <div className="absolute bottom-full left-1/2 z-30 flex w-28 -translate-x-1/2 flex-col items-stretch pb-3 pt-0">
+                  {/* Transparent padding below the panel stays in the hover target so
+                      the cursor can reach the slider (margin outside the panel would not). */}
+                  <div className="rounded-md border border-white/[0.08] bg-[#2c2c30] px-3 py-2.5 shadow-[0_-8px_24px_rgba(0,0,0,0.4)]">
+                    <label className="sr-only" htmlFor={volumeInputId}>
+                      Volume
+                    </label>
+                    <input
+                      id={volumeInputId}
+                      type="range"
+                      min="0"
+                      max="1"
+                      step="0.05"
+                      value={muted ? 0 : volume}
+                      onChange={onVolumeSliderChange}
+                      className="h-1.5 w-full cursor-pointer accent-[#00adef]"
+                    />
+                  </div>
                 </div>
               ) : null}
             </div>
