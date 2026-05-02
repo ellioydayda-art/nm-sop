@@ -1,3 +1,4 @@
+import { CATEGORIES as BUILTIN_CATEGORIES } from "@/data/categories";
 import { supabase } from "@/lib/supabase";
 
 export type UserRole = "admin" | "user";
@@ -64,6 +65,23 @@ function mapCategoryRow(row: CategoryRow): Category {
     description: row.description,
     accentHex: row.accent_hex,
   };
+}
+
+/** DB may lag behind the app; any slug in `data/categories.ts` still shows on the dashboard. */
+function mergeCategoriesWithBuiltins(dbCategories: Category[]): Category[] {
+  const bySlug = new Map(dbCategories.map((c) => [c.slug, c]));
+  for (const b of BUILTIN_CATEGORIES) {
+    if (!bySlug.has(b.slug)) {
+      bySlug.set(b.slug, {
+        slug: b.slug,
+        name: b.name,
+        department: b.department,
+        description: b.description,
+        accentHex: b.accentHex,
+      });
+    }
+  }
+  return Array.from(bySlug.values()).sort((a, b) => a.name.localeCompare(b.name));
 }
 
 export async function getUsers(): Promise<User[]> {
@@ -174,7 +192,8 @@ export async function getCategories(): Promise<Category[]> {
     throw new Error(`Failed to fetch categories: ${error.message}`);
   }
 
-  return (data ?? []).map((row) => mapCategoryRow(row as CategoryRow));
+  const fromDb = (data ?? []).map((row) => mapCategoryRow(row as CategoryRow));
+  return mergeCategoriesWithBuiltins(fromDb);
 }
 
 export async function getCategoryBySlug(slug: string): Promise<Category | undefined> {
@@ -188,7 +207,20 @@ export async function getCategoryBySlug(slug: string): Promise<Category | undefi
     throw new Error(`Failed to fetch category by slug: ${error.message}`);
   }
 
-  return data ? mapCategoryRow(data as CategoryRow) : undefined;
+  if (data) {
+    return mapCategoryRow(data as CategoryRow);
+  }
+  const builtIn = BUILTIN_CATEGORIES.find((c) => c.slug === slug);
+  if (builtIn) {
+    return {
+      slug: builtIn.slug,
+      name: builtIn.name,
+      department: builtIn.department,
+      description: builtIn.description,
+      accentHex: builtIn.accentHex,
+    };
+  }
+  return undefined;
 }
 
 export async function updateCategory(
