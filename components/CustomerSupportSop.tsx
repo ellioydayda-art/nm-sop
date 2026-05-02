@@ -21,7 +21,7 @@ interface CustomerSupportSopProps {
 
 const SECTION_TAGS: Record<string, string> = {
   mission: "Start here",
-  workspace: "Daily flow",
+  workspace: "A then B",
   "reply-rules": "Non-negotiables",
   goals: "Scoreboard",
   cadence: "Timing",
@@ -82,19 +82,8 @@ export default function CustomerSupportSop({ category }: CustomerSupportSopProps
               <span className={styles.kickerDot} aria-hidden />
               Support playbook
             </p>
-            <h1 className={styles.title}>Inbox to Zoom</h1>
+            <h1 className={styles.title}>Client Success</h1>
             <p className={styles.sub}>{category.description}</p>
-            <div className={styles.pillRow}>
-              <span className={styles.pill}>Show-up first</span>
-              <span className={styles.pill}>WhatsApp second</span>
-              <span className={styles.pill}>24h SLA</span>
-              <span className={styles.pill}>Sound human</span>
-            </div>
-            <p className={styles.assetHint}>
-              <strong>More visuals?</strong> Add PNG or WebP files under{" "}
-              <code>public/sop/customer-support/</code> and ask the team to wire new <code>image</code> blocks in the SOP
-              data file.
-            </p>
           </div>
         </header>
 
