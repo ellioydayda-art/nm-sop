@@ -59,7 +59,7 @@ export const CATEGORIES: Category[] = [
     slug: 'customer-support',
     name: 'Customer Support',
     department: 'Support',
-    description: 'Inbox rhythm, 24-hour reply window (WABA), reminders, and FAQ — turn chats into show-ups.',
+    description: 'How we handle customer chats, reminders, and common questions.',
     accent: 'rose',
     accentHex: '#f43f5e',
     accentBg: 'bg-rose-500/10 border-rose-500/20',

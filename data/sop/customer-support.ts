@@ -142,6 +142,11 @@ const customerSupportSOP: SOPDoc = {
           content: "~3 days before (what time? Check when reminders go out.)",
         },
         {
+          type: "image",
+          url: "/sop/customer-support/template-hba1c-checkin.png",
+          alt: "Example: HbA1c reminder message (~3 days before).",
+        },
+        {
           type: "list",
           ordered: true,
           items: [
@@ -153,26 +158,21 @@ const customerSupportSOP: SOPDoc = {
           ],
         },
         {
-          type: "image",
-          url: "/sop/customer-support/template-hba1c-checkin.png",
-          alt: "Example: HbA1c reminder message (~3 days before).",
-        },
-        {
           type: "bold-text",
           content: "~2 days before (what time? Check when reminders go out.)",
-        },
-        {
-          type: "list",
-          ordered: true,
-          items: [
-            "They will ask about their struggle.",
-            "Usually, just reply with \"Understood👍 / Got it👍\", BUT do not reuse the exact same wording you already used, or it will sound robotic or fake.",
-          ],
         },
         {
           type: "image",
           url: "/sop/customer-support/template-struggle-checkin.png",
           alt: "Example: struggle / before we go live reminder (~2 days before).",
+        },
+        {
+          type: "list",
+          ordered: true,
+          items: [
+            "We will ask about their struggle.",
+            "Usually, just reply with \"Understood👍 / Got it👍\", BUT do not reuse the exact same wording you already used, or it will sound robotic or fake.",
+          ],
         },
       ],
     },
