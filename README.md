@@ -103,3 +103,16 @@ Open [http://localhost:3000](http://localhost:3000).
 - Category access is determined by `users.categories`:
   - Example: `["media-buying", "content-creation"]`
   - Wildcard: `["*"]` grants all categories
+
+## Keeping the live site up to date (plain English)
+
+1. **Code / “latest version”**  
+   When changes are committed and **pushed to GitHub** (`main`), that is the source of truth. If you use a host like Vercel that deploys from GitHub, it will build a new version after each push. You do not need to do anything special beyond push.
+
+2. **What Supabase is**  
+   Supabase is the **database** for this app: it stores **users** (logins, passwords, which SOPs each person can open) and **category rows** (names, short descriptions, colours for dashboard cards).  
+   The **full SOP text and layout** mostly live **in this repo’s code** (under `data/sop/`). So: updating the app on GitHub updates the SOP pages.  
+   If a **dashboard card’s short description** still looks old for one category, that line might still be coming from an **old row in Supabase**. Fixing it is optional (edit that row’s `description` in the Supabase table editor, or re-run the relevant part of `supabase/init.sql` on a fresh project). It does not block the SOP page itself from using the latest content in code.
+
+3. **Someone cannot see an SOP**  
+   An **admin** must give their account access to that category (Admin panel → user → categories), or give them all access with `"*"`.
