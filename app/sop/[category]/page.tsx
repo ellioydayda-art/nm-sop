@@ -5,9 +5,11 @@ import metaAdsSOP from '@/data/sop/meta-ads';
 import salesClosingSOP from '@/data/sop/sales-closing';
 import contentCreationSOP from '@/data/sop/content-creation';
 import clientOnboardingSOP from '@/data/sop/client-onboarding';
+import customerSupportSOP from '@/data/sop/customer-support';
 import Navbar from '@/components/Navbar';
 import SopViewer from '@/components/SopViewer';
 import StraightToKillSop from '@/components/StraightToKillSop';
+import CustomerSupportSop from '@/components/CustomerSupportSop';
 import type { SOPDoc } from '@/data/sop/meta-ads';
 
 const SOP_MAP: Record<string, SOPDoc> = {
@@ -15,6 +17,7 @@ const SOP_MAP: Record<string, SOPDoc> = {
   'sales-closing':     salesClosingSOP,
   'content-creation':  contentCreationSOP,
   'client-onboarding': clientOnboardingSOP,
+  'customer-support': customerSupportSOP,
 };
 
 export default async function SopPage({ params }: { params: { category: string } }) {
@@ -35,6 +38,15 @@ export default async function SopPage({ params }: { params: { category: string }
       <div className="min-h-screen bg-[var(--bg)]">
         <Navbar user={{ name: user.name, email: user.email, role: user.role }} />
         <StraightToKillSop category={category} />
+      </div>
+    );
+  }
+
+  if (params.category === 'customer-support') {
+    return (
+      <div className="min-h-screen bg-[var(--bg)]">
+        <Navbar user={{ name: user.name, email: user.email, role: user.role }} />
+        <CustomerSupportSop category={category} />
       </div>
     );
   }

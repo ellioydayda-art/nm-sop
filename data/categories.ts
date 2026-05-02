@@ -55,4 +55,13 @@ export const CATEGORIES: Category[] = [
     accentHex: '#0ea5e9',
     accentBg: 'bg-sky-500/10 border-sky-500/20',
   },
+  {
+    slug: 'customer-support',
+    name: 'Customer Support',
+    department: 'Support',
+    description: 'Inbox rhythm, reply SLAs, reminder cadence, and FAQ — turn chats into show-ups.',
+    accent: 'rose',
+    accentHex: '#f43f5e',
+    accentBg: 'bg-rose-500/10 border-rose-500/20',
+  },
 ];

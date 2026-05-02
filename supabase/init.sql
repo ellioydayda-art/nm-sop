@@ -35,7 +35,8 @@ values
   ('image-ads', 'Straight to Kill - Image Ads', 'Creative', 'High-conversion image ad strategy, design specs, and copy frameworks.', '#06d6a0'),
   ('sales-closing', 'Sales Closing', 'Sales', 'Consultative sales process, objection handling, and closing techniques.', '#f97316'),
   ('content-creation', 'Content Creation', 'Creative', 'Video production workflow, scriptwriting, editing guidelines, and publishing.', '#ec4899'),
-  ('client-onboarding', 'Client Onboarding', 'Operations', 'Step-by-step client intake, access handover, and first-week checklist.', '#0ea5e9')
+  ('client-onboarding', 'Client Onboarding', 'Operations', 'Step-by-step client intake, access handover, and first-week checklist.', '#0ea5e9'),
+  ('customer-support', 'Customer Support', 'Support', 'Inbox rhythm, reply SLAs, reminder cadence, and FAQ — turn chats into show-ups.', '#f43f5e')
 on conflict (slug) do update
 set
   name = excluded.name,
