@@ -11,8 +11,17 @@ const customerSupportSOP: SOPDoc = {
       blocks: [
         {
           type: "text",
-          content:
-            "Main goals when you reply: (1) increase show-up — get them to the Zoom, (2) get them into the WhatsApp community, (3) handle every enquiry, (4) closing — least in the AS app, but still handle when it comes up.",
+          content: "When you reply, you are working toward these four goals, in this order of importance:",
+        },
+        {
+          type: "list",
+          ordered: true,
+          items: [
+            "Show up: get them to attend the Zoom.",
+            "Community: get them into the WhatsApp group.",
+            "Enquiries: answer every question that comes in.",
+            "Closing: least traffic on this WhatsApp for closing-type questions, but still watch this channel during Zoom closing when it comes up.",
+          ],
         },
       ],
     },
@@ -22,11 +31,11 @@ const customerSupportSOP: SOPDoc = {
       blocks: [
         {
           type: "bold-text",
-          content: "A — see screenshot 1",
+          content: "Step A (screenshot 1 below)",
         },
         {
           type: "text",
-          content: "Click on \"Chats\" → look at the \"Unread\" tab → reply from there.",
+          content: "Open Chats, go to the Unread tab, and reply from there.",
         },
         {
           type: "image",
@@ -35,17 +44,17 @@ const customerSupportSOP: SOPDoc = {
         },
         {
           type: "bold-text",
-          content: "B — see screenshot 2",
+          content: "Step B (screenshot 2 below)",
         },
         {
           type: "text",
           content:
-            "Once you have gone through all / replied all, tick \"Select all\" and \"Mark as Read\". Make sure to clear everything every day.",
+            "After you have replied to everyone in this pass, use Select all, then Mark as read. Clear Unread fully every day.",
         },
         {
           type: "image",
           url: "/sop/customer-support/team-inbox-mark-read.png",
-          alt: "Screenshot 2: Select all → Actions → Mark as Read.",
+          alt: "Screenshot 2: Select all, then Actions, then Mark as read.",
         },
       ],
     },
@@ -59,8 +68,8 @@ const customerSupportSOP: SOPDoc = {
           items: [
             "Know when to reply.",
             "Know when you must reply.",
-            "You can only reply inside the 24-hour window — so you must reply within that time. After 24 hours, you cannot reply to that lead anymore (WABA works that way).",
-            "Avoid replying during midnight — most people are already asleep.",
+            "You can only reply inside the 24-hour window, so reply within that time. After 24 hours you cannot message that lead anymore in that thread (WABA works that way).",
+            "Avoid replying around midnight; most people are already asleep.",
           ],
         },
         {
@@ -78,14 +87,15 @@ const customerSupportSOP: SOPDoc = {
       blocks: [
         {
           type: "table",
-          headers: ["Priority", "What it means"],
+          headers: ["#", "Area", "What it means"],
           rows: [
-            ["1 · Show up", "Get them to attend the Zoom."],
-            ["2 · Community", "Get them to join the WhatsApp community."],
-            ["3 · Enquiries", "Answer every enquiry."],
+            ["1", "Show up", "Get them to attend the Zoom."],
+            ["2", "Community", "Get them into the WhatsApp community."],
+            ["3", "Enquiries", "Answer every enquiry."],
             [
-              "4 · Closing",
-              "Least in the AS app — seldom got people contacting through this WhatsApp to ask closing stuff. Still gotta check here during the Zoom closing when it comes up.",
+              "4",
+              "Closing",
+              "Least common on this WhatsApp for closing questions, but still check here during Zoom closing when it comes up.",
             ],
           ],
         },
@@ -98,14 +108,14 @@ const customerSupportSOP: SOPDoc = {
         {
           type: "text",
           content:
-            "Take note: aim to reply every few hours (e.g. 10:30am, 1pm, 3pm, 6pm, 9pm, latest 11:30pm).",
+            "Take note: aim to reply every few hours (for example 10:30am, 1pm, 3pm, 6pm, 9pm, latest 11:30pm).",
         },
         {
           type: "callout",
           variant: "warning",
           title: "Times you cannot miss",
           content:
-            "Know when the reminders are sent out — usually people will reply when reminders are sent out. Be ready around those times.",
+            "Know when reminders go out. People usually reply right after reminders. Be online around those times.",
         },
         {
           type: "table",
@@ -125,11 +135,11 @@ const customerSupportSOP: SOPDoc = {
       blocks: [
         {
           type: "text",
-          content: "For Dr Jasmine’s case as an example:",
+          content: "Example flow for Dr Jasmine’s funnel:",
         },
         {
           type: "bold-text",
-          content: "~3 days before (what time? — check when reminders go out)",
+          content: "~3 days before (what time? Check when reminders go out.)",
         },
         {
           type: "list",
@@ -137,9 +147,9 @@ const customerSupportSOP: SOPDoc = {
           items: [
             "They will ask about their HbA1c level.",
             "Usually, just reply with \"Understood👍 / Got it👍\".",
-            "If got people that talk more than the HbA1c, we could reply something like \"Understood 👍 we will talk more about that during the workshop\".",
-            "Overall the reply gotta make sense, and drive them back to the workshop.",
-            "Avoid answering questions that’s too deep / sensitive — anything usually will just drive back to workshop / webinar.",
+            "If someone goes deeper than HbA1c, you can reply something like \"Understood 👍 we will talk more about that during the workshop\".",
+            "Overall, the reply should make sense and bring them back to the workshop.",
+            "Avoid answering questions that are too deep or too sensitive; usually just steer them back to the workshop or webinar.",
           ],
         },
         {
@@ -149,14 +159,14 @@ const customerSupportSOP: SOPDoc = {
         },
         {
           type: "bold-text",
-          content: "~2 days before (what time? — check when reminders go out)",
+          content: "~2 days before (what time? Check when reminders go out.)",
         },
         {
           type: "list",
           ordered: true,
           items: [
             "They will ask about their struggle.",
-            "Usually, just reply with \"Understood👍 / Got it👍\", BUT take note — don’t reply back to the same word that you’ve replied previously, or else it’s very robot / fake.",
+            "Usually, just reply with \"Understood👍 / Got it👍\", BUT do not reuse the exact same wording you already used, or it will sound robotic or fake.",
           ],
         },
         {
@@ -168,14 +178,14 @@ const customerSupportSOP: SOPDoc = {
     },
     {
       id: "when-stuck",
-      title: "If you don’t know / not sure how to reply",
+      title: "If you don’t know or are not sure how to reply",
       blocks: [
         {
           type: "list",
           ordered: true,
           items: [
-            "Always try to craft a sample reply first (use ChatGPT to avoid grammar errors) — don’t expect leaders to give you a direct answer or else you will never learn.",
-            "After crafting, ask leaders if it’s a correct answer.",
+            "Always try to draft a sample reply first (use ChatGPT to catch grammar). Do not expect leaders to write it for you word for word, or you will never learn.",
+            "After you draft it, ask a leader if it is the correct answer.",
           ],
         },
       ],
@@ -188,14 +198,14 @@ const customerSupportSOP: SOPDoc = {
           type: "callout",
           variant: "info",
           title: "How to join the WhatsApp community?",
-          content: "Always check the correct link before reply, as we alternate links every week.",
+          content: "Always check the correct link before you reply; we alternate links every week.",
         },
         {
           type: "callout",
           variant: "info",
           title: "If I can’t attend / not free, how?",
           content:
-            "Tell them the next round date, whether they can attend? Once they confirm, reinvite them (ask Stanley how) to the next webinar session. If they can’t give a clear answer, whether can or cannot, or keep on drag, then get them to join the WhatsApp community first.",
+            "Tell them the next session date and ask if they can attend. Once they confirm, reinvite them (ask Stanley how) to the next webinar session. If they cannot give a clear yes or no, or they keep dragging, get them into the WhatsApp community first.",
         },
         {
           type: "callout",
