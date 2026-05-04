@@ -341,6 +341,7 @@ const metaAdsSOP: SOPDoc = {
         {
           type: 'list',
           items: [
+            'Every GT campaign must run at least 3 ads at all times. GT1 is no exception: the GT1 campaign must always contain a minimum of 3 ads. The same minimum applies to GT2 and GT3.',
             'Create as many interest variations as possible',
             'If an ad set has zero leads within 24 hours — turn it off immediately',
             'Once minimum 3 ad sets prove leads for 2 consecutive days → eligible to open GT2',
@@ -365,6 +366,7 @@ const metaAdsSOP: SOPDoc = {
         {
           type: 'list',
           items: [
+            'Minimum 3 ads in this GT2 campaign at all times (same rule as GT1 and GT3: no GT campaign below 3 ads).',
             'Duplicate the winning ad sets from GT1',
             'Switch budget method to CBO (Campaign Budget Optimisation)',
             'Starting budget: RM200 (good starting point) — maximum RM400',
@@ -399,6 +401,7 @@ const metaAdsSOP: SOPDoc = {
           ordered: true,
           items: [
             'Duplicate the campaign from GT2',
+            'Keep at least 3 ads running in this GT3 campaign (required for every GT phase, same as GT1 and GT2).',
             'Eliminate poor-performing interests — keep only GREEN LIGHT audiences',
             'Set budget method to CBO (Campaign Budget Optimisation)',
             'Double the GT2 budget',
