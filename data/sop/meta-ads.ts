@@ -342,7 +342,6 @@ const metaAdsSOP: SOPDoc = {
           type: 'list',
           items: [
             'Every GT campaign must run at least 3 ads at all times. GT1 is no exception: the GT1 campaign must always contain a minimum of 3 ads. The same minimum applies to GT2 and GT3.',
-            'Create as many interest variations as possible',
             'If an ad set has zero leads within 24 hours — turn it off immediately',
             'Once minimum 3 ad sets prove leads for 2 consecutive days → eligible to open GT2',
             'Upload new ads daily for effective testing',
