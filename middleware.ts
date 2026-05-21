@@ -9,12 +9,9 @@ export async function middleware(req: NextRequest) {
   // Allow public paths
   if (PUBLIC_PATHS.some(p => pathname.startsWith(p))) return NextResponse.next();
 
-  // Allow static assets (including SOP images in /public/sop)
-  if (
-    pathname.startsWith('/_next') ||
-    pathname.startsWith('/favicon') ||
-    pathname.startsWith('/sop/')
-  ) {
+  // Allow static assets from /public regardless of auth state.
+  const isStaticFile = /\.(?:avif|gif|ico|jpeg|jpg|json|png|svg|txt|webp|xml)$/i.test(pathname);
+  if (pathname.startsWith('/_next') || pathname.startsWith('/favicon') || isStaticFile) {
     return NextResponse.next();
   }
 
