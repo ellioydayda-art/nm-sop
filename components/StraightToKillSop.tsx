@@ -494,9 +494,6 @@ export default function StraightToKillSop({ category }: Props) {
               </p>
 
               <div className={styles.imgGrid}>
-                {REF_IMAGES.map(l => (
-                  <ImgCard key={l} src={`/sop/image-ads/reference_${l}.png`} alt={`Reference ${l}`} dlName={`reference_${l}.png`} />
-                ))}
                 {EXAMPLE_IMAGES.map(n => (
                   <ImgCard key={n} src={`/sop/image-ads/example_${n}.png`} alt={`Example ${n}`} dlName={`example_${n}.png`} />
                 ))}

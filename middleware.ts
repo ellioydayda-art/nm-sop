@@ -9,8 +9,14 @@ export async function middleware(req: NextRequest) {
   // Allow public paths
   if (PUBLIC_PATHS.some(p => pathname.startsWith(p))) return NextResponse.next();
 
-  // Allow static assets
-  if (pathname.startsWith('/_next') || pathname.startsWith('/favicon')) return NextResponse.next();
+  // Allow static assets (including SOP images in /public/sop)
+  if (
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/favicon') ||
+    pathname.startsWith('/sop/')
+  ) {
+    return NextResponse.next();
+  }
 
   const session = await getSessionFromRequest(req);
 
