@@ -12,7 +12,7 @@ export default async function AdminPage() {
   const user = await getUserById(session.userId);
   if (!user) redirect('/login');
 
-  const users = (await getUsers()).map(({ passwordHash: _, ...u }) => u);
+  const users = await getUsers();
   const categories = await getCategories();
   const totalAccess = users.reduce((sum, u) => sum + (u.categories.includes('*') ? categories.length : u.categories.length), 0);
 

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { CategoryIcon, IconPlus, IconEdit, IconTrash, IconCheck, IconLock } from './Icons';
 import type { User, Category } from '@/lib/db';
 
-type SafeUser = Omit<User, 'passwordHash'>;
+type SafeUser = User;
 
 interface AdminPanelProps {
   initialUsers: SafeUser[];

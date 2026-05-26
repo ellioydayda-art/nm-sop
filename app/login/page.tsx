@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { IconWarning } from '@/components/Icons';
+import { createClient } from '@/lib/supabase/client';
 
 function NMLogo() {
   return (
@@ -58,14 +59,13 @@ export default function LoginPage() {
     setError('');
     setLoading(true);
     try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+      const supabase = createClient();
+      const { error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
       });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.error || 'Login failed');
+      if (authError) {
+        setError('Invalid credentials. Please check your email and password.');
       } else {
         router.push('/dashboard');
         router.refresh();

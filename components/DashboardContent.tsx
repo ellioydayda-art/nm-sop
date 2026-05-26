@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import { CategoryIcon, IconLock, IconChevronRight, IconSettings } from '@/components/Icons';
 import type { Category } from '@/lib/db';
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from '@/lib/supabase/client';
 
 interface DashboardContentProps {
   user: { name: string; email: string; role: string; categories: string[] };
@@ -20,18 +20,11 @@ interface CategoryRealtimeRow {
   accent_hex: string;
 }
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
 export default function DashboardContent({ user, initialCategories }: DashboardContentProps) {
   const [categories, setCategories] = useState<Category[]>(initialCategories);
 
   useEffect(() => {
-    if (!supabaseUrl || !supabaseAnonKey) return;
-
-    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-      auth: { persistSession: false, autoRefreshToken: false },
-    });
+    const supabase = createClient();
 
     const channel = supabase
       .channel('categories-live')

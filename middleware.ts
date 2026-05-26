@@ -1,36 +1,61 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getSessionFromRequest } from '@/lib/auth';
+import { type NextRequest, NextResponse } from "next/server";
+import { updateSession } from "@/lib/supabase/middleware";
 
-const PUBLIC_PATHS = ['/login', '/api/auth/login'];
+/**
+ * Public paths that do not require authentication.
+ * The /api/auth/login endpoint is kept public so the login page can POST to it.
+ */
+const PUBLIC_PATHS = ["/login", "/api/auth/login", "/api/auth/logout"];
 
-export async function middleware(req: NextRequest) {
-  const { pathname } = req.nextUrl;
+export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
 
-  // Allow public paths
-  if (PUBLIC_PATHS.some(p => pathname.startsWith(p))) return NextResponse.next();
-
-  // Allow static assets from /public regardless of auth state.
-  const isStaticFile = /\.(?:avif|gif|ico|jpeg|jpg|json|png|svg|txt|webp|xml)$/i.test(pathname);
-  if (pathname.startsWith('/_next') || pathname.startsWith('/favicon') || isStaticFile) {
+  // Pass through public routes without touching the session.
+  if (PUBLIC_PATHS.some((p) => pathname.startsWith(p))) {
     return NextResponse.next();
   }
 
-  const session = await getSessionFromRequest(req);
+  // Refresh the Supabase Auth session and get the current user.
+  const { supabaseResponse, user } = await updateSession(request);
 
-  if (!session) {
-    return NextResponse.redirect(new URL('/login', req.url));
+  // Redirect unauthenticated requests to the login page.
+  if (!user) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/login";
+    return NextResponse.redirect(url);
   }
 
-  // Admin-only routes
-  if (pathname.startsWith('/admin') || pathname.startsWith('/api/admin')) {
-    if (session.role !== 'admin') {
-      return NextResponse.redirect(new URL('/dashboard', req.url));
+  // Restrict admin routes to users with the admin role in app_metadata.
+  if (
+    pathname.startsWith("/admin") ||
+    pathname.startsWith("/api/admin")
+  ) {
+    const role =
+      typeof user.app_metadata?.role === "string"
+        ? user.app_metadata.role
+        : "user";
+
+    if (role !== "admin") {
+      const url = request.nextUrl.clone();
+      url.pathname = "/dashboard";
+      return NextResponse.redirect(url);
     }
   }
 
-  return NextResponse.next();
+  // IMPORTANT: return the supabaseResponse so Set-Cookie headers are forwarded.
+  return supabaseResponse;
 }
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
+  matcher: [
+    /*
+     * Match all request paths except:
+     * - _next/static  (static assets)
+     * - _next/image   (image optimisation)
+     * - favicon.ico
+     * - sop-assets    (public screenshot directory)
+     * - common image file extensions
+     */
+    "/((?!_next/static|_next/image|favicon.ico|sop-assets|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+  ],
 };

@@ -1,15 +1,29 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getSessionFromRequest } from '@/lib/auth';
-import { getUserById } from '@/lib/db';
+import { NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
+import { getUserById } from "@/lib/db";
 
-export async function GET(req: NextRequest) {
-  const session = await getSessionFromRequest(req);
-  if (!session) return NextResponse.json({ user: null }, { status: 401 });
+/**
+ * GET /api/auth/me
+ * Returns the current user's profile if authenticated.
+ */
+export async function GET() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  const user = await getUserById(session.userId);
   if (!user) return NextResponse.json({ user: null }, { status: 401 });
 
+  const profile = await getUserById(user.id);
+  if (!profile) return NextResponse.json({ user: null }, { status: 401 });
+
   return NextResponse.json({
-    user: { id: user.id, email: user.email, name: user.name, role: user.role, categories: user.categories },
+    user: {
+      id: profile.id,
+      email: profile.email,
+      name: profile.name,
+      role: profile.role,
+      categories: profile.categories,
+    },
   });
 }

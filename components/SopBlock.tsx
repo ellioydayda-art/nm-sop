@@ -102,15 +102,21 @@ export function SopBlock({ block, accentHex }: { block: ContentBlock; accentHex:
         <div className={styles.steps}>
           {block.steps.map((step, i) => (
             <div key={i} className={styles.stepItem}>
-              <div className={styles.stepLetter} style={{ background: accentHex }}>
-                {String.fromCharCode(65 + i)}
+              {/* Connector line between steps */}
+              <div className={styles.stepTrack}>
+                <div className={styles.stepNumber} style={{ background: accentHex }}>
+                  {i + 1}
+                </div>
+                {i < block.steps.length - 1 && (
+                  <div className={styles.stepConnector} style={{ background: `${accentHex}30` }} />
+                )}
               </div>
               <div className={styles.stepCard}>
                 <p className={styles.stepCardTitle}>{step.label}</p>
                 <div>
                   {step.items.map((item, ii) => (
                     <div key={ii} className={styles.stepCardItem}>
-                      <span className={styles.stepCardNum}>{ii + 1}.</span>
+                      <span className={styles.stepCardDot} style={{ background: accentHex }} />
                       <span>{item}</span>
                     </div>
                   ))}

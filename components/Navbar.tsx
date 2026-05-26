@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTheme } from './ThemeProvider';
 import { IconSettings, IconSun, IconMoon, IconLogOut } from './Icons';
+import { KeyRound } from 'lucide-react';
 import CogVaultMark from './CogVaultMark';
 
 interface NavbarProps {
@@ -60,6 +61,15 @@ export default function Navbar({ user }: NavbarProps) {
               <IconSettings size={15} />
             </Link>
           )}
+
+          {/* Change password link */}
+          <Link
+            href="/account"
+            className="w-8 h-8 flex items-center justify-center rounded-lg text-[var(--muted)] hover:text-[var(--text)] hover:bg-[var(--raised)] transition-all duration-200"
+            aria-label="Change password"
+          >
+            <KeyRound size={15} />
+          </Link>
 
           {/* Divider */}
           <div className="w-px h-5 bg-[var(--border)] mx-1" />
