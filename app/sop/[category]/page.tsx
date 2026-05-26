@@ -6,6 +6,13 @@ import salesClosingSOP from '@/data/sop/sales-closing';
 import contentCreationSOP from '@/data/sop/content-creation';
 import clientOnboardingSOP from '@/data/sop/client-onboarding';
 import customerSupportSOP from '@/data/sop/customer-support';
+import automaticsalesOverviewSOP from '@/data/sop/automaticsales-overview';
+import automaticsalesSessionUpdateSOP from '@/data/sop/automaticsales-session-update';
+import automaticsalesWabaSOP from '@/data/sop/automaticsales-waba';
+import automaticsalesBuilderSOP from '@/data/sop/automaticsales-builder';
+import automaticsalesSalesSOP from '@/data/sop/automaticsales-sales';
+import automaticsalesProjectRdpSOP from '@/data/sop/automaticsales-project-rdp';
+import automaticsalesProjectCaeSOP from '@/data/sop/automaticsales-project-cae';
 import Navbar from '@/components/Navbar';
 import SopViewer from '@/components/SopViewer';
 import StraightToKillSop from '@/components/StraightToKillSop';
@@ -13,11 +20,18 @@ import CustomerSupportSop from '@/components/CustomerSupportSop';
 import type { SOPDoc } from '@/data/sop/meta-ads';
 
 const SOP_MAP: Record<string, SOPDoc> = {
-  'media-buying':      metaAdsSOP,
-  'sales-closing':     salesClosingSOP,
-  'content-creation':  contentCreationSOP,
-  'client-onboarding': clientOnboardingSOP,
-  'customer-support': customerSupportSOP,
+  'media-buying':                  metaAdsSOP,
+  'sales-closing':                 salesClosingSOP,
+  'content-creation':              contentCreationSOP,
+  'client-onboarding':             clientOnboardingSOP,
+  'customer-support':              customerSupportSOP,
+  'automaticsales-overview':       automaticsalesOverviewSOP,
+  'automaticsales-session-update': automaticsalesSessionUpdateSOP,
+  'automaticsales-waba':           automaticsalesWabaSOP,
+  'automaticsales-builder':        automaticsalesBuilderSOP,
+  'automaticsales-sales':          automaticsalesSalesSOP,
+  'automaticsales-project-rdp':    automaticsalesProjectRdpSOP,
+  'automaticsales-project-cae':    automaticsalesProjectCaeSOP,
 };
 
 export default async function SopPage({ params }: { params: { category: string } }) {
