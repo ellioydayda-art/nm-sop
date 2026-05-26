@@ -109,7 +109,7 @@ const automaticsalesProjectRdpSOP: SOPDoc = {
         {
           type: "text",
           content:
-            "The following is the current WhatsApp reminder sequence for the RDP project. Each message has a marketing and utility version (except the last three webinar-day messages, which are marketing only). Always verify the exact timings in the Reminder Workflow inside the RDP sub-account, as these may be tuned over time.",
+            "The following is the current WhatsApp reminder sequence for the RDP project. Every message has both a marketing and utility version — the only exception is the optional push message, which is marketing only. Always verify the exact timings in the Reminder Workflow inside the RDP sub-account, as these may be tuned over time.",
         },
         {
           type: "table",
@@ -119,8 +119,8 @@ const automaticsalesProjectRdpSOP: SOPDoc = {
             ["Reminder 1", "3 days before — 10:00 AM", "Marketing + Utility"],
             ["Reminder 2", "2 days before — 10:00 AM", "Marketing + Utility"],
             ["Reminder 3", "24 hours before", "Marketing + Utility"],
-            ["Reminder 4", "50 minutes before", "Marketing only"],
-            ["On the dot", "At webinar start time (8:00 PM)", "Marketing only"],
+            ["Reminder 4", "50 minutes before", "Marketing + Utility"],
+            ["On the dot", "At webinar start time (8:00 PM)", "Marketing + Utility"],
             [
               "Push message (last resort only)",
               "15–20 min AFTER webinar starts — only when PM requests it due to low show-up",

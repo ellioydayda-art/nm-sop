@@ -320,9 +320,14 @@
 .table td {
   padding: 11px 16px;
   border-bottom: 1px solid #dcdcec;
-  vertical-align: middle;
+  vertical-align: top;
   color: #444466;
   line-height: 1.55;
+}
+
+.table td:first-child,
+.tableHead th:first-child {
+  white-space: nowrap;
 }
 
 .table tr:last-child td { border-bottom: none; }

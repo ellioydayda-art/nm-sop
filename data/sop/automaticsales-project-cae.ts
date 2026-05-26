@@ -136,7 +136,7 @@ const automaticsalesProjectCaeSOP: SOPDoc = {
         {
           type: "text",
           content:
-            "CAE runs a 2-day webinar, so the reminder sequence spans both days. Leads register once and receive reminders for both Day 1 and Day 2. Each message has a marketing and utility version except the webinar-day messages.",
+            "CAE runs a 2-day webinar, so the reminder sequence spans both days. Leads register once and receive reminders for both Day 1 and Day 2. Every message has both a marketing and utility version — the only exception is the optional push messages, which are marketing only.",
         },
         {
           type: "table",
@@ -144,15 +144,15 @@ const automaticsalesProjectCaeSOP: SOPDoc = {
           rows: [
             ["Confirmation", "Immediately on registration", "Marketing + Utility"],
             ["Reminder 1", "24 hours before Day 1", "Marketing + Utility"],
-            ["Reminder 2 — Day 1", "1 hour before Day 1 (8:00 PM)", "Marketing only"],
-            ["On the dot — Day 1", "At Day 1 start time (8:00 PM)", "Marketing only"],
+            ["Reminder 2 — Day 1", "1 hour before Day 1 (8:00 PM)", "Marketing + Utility"],
+            ["On the dot — Day 1", "At Day 1 start time (8:00 PM)", "Marketing + Utility"],
             [
               "Push Day 1 (last resort only)",
               "15–20 min AFTER Day 1 starts — only when PM requests it",
               "Marketing only — no utility fallback",
             ],
-            ["Reminder 3 — Day 2", "1 hour before Day 2 (8:00 PM)", "Marketing only"],
-            ["On the dot — Day 2", "At Day 2 start time (8:00 PM)", "Marketing only"],
+            ["Reminder 3 — Day 2", "1 hour before Day 2 (8:00 PM)", "Marketing + Utility"],
+            ["On the dot — Day 2", "At Day 2 start time (8:00 PM)", "Marketing + Utility"],
             [
               "Push Day 2 (last resort only)",
               "15–20 min AFTER Day 2 starts — only when PM requests it",
