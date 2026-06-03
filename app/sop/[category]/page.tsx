@@ -13,6 +13,7 @@ import automaticsalesBuilderSOP from '@/data/sop/automaticsales-builder';
 import automaticsalesSalesSOP from '@/data/sop/automaticsales-sales';
 import automaticsalesProjectRdpSOP from '@/data/sop/automaticsales-project-rdp';
 import automaticsalesProjectCaeSOP from '@/data/sop/automaticsales-project-cae';
+import whatsappCommunityValuePostsSOP from '@/data/sop/whatsapp-community-value-posts';
 import Navbar from '@/components/Navbar';
 import SopViewer from '@/components/SopViewer';
 import StraightToKillSop from '@/components/StraightToKillSop';
@@ -25,6 +26,7 @@ const SOP_MAP: Record<string, SOPDoc> = {
   'content-creation':              contentCreationSOP,
   'client-onboarding':             clientOnboardingSOP,
   'customer-support':              customerSupportSOP,
+  'whatsapp-community-value-posts': whatsappCommunityValuePostsSOP,
   'automaticsales-overview':       automaticsalesOverviewSOP,
   'automaticsales-session-update': automaticsalesSessionUpdateSOP,
   'automaticsales-waba':           automaticsalesWabaSOP,

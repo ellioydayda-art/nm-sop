@@ -64,4 +64,13 @@ export const CATEGORIES: Category[] = [
     accentHex: '#f43f5e',
     accentBg: 'bg-rose-500/10 border-rose-500/20',
   },
+  {
+    slug: 'whatsapp-community-value-posts',
+    name: 'WhatsApp Community — Value Posts',
+    department: 'Community',
+    description: 'How to write and publish value-first posts in WhatsApp communities — format, frequency, and examples.',
+    accent: 'green',
+    accentHex: '#25D366',
+    accentBg: 'bg-emerald-500/10 border-emerald-500/20',
+  },
 ];

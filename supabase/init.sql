@@ -37,6 +37,7 @@ values
   ('content-creation', 'Content Creation', 'Creative', 'Video production workflow, scriptwriting, editing guidelines, and publishing.', '#ec4899'),
   ('client-onboarding', 'Client Onboarding', 'Operations', 'Step-by-step client intake, access handover, and first-week checklist.', '#0ea5e9'),
   ('customer-support', 'Customer Support', 'Support', 'How we handle customer chats, reminders, and common questions.', '#f43f5e'),
+  ('whatsapp-community-value-posts', 'WhatsApp Community — Value Posts', 'Community', 'How to write and publish value-first posts in WhatsApp communities — format, frequency, and examples.', '#25D366'),
   ('automaticsales-overview', 'AutomaticSales — Overview', 'AutomaticSales', 'What AutomaticSales is, how our webinar pipeline works, and how to navigate this SOP.', '#7c3aed'),
   ('automaticsales-session-update', 'AutomaticSales — Session Update', 'AutomaticSales', 'The recurring pre-session checklist: Zoom setup, custom values, Google Sheet, and verification.', '#f59e0b'),
   ('automaticsales-waba', 'AutomaticSales — WABA & Email', 'AutomaticSales', 'Reminder systems, the marketing/utility fallback, fail rates, and manual blast procedure.', '#10b981'),
