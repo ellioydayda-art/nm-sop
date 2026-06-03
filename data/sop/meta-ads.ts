@@ -187,7 +187,25 @@ const metaAdsSOP: SOPDoc = {
       ],
     },
 
-    // ─── 5. CREATIVE GUIDELINES ──────────────────────────────────────────────
+    // ─── 5. META PIXEL — CREATE & INSTALL IN AS ──────────────────────────────
+    {
+      id: 'meta-pixel-setup',
+      title: 'Meta Pixel — Create & Install in AS',
+      blocks: [
+        {
+          type: 'text',
+          content:
+            'After your Business Manager and ad account are ready, create the Meta pixel for the project and install it into Automatic Sales (funnel events and Conversion API). Complete this before launching GT1 campaigns so leads and conversions track correctly.',
+        },
+        {
+          type: 'video',
+          url: 'https://assets.cdn.filesafe.space/F0KfE1AF2e9vOaHGH2Ym/media/6a1ffa7485f563c78d767183.mp4',
+          title: 'How to Create Pixel & Install into AS',
+        },
+      ],
+    },
+
+    // ─── 6. CREATIVE GUIDELINES ──────────────────────────────────────────────
     {
       id: 'creative-guidelines',
       title: 'Creative Guidelines',
@@ -241,7 +259,7 @@ const metaAdsSOP: SOPDoc = {
       ],
     },
 
-    // ─── 6. ADS MANAGER STRUCTURE ────────────────────────────────────────────
+    // ─── 7. ADS MANAGER STRUCTURE ────────────────────────────────────────────
     {
       id: 'ads-manager-structure',
       title: 'Ads Manager Structure',
@@ -271,7 +289,7 @@ const metaAdsSOP: SOPDoc = {
       ],
     },
 
-    // ─── 7. NAMING CONVENTIONS ───────────────────────────────────────────────
+    // ─── 8. NAMING CONVENTIONS ───────────────────────────────────────────────
     {
       id: 'naming-conventions',
       title: 'Naming Conventions',
@@ -308,7 +326,7 @@ const metaAdsSOP: SOPDoc = {
       ],
     },
 
-    // ─── 8. TESTING PHASE GT1 ────────────────────────────────────────────────
+    // ─── 9. TESTING PHASE GT1 ────────────────────────────────────────────────
     {
       id: 'gt1-testing',
       title: 'GT1 — Test Audience (Testing Phase)',
@@ -350,7 +368,7 @@ const metaAdsSOP: SOPDoc = {
       ],
     },
 
-    // ─── 9. SCALING PHASE GT2 ────────────────────────────────────────────────
+    // ─── 10. SCALING PHASE GT2 ────────────────────────────────────────────────
     {
       id: 'gt2-scaling',
       title: 'GT2 — Test Best Ads (Scaling Phase)',
@@ -375,7 +393,7 @@ const metaAdsSOP: SOPDoc = {
       ],
     },
 
-    // ─── 10. SCALING PHASE GT3 ───────────────────────────────────────────────
+    // ─── 11. SCALING PHASE GT3 ───────────────────────────────────────────────
     {
       id: 'gt3-scaling',
       title: 'GT3 — Full Scale (Scaling Phase)',
@@ -416,7 +434,7 @@ const metaAdsSOP: SOPDoc = {
       ],
     },
 
-    // ─── 11. DAILY ACTIVITIES ────────────────────────────────────────────────
+    // ─── 12. DAILY ACTIVITIES ────────────────────────────────────────────────
     {
       id: 'daily-activities',
       title: 'Daily Facebook Page Activities',
@@ -444,7 +462,7 @@ const metaAdsSOP: SOPDoc = {
       ],
     },
 
-    // ─── 12. TOOLS & RESOURCES ───────────────────────────────────────────────
+    // ─── 13. TOOLS & RESOURCES ───────────────────────────────────────────────
     {
       id: 'tools-resources',
       title: 'Tools & Resources',
