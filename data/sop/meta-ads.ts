@@ -80,7 +80,6 @@ const metaAdsSOP: SOPDoc = {
               label: 'When to update',
               items: [
                 'Minimum: once every working day while ads are live',
-                'After any major budget change, new campaign launch, or account warning',
                 'When you notice Meta has revised spend on prior days (common within the 3–5 day window)',
               ],
             },
@@ -88,9 +87,10 @@ const metaAdsSOP: SOPDoc = {
               label: 'What to do in Google Sheet',
               items: [
                 'Open the correct project spend tracker (right tab / ad account)',
-                'Pull latest spend from Ads Manager for the date range your team uses (usually yesterday + rolling 7 days)',
+                'Pull latest spend from Ads Manager for the date range your team uses (usually yesterday)',
                 'Update the sheet so it reflects Meta as closely as possible',
                 'Note the date and time you last synced (so others know how fresh the data is)',
+                'Do not wait until finance or the accountant asks you — if you wait, you slow down the whole process and you will get a warning',
               ],
             },
             {
@@ -99,8 +99,6 @@ const metaAdsSOP: SOPDoc = {
               items: [
                 'After saving the sheet, post in the project WhatsApp group — same day, every time',
                 'Do not assume anyone will open the sheet on their own. The WhatsApp message is part of the job.',
-                'Include: project name · date updated · spend for the period your team tracks · one-line note if anything unusual',
-                'Example: "[Project] Ad spend updated in sheet — 3 Jun. MTD RM12,400. Yesterday RM890. No issues."',
               ],
             },
           ],
