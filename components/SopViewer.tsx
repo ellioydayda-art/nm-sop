@@ -54,7 +54,9 @@ export default function SopViewer({ sop, category }: SopViewerProps) {
   }
 
   const activeIdx = sop.sections.findIndex(s => s.id === activeSection);
-  const criticalSection = sop.sections.find(s => s.emphasis === 'critical');
+  const criticalIdx = sop.sections.findIndex(s => s.emphasis === 'critical');
+  const criticalSection = criticalIdx >= 0 ? sop.sections[criticalIdx] : undefined;
+  const showCriticalBanner = criticalSection !== undefined && criticalIdx > 0;
   const CRITICAL_RED = '#dc2626';
 
   return (
@@ -149,7 +151,7 @@ export default function SopViewer({ sop, category }: SopViewerProps) {
 
           {/* ── Main content ─────────────────────────────── */}
           <main className={styles.main}>
-            {criticalSection && (
+            {showCriticalBanner && criticalSection && (
               <button
                 type="button"
                 className={styles.criticalJumpBanner}

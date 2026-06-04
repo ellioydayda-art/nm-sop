@@ -30,29 +30,7 @@ const metaAdsSOP: SOPDoc = {
   title: 'Media Buying SOP',
   department: 'Marketing',
   sections: [
-    // ─── 1. OVERVIEW & METRICS ───────────────────────────────────────────────
-    {
-      id: 'overview',
-      title: 'Overview & Key Metrics',
-      blocks: [
-        {
-          type: 'text',
-          content:
-            'The key of media buying is to get an audience to purchase from you. The metrics below are general indicators to help a business owner achieve target sales. Actual benchmarks vary by industry — treat these as a starting baseline.',
-        },
-        {
-          type: 'table',
-          headers: ['Metric', 'Target', 'Notes'],
-          rows: [
-            ['CPR (Cost Per Result)', '≤ RM20', 'Cost per lead/register'],
-            ['Register Rate', '> 10%', 'Leads who actually register'],
-            ['ROAS (Return on Ad Spend)', '≥ 5×', 'Revenue ÷ ad spend'],
-          ],
-        },
-      ],
-    },
-
-    // ─── 2. CRITICAL RULES — MEDIA BUYER ACCOUNTABILITY ──────────────────────
+    // ─── 1. CRITICAL RULES — MEDIA BUYER ACCOUNTABILITY ──────────────────────
     {
       id: 'critical-rules',
       title: 'Critical Rules — Media Buyer Accountability',
@@ -146,6 +124,28 @@ const metaAdsSOP: SOPDoc = {
             ['1 — Sheet + WhatsApp', 'Update latest ad spend in Google Sheet; ping WhatsApp after every update'],
             ['2 — Daily GSheet record', 'Record ads spend in Google Sheet every working day'],
             ['3 — Leader update', 'Always update your respective leader after each sheet update'],
+          ],
+        },
+      ],
+    },
+
+    // ─── 2. OVERVIEW & METRICS ───────────────────────────────────────────────
+    {
+      id: 'overview',
+      title: 'Overview & Key Metrics',
+      blocks: [
+        {
+          type: 'text',
+          content:
+            'The key of media buying is to get an audience to purchase from you. The metrics below are general indicators to help a business owner achieve target sales. Actual benchmarks vary by industry — treat these as a starting baseline.',
+        },
+        {
+          type: 'table',
+          headers: ['Metric', 'Target', 'Notes'],
+          rows: [
+            ['CPR (Cost Per Result)', '≤ RM20', 'Cost per lead/register'],
+            ['Register Rate', '> 10%', 'Leads who actually register'],
+            ['ROAS (Return on Ad Spend)', '≥ 5×', 'Revenue ÷ ad spend'],
           ],
         },
       ],
