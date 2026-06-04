@@ -50,7 +50,107 @@ const metaAdsSOP: SOPDoc = {
       ],
     },
 
-    // ─── 2. BUILD FB PAGE ────────────────────────────────────────────────────
+    // ─── 2. CRITICAL RULES — MEDIA BUYER ACCOUNTABILITY ──────────────────────
+    {
+      id: 'critical-rules',
+      title: 'Critical Rules — Media Buyer Accountability',
+      blocks: [
+        {
+          type: 'callout',
+          variant: 'warning',
+          title: 'Non-negotiable — read before anything else',
+          content:
+            'These rules are mandatory for every media buyer on every active project. They exist so leadership, ops, and sales can trust the numbers and react fast. Skipping reporting is not a small mistake — it causes wrong budget calls, wrong scaling, and wrong webinar prep.',
+        },
+        {
+          type: 'bold-text',
+          content: 'Rule 1 — Update ad spend in Google Sheet, then notify WhatsApp (every working day)',
+        },
+        {
+          type: 'callout',
+          variant: 'rule',
+          title: 'Why this is critical',
+          content:
+            'Meta does not finalise spend straight away. Ads Manager figures can still change for 3–5 days while Meta reconciles. The team plans from the Google Sheet — if the sheet is stale, everyone decides on wrong numbers.',
+        },
+        {
+          type: 'steps',
+          steps: [
+            {
+              label: 'When to update',
+              items: [
+                'Minimum: once every working day while ads are live',
+                'After any major budget change, new campaign launch, or account warning',
+                'When you notice Meta has revised spend on prior days (common within the 3–5 day window)',
+              ],
+            },
+            {
+              label: 'What to do in Google Sheet',
+              items: [
+                'Open the correct project spend tracker (right tab / ad account)',
+                'Pull latest spend from Ads Manager for the date range your team uses (usually yesterday + rolling 7 days)',
+                'Update the sheet so it reflects Meta as closely as possible',
+                'Note the date and time you last synced (so others know how fresh the data is)',
+              ],
+            },
+            {
+              label: 'Notify the team in WhatsApp',
+              result: 'Sheet updated + team informed',
+              items: [
+                'After saving the sheet, post in the project WhatsApp group — same day, every time',
+                'Do not assume anyone will open the sheet on their own. The WhatsApp message is part of the job.',
+                'Include: project name · date updated · spend for the period your team tracks · one-line note if anything unusual',
+                'Example: "[Project] Ad spend updated in sheet — 3 Jun. MTD RM12,400. Yesterday RM890. No issues."',
+              ],
+            },
+          ],
+        },
+        {
+          type: 'callout',
+          variant: 'rule',
+          title: 'Meta 3–5 day spend delay',
+          content:
+            'Treat Ads Manager as provisional until reconciliation settles. If Meta later changes prior days and the difference is material (rough guide: RM100+ or it affects ROAS / scaling decisions), update the sheet again and send a follow-up WhatsApp message.',
+        },
+        {
+          type: 'divider',
+        },
+        {
+          type: 'bold-text',
+          content: 'Rule 2 — Daily ads spent record to Google Sheet',
+        },
+        {
+          type: 'callout',
+          variant: 'rule',
+          content:
+            'Every working day while ads are live: record the latest ads spend in the project Google Sheet before end of day — no exceptions. Use the best available numbers from Ads Manager even if Meta may still adjust them over the next 3–5 days; refresh the sheet when Meta reconciles.',
+        },
+        {
+          type: 'bold-text',
+          content: 'Rule 3 — Always update your respective leader',
+        },
+        {
+          type: 'callout',
+          variant: 'rule',
+          content:
+            'After you update the sheet and post in the project WhatsApp group, always inform your respective project leader the same day (DM or direct tag) so they know the numbers are current. If spend, delivery, or the account looks unusual, tell the leader immediately — not only the group chat.',
+        },
+        {
+          type: 'divider',
+        },
+        {
+          type: 'table',
+          headers: ['Rule', 'One-line summary'],
+          rows: [
+            ['1 — Sheet + WhatsApp', 'Update latest ad spend in Google Sheet; ping WhatsApp after every update'],
+            ['2 — Daily GSheet record', 'Record ads spend in Google Sheet every working day'],
+            ['3 — Leader update', 'Always update your respective leader after each sheet update'],
+          ],
+        },
+      ],
+    },
+
+    // ─── 3. BUILD FB PAGE ────────────────────────────────────────────────────
     {
       id: 'build-fb-page',
       title: 'Build Your Facebook Page',
@@ -76,7 +176,7 @@ const metaAdsSOP: SOPDoc = {
       ],
     },
 
-    // ─── 3. BUSINESS MANAGER — CONCEPTS ─────────────────────────────────────
+    // ─── 4. BUSINESS MANAGER — CONCEPTS ─────────────────────────────────────
     {
       id: 'business-manager-concepts',
       title: 'Business Manager — Concepts & Rules',
@@ -118,7 +218,7 @@ const metaAdsSOP: SOPDoc = {
       ],
     },
 
-    // ─── 4. SETUP STEP-BY-STEP ───────────────────────────────────────────────
+    // ─── 5. SETUP STEP-BY-STEP ───────────────────────────────────────────────
     {
       id: 'setup-step-by-step',
       title: 'Setup: Business Manager & Ad Account',
@@ -187,7 +287,7 @@ const metaAdsSOP: SOPDoc = {
       ],
     },
 
-    // ─── 5. META PIXEL — CREATE & INSTALL IN AS ──────────────────────────────
+    // ─── 6. META PIXEL — CREATE & INSTALL IN AS ──────────────────────────────
     {
       id: 'meta-pixel-setup',
       title: 'Meta Pixel — Create & Install in AS',
@@ -205,7 +305,7 @@ const metaAdsSOP: SOPDoc = {
       ],
     },
 
-    // ─── 6. CREATIVE GUIDELINES ──────────────────────────────────────────────
+    // ─── 7. CREATIVE GUIDELINES ──────────────────────────────────────────────
     {
       id: 'creative-guidelines',
       title: 'Creative Guidelines',
@@ -259,7 +359,7 @@ const metaAdsSOP: SOPDoc = {
       ],
     },
 
-    // ─── 7. ADS MANAGER STRUCTURE ────────────────────────────────────────────
+    // ─── 8. ADS MANAGER STRUCTURE ────────────────────────────────────────────
     {
       id: 'ads-manager-structure',
       title: 'Ads Manager Structure',
@@ -289,7 +389,7 @@ const metaAdsSOP: SOPDoc = {
       ],
     },
 
-    // ─── 8. NAMING CONVENTIONS ───────────────────────────────────────────────
+    // ─── 9. NAMING CONVENTIONS ───────────────────────────────────────────────
     {
       id: 'naming-conventions',
       title: 'Naming Conventions',
@@ -326,7 +426,7 @@ const metaAdsSOP: SOPDoc = {
       ],
     },
 
-    // ─── 9. TESTING PHASE GT1 ────────────────────────────────────────────────
+    // ─── 10. TESTING PHASE GT1 ────────────────────────────────────────────────
     {
       id: 'gt1-testing',
       title: 'GT1 — Test Audience (Testing Phase)',
@@ -368,7 +468,7 @@ const metaAdsSOP: SOPDoc = {
       ],
     },
 
-    // ─── 10. SCALING PHASE GT2 ────────────────────────────────────────────────
+    // ─── 11. SCALING PHASE GT2 ────────────────────────────────────────────────
     {
       id: 'gt2-scaling',
       title: 'GT2 — Test Best Ads (Scaling Phase)',
@@ -393,7 +493,7 @@ const metaAdsSOP: SOPDoc = {
       ],
     },
 
-    // ─── 11. SCALING PHASE GT3 ───────────────────────────────────────────────
+    // ─── 12. SCALING PHASE GT3 ───────────────────────────────────────────────
     {
       id: 'gt3-scaling',
       title: 'GT3 — Full Scale (Scaling Phase)',
@@ -434,7 +534,7 @@ const metaAdsSOP: SOPDoc = {
       ],
     },
 
-    // ─── 12. DAILY ACTIVITIES ────────────────────────────────────────────────
+    // ─── 13. DAILY ACTIVITIES ────────────────────────────────────────────────
     {
       id: 'daily-activities',
       title: 'Daily Facebook Page Activities',
@@ -462,7 +562,7 @@ const metaAdsSOP: SOPDoc = {
       ],
     },
 
-    // ─── 13. TOOLS & RESOURCES ───────────────────────────────────────────────
+    // ─── 14. TOOLS & RESOURCES ───────────────────────────────────────────────
     {
       id: 'tools-resources',
       title: 'Tools & Resources',
