@@ -1,7 +1,7 @@
 export type ContentBlock =
   | { type: 'text'; content: string }
   | { type: 'bold-text'; content: string }
-  | { type: 'callout'; variant: 'info' | 'warning' | 'tip' | 'rule'; title?: string; content: string }
+  | { type: 'callout'; variant: 'info' | 'warning' | 'tip' | 'rule' | 'critical'; title?: string; content: string }
   | { type: 'list'; ordered?: boolean; items: string[] }
   | { type: 'table'; headers: string[]; rows: string[][] }
   | { type: 'steps'; steps: { label: string; result?: string; items: string[] }[] }
@@ -14,6 +14,8 @@ export interface SOPSection {
   id: string;
   title: string;
   blocks: ContentBlock[];
+  /** Renders section with high-visibility mandatory styling (red). */
+  emphasis?: 'critical';
 }
 
 export interface SOPDoc {
@@ -54,10 +56,11 @@ const metaAdsSOP: SOPDoc = {
     {
       id: 'critical-rules',
       title: 'Critical Rules — Media Buyer Accountability',
+      emphasis: 'critical',
       blocks: [
         {
           type: 'callout',
-          variant: 'warning',
+          variant: 'critical',
           title: 'Non-negotiable — read before anything else',
           content:
             'These rules are mandatory for every media buyer on every active project. They exist so leadership, ops, and sales can trust the numbers and react fast. Skipping reporting is not a small mistake — it causes wrong budget calls, wrong scaling, and wrong webinar prep.',

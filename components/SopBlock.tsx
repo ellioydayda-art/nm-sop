@@ -68,6 +68,7 @@ export function SopBlock({ block, accentHex }: { block: ContentBlock; accentHex:
         warning: styles.calloutWarning,
         tip: styles.calloutTip,
         rule: styles.calloutRule,
+        critical: styles.calloutCritical,
       }[block.variant];
 
       const labelClass = {
@@ -75,6 +76,7 @@ export function SopBlock({ block, accentHex }: { block: ContentBlock; accentHex:
         warning: styles.calloutLabelWarning,
         tip: styles.calloutLabelTip,
         rule: styles.calloutLabelRule,
+        critical: styles.calloutLabelCritical,
       }[block.variant];
 
       const icons = {
@@ -82,6 +84,7 @@ export function SopBlock({ block, accentHex }: { block: ContentBlock; accentHex:
         warning: "▲",
         tip: "★",
         rule: "◆",
+        critical: "⚠",
       };
 
       return (

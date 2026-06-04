@@ -54,6 +54,8 @@ export default function SopViewer({ sop, category }: SopViewerProps) {
   }
 
   const activeIdx = sop.sections.findIndex(s => s.id === activeSection);
+  const criticalSection = sop.sections.find(s => s.emphasis === 'critical');
+  const CRITICAL_RED = '#dc2626';
 
   return (
     <>
@@ -117,22 +119,28 @@ export default function SopViewer({ sop, category }: SopViewerProps) {
             <nav style={{ flex: 1 }}>
               {sop.sections.map((section, i) => {
                 const isActive = activeSection === section.id;
+                const isCritical = section.emphasis === 'critical';
                 return (
                   <button
                     key={section.id}
                     onClick={() => scrollTo(section.id)}
-                    className={`${styles.navBtn} ${isActive ? styles.navBtnActive : ''}`}
+                    className={`${styles.navBtn} ${isActive ? styles.navBtnActive : ''} ${isCritical ? styles.navBtnCritical : ''}`}
                   >
                     {isActive && (
-                      <span className={styles.navIndicator} style={{ background: category.accentHex }} />
+                      <span
+                        className={styles.navIndicator}
+                        style={{ background: isCritical ? CRITICAL_RED : category.accentHex }}
+                      />
                     )}
                     <span
                       className={`${styles.navNum} ${isActive ? styles.navNumActive : ''}`}
-                      style={isActive ? { color: category.accentHex } : {}}
+                      style={isActive ? { color: isCritical ? CRITICAL_RED : category.accentHex } : isCritical ? { color: CRITICAL_RED, opacity: 1 } : {}}
                     >
-                      {String(i + 1).padStart(2, '0')}
+                      {isCritical ? '!' : String(i + 1).padStart(2, '0')}
                     </span>
-                    {section.title}
+                    <span className={isCritical ? styles.navBtnCriticalLabel : undefined}>
+                      {isCritical ? 'READ FIRST' : section.title}
+                    </span>
                   </button>
                 );
               })}
@@ -141,34 +149,67 @@ export default function SopViewer({ sop, category }: SopViewerProps) {
 
           {/* ── Main content ─────────────────────────────── */}
           <main className={styles.main}>
-            {sop.sections.map((section, i) => (
+            {criticalSection && (
+              <button
+                type="button"
+                className={styles.criticalJumpBanner}
+                onClick={() => scrollTo(criticalSection.id)}
+              >
+                <span className={styles.criticalJumpBadge}>Mandatory</span>
+                <span className={styles.criticalJumpText}>
+                  Read <strong>{criticalSection.title}</strong> before anything else — tap to jump
+                </span>
+                <span className={styles.criticalJumpArrow}>↓</span>
+              </button>
+            )}
+
+            {sop.sections.map((section, i) => {
+              const isCritical = section.emphasis === 'critical';
+              return (
               <section
                 key={section.id}
                 id={section.id}
                 data-section
-                className={`${styles.section} ${i === 0 ? styles.sectionFirst : ''} scroll-mt-10`}
+                className={`${styles.section} ${i === 0 ? styles.sectionFirst : ''} ${isCritical ? styles.sectionCritical : ''} scroll-mt-10`}
               >
                 {/* Section header */}
                 <div className={styles.sectionHeader}>
-                  <div className={styles.sectionNum} style={{ background: category.accentHex }}>
-                    {String(i + 1).padStart(2, '0')}
+                  <div
+                    className={`${styles.sectionNum} ${isCritical ? styles.sectionNumCritical : ''}`}
+                    style={{ background: isCritical ? CRITICAL_RED : category.accentHex }}
+                  >
+                    {isCritical ? '!' : String(i + 1).padStart(2, '0')}
                   </div>
                   <div>
-                    <h2 className={styles.sectionTitle}>{section.title}</h2>
+                    {isCritical && (
+                      <span className={styles.sectionMandatoryPill}>Non-negotiable</span>
+                    )}
+                    <h2 className={`${styles.sectionTitle} ${isCritical ? styles.sectionTitleCritical : ''}`}>
+                      {section.title}
+                    </h2>
                     <div
                       className={styles.sectionRule}
-                      style={{ background: `linear-gradient(90deg, ${category.accentHex}, ${category.accentHex}40)` }}
+                      style={{
+                        background: isCritical
+                          ? `linear-gradient(90deg, ${CRITICAL_RED}, #fca5a5)`
+                          : `linear-gradient(90deg, ${category.accentHex}, ${category.accentHex}40)`,
+                      }}
                     />
                   </div>
                 </div>
 
-                <div style={{ paddingLeft: 70 }}>
+                <div className={isCritical ? styles.sectionCriticalBody : undefined} style={isCritical ? undefined : { paddingLeft: 70 }}>
                   {section.blocks.map((block, bi) => (
-                    <SopBlock key={bi} block={block} accentHex={category.accentHex} />
+                    <SopBlock
+                      key={bi}
+                      block={block}
+                      accentHex={isCritical ? CRITICAL_RED : category.accentHex}
+                    />
                   ))}
                 </div>
               </section>
-            ))}
+            );
+            })}
 
             <div className={styles.footer}>
               <Link href="/dashboard" className={styles.footerBack}>
