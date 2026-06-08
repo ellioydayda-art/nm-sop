@@ -17,6 +17,7 @@ import whatsappCommunityValuePostsSOP from '@/data/sop/whatsapp-community-value-
 import whatsappCommunityDrJasmineShowUpSOP from '@/data/sop/whatsapp-community-dr-jasmine-show-up';
 import Navbar from '@/components/Navbar';
 import SopViewer from '@/components/SopViewer';
+import PromptCopySopViewer from '@/components/PromptCopySopViewer';
 import StraightToKillSop from '@/components/StraightToKillSop';
 import CustomerSupportSop from '@/components/CustomerSupportSop';
 import type { SOPDoc } from '@/data/sop/meta-ads';
@@ -71,6 +72,15 @@ export default async function SopPage({ params }: { params: { category: string }
 
   const sop = SOP_MAP[params.category];
   if (!sop) notFound();
+
+  if (sop.fullPrompt) {
+    return (
+      <div className="min-h-screen bg-[var(--bg)]">
+        <Navbar user={{ name: user.name, email: user.email, role: user.role }} />
+        <PromptCopySopViewer sop={sop} category={category} />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[var(--bg)]">

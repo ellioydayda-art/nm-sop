@@ -23,6 +23,8 @@ export interface SOPDoc {
   title: string;
   department: string;
   sections: SOPSection[];
+  /** When set, SOP renders as a single copyable AI prompt instead of section blocks. */
+  fullPrompt?: string;
 }
 
 const metaAdsSOP: SOPDoc = {
