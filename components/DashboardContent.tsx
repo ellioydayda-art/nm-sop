@@ -98,7 +98,12 @@ export default function DashboardContent({ user, initialCategories }: DashboardC
       .sort(([left], [right]) => left.localeCompare(right))
       .map(([department, list]) => ({
         department,
-        items: [...list].sort((left, right) => left.name.localeCompare(right.name)),
+        items: [...list].sort((left, right) => {
+          const leftInactive = left.inactive ? 1 : 0;
+          const rightInactive = right.inactive ? 1 : 0;
+          if (leftInactive !== rightInactive) return leftInactive - rightInactive;
+          return left.name.localeCompare(right.name);
+        }),
       }));
   }, [categories]);
 
