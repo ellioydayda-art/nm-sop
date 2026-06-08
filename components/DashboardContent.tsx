@@ -150,8 +150,8 @@ export default function DashboardContent({ user, initialCategories }: DashboardC
                     <Link
                       key={cat.slug}
                       href={`/sop/${cat.slug}`}
-                      className={`group gradient-border card p-5 cursor-pointer transition-opacity duration-200 ${
-                        cat.inactive ? 'opacity-50 saturate-[0.65] hover:opacity-60' : 'card-hover'
+                      className={`group gradient-border card p-5 cursor-pointer transition-all duration-200 ${
+                        cat.inactive ? 'card-inactive overflow-hidden' : 'card-hover'
                       }`}
                       style={{
                         animationName: 'slideUp',
@@ -161,21 +161,26 @@ export default function DashboardContent({ user, initialCategories }: DashboardC
                         animationTimingFunction: 'ease-out',
                       }}
                     >
-                      <div className="flex items-start justify-between mb-4">
-                        <div
-                          className="w-10 h-10 rounded-xl border flex items-center justify-center transition-transform duration-200 group-hover:scale-110"
-                          style={{ backgroundColor: `${cat.accentHex}14`, borderColor: `${cat.accentHex}30` }}
-                        >
-                          <CategoryIcon slug={cat.slug} size={18} style={{ color: cat.accentHex } as React.CSSProperties} />
+                      {cat.inactive && (
+                        <div className="corner-ribbon" aria-hidden="true">
+                          <span>Inactive</span>
                         </div>
-                        <div className="flex flex-col items-end gap-1.5">
-                          {cat.inactive && (
-                            <span className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full border border-[var(--border)] bg-[var(--raised)] text-[var(--subtle)]">
-                              Inactive
-                            </span>
-                          )}
+                      )}
+
+                      <div className="relative z-[1]">
+                        <div className="flex items-start justify-between mb-4">
+                          <div
+                            className={`w-10 h-10 rounded-xl border flex items-center justify-center transition-transform duration-200 ${
+                              cat.inactive ? 'opacity-60' : 'group-hover:scale-110'
+                            }`}
+                            style={{ backgroundColor: `${cat.accentHex}14`, borderColor: `${cat.accentHex}30` }}
+                          >
+                            <CategoryIcon slug={cat.slug} size={18} style={{ color: cat.accentHex } as React.CSSProperties} />
+                          </div>
                           <span
-                            className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full border"
+                            className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full border ${
+                              cat.inactive ? 'opacity-50' : ''
+                            }`}
                             style={{
                               color: cat.accentHex,
                               backgroundColor: `${cat.accentHex}14`,
@@ -185,23 +190,23 @@ export default function DashboardContent({ user, initialCategories }: DashboardC
                             {cat.department}
                           </span>
                         </div>
+
+                        <h3 className={`font-semibold text-base mb-1.5 leading-snug transition-colors duration-200 ${
+                          cat.inactive ? 'text-[var(--subtle)]' : 'text-[var(--text)] group-hover:text-brand'
+                        }`}>
+                          {cat.name}
+                        </h3>
+                        <p className={`text-sm leading-relaxed ${cat.inactive ? 'text-[var(--subtle)] opacity-70' : 'text-[var(--muted)]'}`}>
+                          {cat.description}
+                        </p>
+
+                        {!cat.inactive && (
+                          <div className="mt-5 flex items-center gap-1 text-xs font-medium transition-all duration-200 opacity-0 group-hover:opacity-100 -translate-x-1 group-hover:translate-x-0" style={{ color: cat.accentHex }}>
+                            <span>Open SOP</span>
+                            <IconChevronRight size={12} />
+                          </div>
+                        )}
                       </div>
-
-                      <h3 className={`font-semibold text-base mb-1.5 leading-snug transition-colors duration-200 ${
-                        cat.inactive ? 'text-[var(--muted)]' : 'text-[var(--text)] group-hover:text-brand'
-                      }`}>
-                        {cat.name}
-                      </h3>
-                      <p className={`text-sm leading-relaxed ${cat.inactive ? 'text-[var(--subtle)]' : 'text-[var(--muted)]'}`}>
-                        {cat.description}
-                      </p>
-
-                      {!cat.inactive && (
-                        <div className="mt-5 flex items-center gap-1 text-xs font-medium transition-all duration-200 opacity-0 group-hover:opacity-100 -translate-x-1 group-hover:translate-x-0" style={{ color: cat.accentHex }}>
-                          <span>Open SOP</span>
-                          <IconChevronRight size={12} />
-                        </div>
-                      )}
                     </Link>
                   ))}
                 </div>

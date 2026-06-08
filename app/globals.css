@@ -147,6 +147,66 @@ body {
     border-color: rgba(155,141,255,0.4);
     box-shadow: 0 8px 32px rgba(0,0,0,0.35), 0 0 0 1px rgba(155,141,255,0.12), 0 0 24px rgba(155,141,255,0.08);
   }
+  .card-inactive {
+    background: linear-gradient(
+      145deg,
+      color-mix(in srgb, var(--text) 14%, var(--surface)) 0%,
+      color-mix(in srgb, var(--text) 26%, var(--raised)) 100%
+    );
+    border-color: color-mix(in srgb, var(--text) 10%, var(--border));
+    filter: saturate(0.45) brightness(0.72);
+  }
+  .card-inactive:hover {
+    filter: saturate(0.5) brightness(0.78);
+  }
+  .dark .card-inactive {
+    background: linear-gradient(
+      145deg,
+      color-mix(in srgb, #000 62%, var(--surface)) 0%,
+      color-mix(in srgb, #000 78%, var(--raised)) 100%
+    );
+    border-color: rgba(255, 255, 255, 0.06);
+    filter: saturate(0.35) brightness(0.55);
+  }
+  .dark .card-inactive:hover {
+    filter: saturate(0.4) brightness(0.62);
+  }
+  .corner-ribbon {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 92px;
+    height: 92px;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 2;
+  }
+  .corner-ribbon span {
+    position: absolute;
+    display: block;
+    width: 132px;
+    top: 20px;
+    right: -34px;
+    transform: rotate(45deg);
+    text-align: center;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 5px 0;
+    background: linear-gradient(135deg, #6b5ce7 0%, #3d2f9e 55%, #2a2068 100%);
+    color: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
+  }
+  .dark .corner-ribbon span {
+    background: linear-gradient(135deg, #8b7ff8 0%, #5a48c9 55%, #3a2d85 100%);
+    color: #f4f2ff;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+  }
+  .card-inactive.gradient-border::before,
+  .card-inactive.gradient-border:hover::before {
+    opacity: 0;
+  }
   .input {
     @apply w-full border border-[var(--border)] rounded-xl px-3 py-2.5 text-[var(--text)] placeholder-[var(--subtle)] focus:outline-none focus:ring-2 focus:ring-brand/40 focus:border-brand transition-all duration-200 text-sm;
     background: color-mix(in srgb, var(--raised) 80%, transparent);
