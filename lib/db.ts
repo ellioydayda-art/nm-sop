@@ -22,6 +22,7 @@ export interface Category {
   department: string;
   description: string;
   accentHex: string;
+  inactive?: boolean;
 }
 
 /** Raw shape returned by the profiles table. */
@@ -69,9 +70,15 @@ function mapCategoryRow(row: CategoryRow): Category {
   };
 }
 
+function applyBuiltinFlags(category: Category): Category {
+  const builtin = BUILTIN_CATEGORIES.find((entry) => entry.slug === category.slug);
+  if (!builtin?.inactive) return category;
+  return { ...category, inactive: true };
+}
+
 /** Ensures categories in data/categories.ts always appear even if not yet in DB. */
 function mergeCategoriesWithBuiltins(dbCategories: Category[]): Category[] {
-  const bySlug = new Map(dbCategories.map((c) => [c.slug, c]));
+  const bySlug = new Map(dbCategories.map((c) => [c.slug, applyBuiltinFlags(c)]));
   for (const b of BUILTIN_CATEGORIES) {
     if (!bySlug.has(b.slug)) {
       bySlug.set(b.slug, {
@@ -80,6 +87,7 @@ function mergeCategoriesWithBuiltins(dbCategories: Category[]): Category[] {
         department: b.department,
         description: b.description,
         accentHex: b.accentHex,
+        inactive: b.inactive,
       });
     }
   }

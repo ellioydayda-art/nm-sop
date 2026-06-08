@@ -3,6 +3,8 @@ export interface Category {
   name: string;
   department: string;
   description: string;
+  /** When true, the SOP is shown as archived / not in active use. */
+  inactive?: boolean;
   // Tailwind color accent for the card (used in CSS classes)
   accent: string;         // e.g. 'brand'
   accentHex: string;      // literal hex for inline styles
@@ -32,6 +34,7 @@ export const CATEGORIES: Category[] = [
     slug: 'sales-closing',
     name: 'Sales Closing',
     department: 'Sales',
+    inactive: true,
     description: 'Consultative sales process, objection handling, and closing techniques.',
     accent: 'orange',
     accentHex: '#f97316',
@@ -41,6 +44,7 @@ export const CATEGORIES: Category[] = [
     slug: 'content-creation',
     name: 'Content Creation',
     department: 'Creative',
+    inactive: true,
     description: 'Video production workflow, scriptwriting, editing guidelines, and publishing.',
     accent: 'pink',
     accentHex: '#ec4899',
@@ -50,6 +54,7 @@ export const CATEGORIES: Category[] = [
     slug: 'client-onboarding',
     name: 'Client Onboarding',
     department: 'Operations',
+    inactive: true,
     description: 'Step-by-step client intake, access handover, and first-week checklist.',
     accent: 'sky',
     accentHex: '#0ea5e9',

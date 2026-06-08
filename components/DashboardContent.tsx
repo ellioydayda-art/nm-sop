@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import { CategoryIcon, IconLock, IconChevronRight, IconSettings } from '@/components/Icons';
 import type { Category } from '@/lib/db';
+import { CATEGORIES as BUILTIN_CATEGORIES } from '@/data/categories';
 import { createClient } from '@/lib/supabase/client';
 
 interface DashboardContentProps {
@@ -18,6 +19,12 @@ interface CategoryRealtimeRow {
   department: string;
   description: string;
   accent_hex: string;
+}
+
+function withInactiveFlag(category: Category): Category {
+  const builtin = BUILTIN_CATEGORIES.find((entry) => entry.slug === category.slug);
+  if (!builtin?.inactive) return category;
+  return { ...category, inactive: true };
 }
 
 export default function DashboardContent({ user, initialCategories }: DashboardContentProps) {
@@ -36,13 +43,13 @@ export default function DashboardContent({ user, initialCategories }: DashboardC
           if (!user.categories.includes('*') && !user.categories.includes(next.slug)) return;
           setCategories(prev => {
             const exists = prev.some(cat => cat.slug === next.slug);
-            const mapped: Category = {
+            const mapped = withInactiveFlag({
               slug: next.slug,
               name: next.name,
               department: next.department,
               description: next.description,
               accentHex: next.accent_hex,
-            };
+            });
             if (!exists) return [...prev, mapped];
             return prev.map(cat => (cat.slug === next.slug ? mapped : cat));
           });
@@ -61,7 +68,9 @@ export default function DashboardContent({ user, initialCategories }: DashboardC
         .then(response => response.json())
         .then(data => {
           const nextCategories = Array.isArray(data.categories) ? (data.categories as Category[]) : [];
-          const visible = nextCategories.filter(category => user.categories.includes('*') || user.categories.includes(category.slug));
+          const visible = nextCategories
+            .filter(category => user.categories.includes('*') || user.categories.includes(category.slug))
+            .map(withInactiveFlag);
           setCategories(visible);
         })
         .catch(() => {
@@ -141,7 +150,9 @@ export default function DashboardContent({ user, initialCategories }: DashboardC
                     <Link
                       key={cat.slug}
                       href={`/sop/${cat.slug}`}
-                      className="group gradient-border card card-hover p-5 cursor-pointer"
+                      className={`group gradient-border card p-5 cursor-pointer transition-opacity duration-200 ${
+                        cat.inactive ? 'opacity-50 saturate-[0.65] hover:opacity-60' : 'card-hover'
+                      }`}
                       style={{
                         animationName: 'slideUp',
                         animationDuration: '0.4s',
@@ -157,29 +168,40 @@ export default function DashboardContent({ user, initialCategories }: DashboardC
                         >
                           <CategoryIcon slug={cat.slug} size={18} style={{ color: cat.accentHex } as React.CSSProperties} />
                         </div>
-                        <span
-                          className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full border"
-                          style={{
-                            color: cat.accentHex,
-                            backgroundColor: `${cat.accentHex}14`,
-                            borderColor: `${cat.accentHex}30`,
-                          }}
-                        >
-                          {cat.department}
-                        </span>
+                        <div className="flex flex-col items-end gap-1.5">
+                          {cat.inactive && (
+                            <span className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full border border-[var(--border)] bg-[var(--raised)] text-[var(--subtle)]">
+                              Inactive
+                            </span>
+                          )}
+                          <span
+                            className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full border"
+                            style={{
+                              color: cat.accentHex,
+                              backgroundColor: `${cat.accentHex}14`,
+                              borderColor: `${cat.accentHex}30`,
+                            }}
+                          >
+                            {cat.department}
+                          </span>
+                        </div>
                       </div>
 
-                      <h3 className="font-semibold text-[var(--text)] text-base mb-1.5 leading-snug group-hover:text-brand transition-colors duration-200">
+                      <h3 className={`font-semibold text-base mb-1.5 leading-snug transition-colors duration-200 ${
+                        cat.inactive ? 'text-[var(--muted)]' : 'text-[var(--text)] group-hover:text-brand'
+                      }`}>
                         {cat.name}
                       </h3>
-                      <p className="text-[var(--muted)] text-sm leading-relaxed">
+                      <p className={`text-sm leading-relaxed ${cat.inactive ? 'text-[var(--subtle)]' : 'text-[var(--muted)]'}`}>
                         {cat.description}
                       </p>
 
-                      <div className="mt-5 flex items-center gap-1 text-xs font-medium transition-all duration-200 opacity-0 group-hover:opacity-100 -translate-x-1 group-hover:translate-x-0" style={{ color: cat.accentHex }}>
-                        <span>Open SOP</span>
-                        <IconChevronRight size={12} />
-                      </div>
+                      {!cat.inactive && (
+                        <div className="mt-5 flex items-center gap-1 text-xs font-medium transition-all duration-200 opacity-0 group-hover:opacity-100 -translate-x-1 group-hover:translate-x-0" style={{ color: cat.accentHex }}>
+                          <span>Open SOP</span>
+                          <IconChevronRight size={12} />
+                        </div>
+                      )}
                     </Link>
                   ))}
                 </div>
