@@ -14,6 +14,7 @@ import automaticsalesSalesSOP from '@/data/sop/automaticsales-sales';
 import automaticsalesProjectRdpSOP from '@/data/sop/automaticsales-project-rdp';
 import automaticsalesProjectCaeSOP from '@/data/sop/automaticsales-project-cae';
 import whatsappCommunityValuePostsSOP from '@/data/sop/whatsapp-community-value-posts';
+import whatsappCommunityDrJasmineShowUpSOP from '@/data/sop/whatsapp-community-dr-jasmine-show-up';
 import Navbar from '@/components/Navbar';
 import SopViewer from '@/components/SopViewer';
 import StraightToKillSop from '@/components/StraightToKillSop';
@@ -27,6 +28,7 @@ const SOP_MAP: Record<string, SOPDoc> = {
   'client-onboarding':             clientOnboardingSOP,
   'customer-support':              customerSupportSOP,
   'whatsapp-community-value-posts': whatsappCommunityValuePostsSOP,
+  'whatsapp-community-dr-jasmine-show-up': whatsappCommunityDrJasmineShowUpSOP,
   'automaticsales-overview':       automaticsalesOverviewSOP,
   'automaticsales-session-update': automaticsalesSessionUpdateSOP,
   'automaticsales-waba':           automaticsalesWabaSOP,

@@ -78,4 +78,13 @@ export const CATEGORIES: Category[] = [
     accentHex: '#25D366',
     accentBg: 'bg-emerald-500/10 border-emerald-500/20',
   },
+  {
+    slug: 'whatsapp-community-dr-jasmine-show-up',
+    name: 'Dr Jasmine Community Show Up',
+    department: 'Community',
+    description: 'How to drive show-up rates for Dr Jasmine WhatsApp community sessions — reminders, engagement, and pre-session prep.',
+    accent: 'green',
+    accentHex: '#128C7E',
+    accentBg: 'bg-teal-500/10 border-teal-500/20',
+  },
 ];

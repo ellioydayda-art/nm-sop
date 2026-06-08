@@ -354,6 +354,7 @@ export function CategoryIcon({ slug, className, size }: { slug: string } & IconP
     case 'client-onboarding':return <IconUsers className={className} size={size} />;
     case 'customer-support': return <IconMessageCircle className={className} size={size} />;
     case 'whatsapp-community-value-posts':
+    case 'whatsapp-community-dr-jasmine-show-up':
       return <IconMessageCircle className={className} size={size} />;
     case 'email-marketing':  return <IconMail className={className} size={size} />;
     default:                 return <IconShield className={className} size={size} />;
