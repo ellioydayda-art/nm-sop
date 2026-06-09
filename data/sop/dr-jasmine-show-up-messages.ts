@@ -2,25 +2,21 @@ export interface ShowUpMessageStep {
   id: string;
   step: string;
   title: string;
-  /** When to send relative to webinar */
   timing: string;
-  /** Example clock time */
   sendAt: string;
-  /** Things to verify before hitting send */
   checklist: string[];
-  /** Fields in the message that must be updated each session */
-  variables: string[];
   message: string;
   image?: {
     src: string;
     downloadName: string;
     alt: string;
+    /** When false, download is hidden (e.g. WhatsApp in-app stickers). Default true. */
+    allowDownload?: boolean;
   };
+  /** Sticker-only step: no text message, in-app sticker required */
+  stickerOnly?: boolean;
   notes?: string[];
 }
-
-export const WHATSAPP_GREEN = "#25D366";
-export const WHATSAPP_GREEN_DARK = "#075E54";
 
 export const DR_JASMINE_SHOW_UP_MESSAGES: ShowUpMessageStep[] = [
   {
@@ -30,10 +26,9 @@ export const DR_JASMINE_SHOW_UP_MESSAGES: ShowUpMessageStep[] = [
     timing: "4 days before webinar",
     sendAt: "3:00 PM (GMT+8)",
     checklist: [
-      "Confirm which day the webinar goes live (e.g. if webinar is Monday, send this on Thursday)",
-      "Double-check the webinar day and date before sending",
+      "If webinar is Monday, send this on Thursday at 3:00 PM",
+      "Confirm the webinar day and date before sending",
     ],
-    variables: [],
     image: {
       src: "/sop/whatsapp-show-up/01-welcome.jpeg",
       downloadName: "dr-jasmine-show-up-01-welcome.jpeg",
@@ -68,12 +63,7 @@ Let's do this!`,
     sendAt: "3:00 PM (GMT+8)",
     checklist: [
       "Confirm webinar day and date",
-      "Update the workshop day, date, and time in the message before sending",
-    ],
-    variables: [
-      "Workshop day (e.g. Tuesday)",
-      "Workshop date (e.g. 9/6)",
-      "Workshop time (e.g. 8PM GMT+8)",
+      "Fill in Custom Values at the top before copying",
     ],
     image: {
       src: "/sop/whatsapp-show-up/02-2day-countdown.jpeg",
@@ -96,6 +86,7 @@ The energy still drops.
 And deep down, there's still that worry about where this is heading.
 
 Most people assume diabetes is something you just have to manage forever.
+
 Control the blood sugar.
 Take the medication.
 Increase insulin if needed.
@@ -139,10 +130,7 @@ This could be the session that changes how you look at diabetes completely 🔥`
     sendAt: "8:00 PM (GMT+8)",
     checklist: [
       "Confirm webinar is tomorrow",
-      "Verify Zoom link is correct before sending",
-    ],
-    variables: [
-      "Zoom link (default: http://drjasminechiew.com/zoom)",
+      "Fill in Zoom link in Custom Values before copying",
     ],
     image: {
       src: "/sop/whatsapp-show-up/03-1day-countdown.jpeg",
@@ -185,7 +173,7 @@ Be there live.
 Because the more you understand your condition properly,
 the better decisions you can make from here. 🙌
 
-See you tomorrow at 8PM (GMT+8)!`,
+See you tomorrow at 8PM（GMT +8）!`,
   },
   {
     id: "starting-soon",
@@ -195,15 +183,7 @@ See you tomorrow at 8PM (GMT+8)!`,
     sendAt: "11:00 AM (GMT+8)",
     checklist: [
       "Confirm today's date matches the webinar",
-      "Update session date in the message",
-      "Verify Zoom link, Zoom ID, and passcode are correct",
-    ],
-    variables: [
-      "Session date (e.g. Jun 9, 2026)",
-      "Session time (8:00PM – 10:00PM GMT+8)",
-      "Zoom link",
-      "Zoom ID (e.g. 846 0992 4700)",
-      "Zoom passcode (e.g. 8888)",
+      "Fill in session date, time, Zoom link, ID, and passcode in Custom Values",
     ],
     image: {
       src: "/sop/whatsapp-show-up/04-starting-soon.jpeg",
@@ -217,8 +197,10 @@ Lowering blood sugar is important.
 But understanding why it keeps rising in the first place is what matters even more.
 
 That is the part many people never get properly explained.
+
 And that is also why progress can feel frustrating
-because you may be managing the numbers without fully understanding the condition underneath.
+because you may be managing the numbers without fully understanding the
+condition underneath.
 
 Tonight, we will walk through:
 - why diabetes is more than just a sugar problem
@@ -227,7 +209,8 @@ Tonight, we will walk through:
 - what needs to be addressed for a long term health direction
 
 This session is meant to help you see your condition more clearly
-so you can stop guessing and start making more informed decisions about your health.
+so you can stop guessing and start making more informed decisions about your
+health.
 
 If that is something you've been needing,
 be there live tonight.
@@ -245,28 +228,27 @@ See you tonight.`,
   },
   {
     id: "live-now",
-    step: "04b",
+    step: "05",
     title: "LIVE NOW",
     timing: "Webinar day",
     sendAt: "7:58 PM (GMT+8)",
     checklist: [
       "Send exactly at 7:58 PM, 2 minutes before session starts",
-      "Verify Zoom link is live and working",
-    ],
-    variables: [
-      "Zoom link (default: http://drjasminechiew.com/zoom)",
+      "Fill in Zoom link in Custom Values before copying",
     ],
     message: `🚨 We are LIVE now!
 
 ==> {{ZOOM_LINK}}
 
 Most people with diabetes were taught how to manage the numbers.
-Very few were taught how to understand what may actually be driving the condition underneath.
+Very few were taught how to understand what may actually be driving the condition
+underneath.
 
 That is what we are breaking down right now.
 Once you see it, your entire perspective can change.
 
 Join now:
+
 👉 {{ZOOM_LINK}}`,
     notes: [
       "No image for this message. Text only.",
@@ -274,25 +256,30 @@ Join now:
   },
   {
     id: "live-sticker",
-    step: "05",
+    step: "06",
     title: "After Live Start (Sticker)",
     timing: "Webinar day",
     sendAt: "8:18 PM (GMT+8)",
+    stickerOnly: true,
     checklist: [
-      "Send the sticker from inside WhatsApp (not as a downloaded file)",
-      "Match the sticker shown in the reference image below",
+      "Open WhatsApp Community on your phone",
+      "Tap the sticker icon inside the chat (NOT attach image from gallery)",
+      "Find and send the sticker that matches the reference below",
+      "Send at exactly 8:18 PM (GMT+8)",
     ],
-    variables: [],
     image: {
       src: "/sop/whatsapp-show-up/05-live-sticker.png",
       downloadName: "dr-jasmine-show-up-05-live-sticker-reference.png",
-      alt: "Reference for the WhatsApp sticker to send at 8:18 PM",
+      alt: "Reference only: find this sticker inside WhatsApp",
+      allowDownload: false,
     },
     message: "",
     notes: [
-      "This step is sticker only. Do not paste text.",
-      "The sticker cannot be downloaded and reused outside WhatsApp. It lives inside the WhatsApp app.",
-      "Use the reference image below to find the correct sticker, then send it at 8:18 PM.",
+      "NO TEXT for this step. Sticker only.",
+      "DO NOT download the image below and upload it as a photo. That is wrong.",
+      "DO NOT screenshot and send as image. That is wrong.",
+      "You MUST pick the sticker from WhatsApp's in-app sticker panel.",
+      "The reference image is only so you know which sticker to tap.",
     ],
   },
 ];
@@ -303,7 +290,7 @@ export const SHOW_UP_SCHEDULE_SUMMARY = `Dr Jasmine WhatsApp Community Show Up S
 02 2-Day Countdown  → 2 days before @ 3:00 PM
 03 1-Day Countdown  → 1 day before  @ 8:00 PM
 04 Starting Soon    → Webinar day   @ 11:00 AM
-04b LIVE NOW        → Webinar day   @ 7:58 PM
-05 Live Sticker     → Webinar day   @ 8:18 PM
+05 LIVE NOW         → Webinar day   @ 7:58 PM
+06 Live Sticker     → Webinar day   @ 8:18 PM
 
-Always verify webinar day, date, Zoom link, Zoom ID, and passcode before sending.`;
+Fill in Custom Values at the top of the SOP before copying any message.`;

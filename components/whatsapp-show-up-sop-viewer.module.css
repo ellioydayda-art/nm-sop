@@ -142,7 +142,7 @@
 .navBtn {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   width: 100%;
   text-align: left;
   padding: 9px 10px;
@@ -153,6 +153,33 @@
   font-size: 12px;
   color: #4a6b5c;
   transition: background 0.15s ease, color 0.15s ease;
+}
+
+.navTitle {
+  flex: 1;
+  min-width: 0;
+}
+
+.navStatus {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navStatusOk {
+  background: rgba(37, 211, 102, 0.2);
+  color: #128c7e;
+}
+
+.navStatusWarn {
+  background: rgba(245, 158, 11, 0.2);
+  color: #b45309;
 }
 
 :global(.dark) .navBtn {
@@ -211,6 +238,248 @@
   flex: 1;
   min-width: 0;
   padding: 24px 24px 48px 16px;
+}
+
+.valuesCard {
+  background: white;
+  border: 2px solid rgba(37, 211, 102, 0.35);
+  border-radius: 18px;
+  padding: 22px 24px;
+  margin-bottom: 28px;
+  box-shadow: 0 8px 32px rgba(7, 94, 84, 0.1);
+  scroll-margin-top: 88px;
+}
+
+:global(.dark) .valuesCard {
+  background: #0d1f18;
+}
+
+.valuesHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.valuesEyebrow {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #128c7e;
+  margin: 0 0 6px;
+}
+
+.valuesTitle {
+  font-size: 22px;
+  font-weight: 800;
+  color: #075e54;
+  margin: 0 0 8px;
+}
+
+:global(.dark) .valuesTitle {
+  color: #25d366;
+}
+
+.valuesDesc {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #5a7d6c;
+  margin: 0;
+  max-width: 560px;
+}
+
+.valuesActions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.valuesActionBtn {
+  padding: 9px 16px;
+  border-radius: 10px;
+  border: none;
+  background: #25d366;
+  color: #053d2e;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.valuesActionBtn:hover {
+  background: #1fb855;
+}
+
+.valuesActionBtnSecondary {
+  padding: 9px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(37, 211, 102, 0.35);
+  background: transparent;
+  color: #075e54;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+:global(.dark) .valuesActionBtnSecondary {
+  color: #25d366;
+}
+
+.valuesStatusRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.valuesStatusPill {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(37, 211, 102, 0.12);
+  color: #075e54;
+}
+
+.valuesStatusOk {
+  font-size: 12px;
+  font-weight: 700;
+  color: #059669;
+}
+
+.valuesStatusWarn {
+  font-size: 12px;
+  font-weight: 700;
+  color: #b45309;
+}
+
+.valuesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+.valueField {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.valueLabel {
+  font-size: 12px;
+  font-weight: 700;
+  color: #075e54;
+}
+
+:global(.dark) .valueLabel {
+  color: #8fd4b0;
+}
+
+.valueInput {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(37, 211, 102, 0.25);
+  background: #f8fdf9;
+  font-size: 13px;
+  color: #0e2a1f;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+:global(.dark) .valueInput {
+  background: #0a1510;
+  color: #e8f5ef;
+}
+
+.valueInput:focus {
+  outline: none;
+  border-color: #25d366;
+  box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.15);
+}
+
+.valueInputError {
+  border-color: #f59e0b;
+  background: #fffbeb;
+}
+
+:global(.dark) .valueInputError {
+  background: #1a1408;
+}
+
+.valueHint {
+  font-size: 11px;
+  color: #6b8f7c;
+  line-height: 1.4;
+}
+
+.valueError {
+  font-size: 11px;
+  font-weight: 600;
+  color: #b45309;
+  line-height: 1.4;
+}
+
+.errorBox {
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.errorBoxTitle {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 800;
+  color: #b91c1c;
+}
+
+.errorBox ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.errorBox li {
+  font-size: 12px;
+  line-height: 1.5;
+  color: #991b1b;
+  margin-bottom: 4px;
+}
+
+.metaPillOk {
+  background: rgba(37, 211, 102, 0.15) !important;
+  color: #059669 !important;
+  border-color: rgba(37, 211, 102, 0.35) !important;
+}
+
+.metaPillWarn {
+  background: rgba(245, 158, 11, 0.12) !important;
+  color: #b45309 !important;
+  border-color: rgba(245, 158, 11, 0.35) !important;
+}
+
+.copyBtnDisabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.copyBtnDisabled:hover {
+  background: #25d366;
+  transform: none !important;
+}
+
+.previewNote {
+  margin: 0;
+  padding: 10px 16px 14px;
+  font-size: 11px;
+  color: #b45309;
+  border-top: 1px solid rgba(245, 158, 11, 0.2);
+  background: rgba(245, 158, 11, 0.06);
 }
 
 .timelineCard {
@@ -285,8 +554,18 @@
   scroll-margin-top: 88px;
 }
 
+.messageCardSticker {
+  border: 2px solid #dc2626;
+  box-shadow: 0 6px 32px rgba(220, 38, 38, 0.15);
+}
+
 :global(.dark) .messageCard {
   background: #0d1f18;
+}
+
+:global(.dark) .messageCardSticker {
+  border-color: #ef4444;
+  box-shadow: 0 6px 32px rgba(239, 68, 68, 0.2);
 }
 
 .cardHeader {
@@ -312,6 +591,82 @@
   font-size: 13px;
   font-weight: 900;
   flex-shrink: 0;
+}
+
+.cardStepBadgeSticker {
+  background: #dc2626;
+  color: white;
+}
+
+.metaPillSticker {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: #dc2626;
+  color: white;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  animation: stickerPulse 2s ease-in-out infinite;
+}
+
+@keyframes stickerPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.85; }
+}
+
+.stickerCriticalBanner {
+  padding: 18px 20px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 2px solid #dc2626;
+  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.15);
+}
+
+:global(.dark) .stickerCriticalBanner {
+  background: linear-gradient(135deg, #2a0a0a 0%, #1a0505 100%);
+  border-color: #ef4444;
+}
+
+.stickerCriticalTitle {
+  margin: 0 0 10px;
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  color: #b91c1c;
+  text-transform: uppercase;
+}
+
+:global(.dark) .stickerCriticalTitle {
+  color: #fca5a5;
+}
+
+.stickerCriticalText {
+  margin: 0 0 12px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #7f1d1d;
+}
+
+:global(.dark) .stickerCriticalText {
+  color: #fecaca;
+}
+
+.stickerCriticalList {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.stickerCriticalList li {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.55;
+  color: #991b1b;
+  margin-bottom: 6px;
+}
+
+:global(.dark) .stickerCriticalList li {
+  color: #fca5a5;
 }
 
 .cardTitleBlock {
@@ -432,8 +787,22 @@
   background: #f8fdf9;
 }
 
+.imageBlockSticker {
+  border: 2px dashed #dc2626;
+  background: #fff5f5;
+}
+
 :global(.dark) .imageBlock {
   background: #0a1510;
+}
+
+:global(.dark) .imageBlockSticker {
+  background: #1a0808;
+  border-color: #ef4444;
+}
+
+.imagePreviewWrap {
+  position: relative;
 }
 
 .imagePreview {
@@ -442,6 +811,85 @@
   object-fit: contain;
   display: block;
   background: #eef8f1;
+  user-select: none;
+}
+
+.imageOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.35);
+  color: white;
+  font-size: clamp(20px, 4vw, 32px);
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  pointer-events: none;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.noDownloadBar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #991b1b;
+}
+
+:global(.dark) .noDownloadBar {
+  background: #2a0a0a;
+  border-color: #7f1d1d;
+  color: #fca5a5;
+}
+
+.noDownloadIcon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.stickerNoteBox {
+  padding: 16px 18px;
+  border-radius: 12px;
+  background: #fef2f2;
+  border: 2px solid #f87171;
+}
+
+:global(.dark) .stickerNoteBox {
+  background: #1f0a0a;
+  border-color: #dc2626;
+}
+
+.stickerNoteBoxTitle {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #b91c1c;
+}
+
+.stickerNoteBox p:not(.stickerNoteBoxTitle) {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.55;
+  color: #991b1b;
+}
+
+:global(.dark) .stickerNoteBox p:not(.stickerNoteBoxTitle) {
+  color: #fca5a5;
+}
+
+.stickerNoteBox p:last-child {
+  margin-bottom: 0;
 }
 
 .imageActions {
