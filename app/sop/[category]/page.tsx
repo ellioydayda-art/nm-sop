@@ -18,6 +18,7 @@ import whatsappCommunityDrJasmineShowUpSOP from '@/data/sop/whatsapp-community-d
 import Navbar from '@/components/Navbar';
 import SopViewer from '@/components/SopViewer';
 import PromptCopySopViewer from '@/components/PromptCopySopViewer';
+import WhatsappShowUpSopViewer from '@/components/WhatsappShowUpSopViewer';
 import StraightToKillSop from '@/components/StraightToKillSop';
 import CustomerSupportSop from '@/components/CustomerSupportSop';
 import type { SOPDoc } from '@/data/sop/meta-ads';
@@ -66,6 +67,15 @@ export default async function SopPage({ params }: { params: { category: string }
       <div className="min-h-screen bg-[var(--bg)]">
         <Navbar user={{ name: user.name, email: user.email, role: user.role }} />
         <CustomerSupportSop category={category} />
+      </div>
+    );
+  }
+
+  if (params.category === 'whatsapp-community-dr-jasmine-show-up') {
+    return (
+      <div className="min-h-screen bg-[var(--bg)]">
+        <Navbar user={{ name: user.name, email: user.email, role: user.role }} />
+        <WhatsappShowUpSopViewer category={category} />
       </div>
     );
   }

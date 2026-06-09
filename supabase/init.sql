@@ -38,7 +38,7 @@ values
   ('client-onboarding', 'Client Onboarding', 'Operations', 'Step-by-step client intake, access handover, and first-week checklist.', '#0ea5e9'),
   ('customer-support', 'Customer Support', 'Support', 'How we handle customer chats, reminders, and common questions.', '#f43f5e'),
   ('whatsapp-community-value-posts', '[Dr Jasmine] WhatsApp Community — Value Posts', 'Community', 'AI prompt and writing rules for Dr Jasmine WhatsApp value posts: frameworks, hooks, tone, workflow, and topic rotation.', '#25D366'),
-  ('whatsapp-community-dr-jasmine-show-up', '[Dr Jasmine] WhatsApp Community — Show Up', 'Community', 'How to drive show-up rates for Dr Jasmine WhatsApp community sessions: reminders, engagement, and pre-session prep.', '#128C7E'),
+  ('whatsapp-community-dr-jasmine-show-up', '[Dr Jasmine] WhatsApp Community — Show Up', 'Community', 'Pre-webinar WhatsApp community message sequence: when to send, what to update, images, and copy-paste templates.', '#25D366'),
   ('automaticsales-overview', 'AutomaticSales — Overview', 'AutomaticSales', 'What AutomaticSales is, how our webinar pipeline works, and how to navigate this SOP.', '#7c3aed'),
   ('automaticsales-session-update', 'AutomaticSales — Session Update', 'AutomaticSales', 'The recurring pre-session checklist: Zoom setup, custom values, Google Sheet, and verification.', '#f59e0b'),
   ('automaticsales-waba', 'AutomaticSales — WABA & Email', 'AutomaticSales', 'Reminder systems, the marketing/utility fallback, fail rates, and manual blast procedure.', '#10b981'),

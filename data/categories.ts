@@ -82,9 +82,9 @@ export const CATEGORIES: Category[] = [
     slug: 'whatsapp-community-dr-jasmine-show-up',
     name: '[Dr Jasmine] WhatsApp Community — Show Up',
     department: 'Community',
-    description: 'How to drive show-up rates for Dr Jasmine WhatsApp community sessions: reminders, engagement, and pre-session prep.',
+    description: 'Pre-webinar WhatsApp community message sequence: when to send, what to update, images, and copy-paste templates.',
     accent: 'green',
-    accentHex: '#128C7E',
-    accentBg: 'bg-teal-500/10 border-teal-500/20',
+    accentHex: '#25D366',
+    accentBg: 'bg-emerald-500/10 border-emerald-500/20',
   },
 ];
