@@ -4,11 +4,13 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
-  COMMUNITY_CALENDAR_DAYS,
+  COMBINED_COMMUNITY_SCHEDULE,
   DR_JASMINE_SHOW_UP_MESSAGES,
   SHOW_UP_SCHEDULE_SUMMARY,
-  VALUE_POST_SLOT_RULES,
+  VALUE_POST_ALTERNATE_RULE,
+  VALUE_POST_FIXED_SLOTS,
   VALUE_POST_SOP_SLUG,
+  type CombinedScheduleItem,
 } from "@/data/sop/dr-jasmine-show-up-messages";
 import {
   DEFAULT_SHOW_UP_VALUES,
@@ -151,6 +153,19 @@ export default function WhatsappShowUpSopViewer({ category }: WhatsappShowUpSopV
 
   const copyableSteps = DR_JASMINE_SHOW_UP_MESSAGES.filter(step => step.message.trim());
   const messagesReady = copyableSteps.filter(step => stepResults.get(step.id)?.ok).length;
+
+  const scheduleByDay = useMemo(() => {
+    const groups: { day: string; items: CombinedScheduleItem[] }[] = [];
+    for (const item of COMBINED_COMMUNITY_SCHEDULE) {
+      const last = groups[groups.length - 1];
+      if (last && last.day === item.day) {
+        last.items.push(item);
+      } else {
+        groups.push({ day: item.day, items: [item] });
+      }
+    }
+    return groups;
+  }, []);
 
   const fieldsWithErrors = SHOW_UP_VALUE_FIELDS.filter(
     field => validateShowUpValue(field.key, values[field.key]) !== null
@@ -513,82 +528,71 @@ export default function WhatsappShowUpSopViewer({ category }: WhatsappShowUpSopV
               </div>
 
               <div className={styles.valuePostRules}>
-                <p className={styles.valuePostRulesTitle}>Value post slots</p>
-                <div className={styles.valuePostRuleChips}>
-                  {VALUE_POST_SLOT_RULES.map(rule => (
-                    <span key={rule} className={styles.valuePostRuleChip}>{rule}</span>
+                <p className={styles.valuePostRulesTitle}>Fixed value post slots</p>
+                <ul className={styles.valuePostRulesList}>
+                  {VALUE_POST_FIXED_SLOTS.map(rule => (
+                    <li key={rule}>{rule}</li>
                   ))}
-                </div>
+                </ul>
               </div>
 
-              <div className={styles.postingCalendar}>
-                <div className={styles.postingCalendarHead}>
-                  <p className={styles.postingCalendarTitle}>Posting calendar</p>
-                  <div className={styles.postingCalendarLegend}>
-                    <span className={styles.legendShowUp} />
-                    <span>Show Up</span>
-                    <span className={styles.legendValuePost} />
-                    <span>Value Post</span>
+              <div className={styles.alternateDayBanner} role="alert">
+                <p className={styles.alternateDayTitle}>{VALUE_POST_ALTERNATE_RULE.title}</p>
+                <p className={styles.alternateDayBody}>{VALUE_POST_ALTERNATE_RULE.body}</p>
+              </div>
+
+              <div className={styles.combinedTimeline}>
+                <div className={styles.combinedTimelineHead}>
+                  <p className={styles.combinedTimelineTitle}>Full posting schedule</p>
+                  <div className={styles.combinedTimelineLegend}>
+                    <span className={styles.legendShowUp}>Show Up</span>
+                    <span className={styles.legendValuePost}>Value Post</span>
                   </div>
                 </div>
 
-                <div className={styles.calendarScroll}>
-                  <div className={styles.calendarGrid}>
-                    {COMMUNITY_CALENDAR_DAYS.map(column => (
-                      <div
-                        key={column.id}
-                        className={`${styles.calendarDay} ${column.highlight ? styles.calendarDayLive : ""}`}
-                      >
-                        <div className={styles.calendarDayHead}>
-                          <span className={`${styles.calendarBadge} ${column.highlight ? styles.calendarBadgeLive : ""}`}>
-                            {column.badge}
-                          </span>
-                          <span className={styles.calendarDayLabel}>{column.label}</span>
-                        </div>
-
-                        <div className={styles.calendarEvents}>
-                          {column.events.map(event => {
-                            const eventClass =
-                              event.type === "show-up" ? styles.calendarEventShowUp : styles.calendarEventValue;
-
-                            if (event.stepId) {
-                              return (
-                                <button
-                                  key={`${column.id}-${event.time}-${event.title}`}
-                                  type="button"
-                                  onClick={() => scrollTo(event.stepId ?? "")}
-                                  className={`${styles.calendarEvent} ${eventClass}`}
-                                >
-                                  <span className={styles.calendarEventTime}>{event.time}</span>
-                                  <span className={styles.calendarEventTitle}>{event.title}</span>
-                                </button>
-                              );
-                            }
-
-                            return (
-                              <Link
-                                key={`${column.id}-${event.time}-${event.title}`}
-                                href={`/sop/${VALUE_POST_SOP_SLUG}`}
-                                className={`${styles.calendarEvent} ${eventClass}`}
-                              >
-                                <span className={styles.calendarEventTime}>{event.time}</span>
-                                <span className={styles.calendarEventTitle}>{event.title}</span>
-                              </Link>
-                            );
-                          })}
-                        </div>
-
-                        {column.hint ? (
-                          <p className={styles.calendarDayHint}>{column.hint}</p>
-                        ) : null}
+                <div className={styles.scheduleDayGroups}>
+                  {scheduleByDay.map(group => (
+                    <div key={group.day} className={styles.scheduleDayGroup}>
+                      <div className={styles.scheduleDayHeader}>
+                        <span className={styles.scheduleDayLabel}>{group.day}</span>
                       </div>
-                    ))}
-                  </div>
+                      <div className={styles.scheduleDayItems}>
+                        {group.items.map(item => (
+                          <div
+                            key={`${group.day}-${item.time}-${item.label}`}
+                            className={`${styles.scheduleRow} ${item.type === "show-up" ? styles.scheduleRowShowUp : styles.scheduleRowValuePost}`}
+                          >
+                            <span className={styles.scheduleRowTime}>{item.time}</span>
+                            <div className={styles.scheduleRowBody}>
+                              <div className={styles.scheduleRowTop}>
+                                <span className={styles.scheduleRowTitle}>{item.label}</span>
+                                <span className={styles.scheduleRowType}>
+                                  {item.type === "show-up" ? "Show Up" : "Value Post"}
+                                </span>
+                              </div>
+                              {item.note ? (
+                                <p className={styles.scheduleRowNote}>{item.note}</p>
+                              ) : null}
+                              {item.stepId ? (
+                                <button
+                                  type="button"
+                                  onClick={() => scrollTo(item.stepId ?? "")}
+                                  className={styles.scheduleRowAction}
+                                >
+                                  Jump to message →
+                                </button>
+                              ) : (
+                                <Link href={`/sop/${VALUE_POST_SOP_SLUG}`} className={styles.scheduleRowAction}>
+                                  Open Value Post SOP →
+                                </Link>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
                 </div>
-
-                <p className={styles.calendarFootnote}>
-                  Tap an event to jump to its message or open the Value Post SOP. Count days back from your webinar date.
-                </p>
               </div>
             </section>
 

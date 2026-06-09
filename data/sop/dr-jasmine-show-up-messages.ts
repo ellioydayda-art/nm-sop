@@ -304,70 +304,7 @@ export interface CombinedScheduleItem {
   stepId?: string;
 }
 
-export interface CalendarDayColumn {
-  id: string;
-  badge: string;
-  label: string;
-  hint?: string;
-  highlight?: boolean;
-  events: {
-    time: string;
-    title: string;
-    type: "show-up" | "value-post";
-    stepId?: string;
-  }[];
-}
-
-/** Day-column calendar: show-up reminders + value posts at a glance. */
-export const COMMUNITY_CALENDAR_DAYS: CalendarDayColumn[] = [
-  {
-    id: "d-4",
-    badge: "D-4",
-    label: "4 days before",
-    events: [{ time: "3:00 PM", title: "Welcome", type: "show-up", stepId: "welcome" }],
-  },
-  {
-    id: "d-3",
-    badge: "D-3",
-    label: "3 days before",
-    events: [{ time: "11:00 AM", title: "Value Post", type: "value-post" }],
-  },
-  {
-    id: "d-2",
-    badge: "D-2",
-    label: "2 days before",
-    hint: "Other gap days: value post every other day",
-    events: [{ time: "3:00 PM", title: "2-Day Countdown", type: "show-up", stepId: "2day-countdown" }],
-  },
-  {
-    id: "d-1",
-    badge: "D-1",
-    label: "1 day before",
-    events: [
-      { time: "11:00 AM", title: "Value Post", type: "value-post" },
-      { time: "8:00 PM", title: "1-Day Countdown", type: "show-up", stepId: "1day-countdown" },
-    ],
-  },
-  {
-    id: "live",
-    badge: "LIVE",
-    label: "Webinar day",
-    highlight: true,
-    events: [
-      { time: "11:00 AM", title: "Starting Soon", type: "show-up", stepId: "starting-soon" },
-      { time: "7:58 PM", title: "LIVE NOW", type: "show-up", stepId: "live-now" },
-      { time: "8:18 PM", title: "Sticker", type: "show-up", stepId: "live-sticker" },
-    ],
-  },
-  {
-    id: "d-plus-1",
-    badge: "D+1",
-    label: "Day after live",
-    events: [{ time: "11:00 AM", title: "Value Post", type: "value-post" }],
-  },
-];
-
-/** @deprecated Use COMMUNITY_CALENDAR_DAYS for UI */
+/** Full community schedule: show-up reminders + value posts in order. */
 export const COMBINED_COMMUNITY_SCHEDULE: CombinedScheduleItem[] = [
   { day: "4 days before webinar", time: "3:00 PM", type: "show-up", label: "01 Welcome", stepId: "welcome" },
   { day: "3 days before webinar", time: "11:00 AM", type: "value-post", label: "Value Post", note: "1 day after Welcome Post" },
@@ -380,11 +317,15 @@ export const COMBINED_COMMUNITY_SCHEDULE: CombinedScheduleItem[] = [
   { day: "Day after live", time: "11:00 AM", type: "value-post", label: "Value Post", note: "Post-webinar follow-up" },
 ];
 
-export const VALUE_POST_SLOT_RULES: string[] = [
-  "D-3 · 11am — 1 day after Welcome",
-  "D-1 · 11am — morning before webinar",
-  "D+1 · 11am — day after live",
-  "Gap days — value post every other day",
+export const VALUE_POST_FIXED_SLOTS: string[] = [
+  "1 day after Welcome Post → 11:00 AM",
+  "Morning 11:00 AM on 1-day before webinar",
+  "Day after live → 11:00 AM",
 ];
+
+export const VALUE_POST_ALTERNATE_RULE = {
+  title: "Every other day — still post a Value Post",
+  body: "On all other pre-webinar days that are NOT listed in the fixed slots above, post one Value Post every alternate day (Mon/Wed/Fri style — skip a day, post the next).",
+};
 
 export const VALUE_POST_SOP_SLUG = "whatsapp-community-value-posts";
