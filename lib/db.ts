@@ -23,6 +23,7 @@ export interface Category {
   description: string;
   accentHex: string;
   inactive?: boolean;
+  cardLabel?: string;
 }
 
 /** Raw shape returned by the profiles table. */
@@ -72,8 +73,16 @@ function mapCategoryRow(row: CategoryRow): Category {
 
 function applyBuiltinFlags(category: Category): Category {
   const builtin = BUILTIN_CATEGORIES.find((entry) => entry.slug === category.slug);
-  if (!builtin?.inactive) return category;
-  return { ...category, inactive: true };
+  if (!builtin) return category;
+  return {
+    ...category,
+    name: builtin.name,
+    department: builtin.department,
+    description: builtin.description,
+    accentHex: builtin.accentHex,
+    inactive: builtin.inactive ? true : category.inactive,
+    cardLabel: builtin.cardLabel,
+  };
 }
 
 /** Ensures categories in data/categories.ts always appear even if not yet in DB. */
@@ -88,6 +97,7 @@ function mergeCategoriesWithBuiltins(dbCategories: Category[]): Category[] {
         description: b.description,
         accentHex: b.accentHex,
         inactive: b.inactive,
+        cardLabel: b.cardLabel,
       });
     }
   }

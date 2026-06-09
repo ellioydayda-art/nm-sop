@@ -21,10 +21,18 @@ interface CategoryRealtimeRow {
   accent_hex: string;
 }
 
-function withInactiveFlag(category: Category): Category {
+function withBuiltinFields(category: Category): Category {
   const builtin = BUILTIN_CATEGORIES.find((entry) => entry.slug === category.slug);
-  if (!builtin?.inactive) return category;
-  return { ...category, inactive: true };
+  if (!builtin) return category;
+  return {
+    ...category,
+    name: builtin.name,
+    department: builtin.department,
+    description: builtin.description,
+    accentHex: builtin.accentHex,
+    inactive: builtin.inactive ? true : category.inactive,
+    cardLabel: builtin.cardLabel,
+  };
 }
 
 export default function DashboardContent({ user, initialCategories }: DashboardContentProps) {
@@ -43,7 +51,7 @@ export default function DashboardContent({ user, initialCategories }: DashboardC
           if (!user.categories.includes('*') && !user.categories.includes(next.slug)) return;
           setCategories(prev => {
             const exists = prev.some(cat => cat.slug === next.slug);
-            const mapped = withInactiveFlag({
+            const mapped = withBuiltinFields({
               slug: next.slug,
               name: next.name,
               department: next.department,
@@ -70,7 +78,7 @@ export default function DashboardContent({ user, initialCategories }: DashboardC
           const nextCategories = Array.isArray(data.categories) ? (data.categories as Category[]) : [];
           const visible = nextCategories
             .filter(category => user.categories.includes('*') || user.categories.includes(category.slug))
-            .map(withInactiveFlag);
+            .map(withBuiltinFields);
           setCategories(visible);
         })
         .catch(() => {
@@ -182,18 +190,34 @@ export default function DashboardContent({ user, initialCategories }: DashboardC
                           >
                             <CategoryIcon slug={cat.slug} size={18} style={{ color: cat.accentHex } as React.CSSProperties} />
                           </div>
-                          <span
-                            className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full border ${
-                              cat.inactive ? 'opacity-50' : ''
-                            }`}
-                            style={{
-                              color: cat.accentHex,
-                              backgroundColor: `${cat.accentHex}14`,
-                              borderColor: `${cat.accentHex}30`,
-                            }}
-                          >
-                            {cat.department}
-                          </span>
+                          <div className="flex flex-col items-end gap-1.5">
+                            {cat.cardLabel ? (
+                              <span
+                                className={`text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full border ${
+                                  cat.inactive ? 'opacity-50' : ''
+                                }`}
+                                style={{
+                                  color: cat.accentHex,
+                                  backgroundColor: `${cat.accentHex}22`,
+                                  borderColor: `${cat.accentHex}55`,
+                                }}
+                              >
+                                {cat.cardLabel}
+                              </span>
+                            ) : null}
+                            <span
+                              className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full border ${
+                                cat.inactive ? 'opacity-50' : ''
+                              }`}
+                              style={{
+                                color: cat.accentHex,
+                                backgroundColor: `${cat.accentHex}14`,
+                                borderColor: `${cat.accentHex}30`,
+                              }}
+                            >
+                              {cat.department}
+                            </span>
+                          </div>
                         </div>
 
                         <h3 className={`font-semibold text-base mb-1.5 leading-snug transition-colors duration-200 ${

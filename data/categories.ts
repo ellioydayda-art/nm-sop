@@ -5,6 +5,8 @@ export interface Category {
   description: string;
   /** When true, the SOP is shown as archived / not in active use. */
   inactive?: boolean;
+  /** Short label on dashboard card to tell similar SOPs apart (e.g. "AI Prompt"). */
+  cardLabel?: string;
   // Tailwind color accent for the card (used in CSS classes)
   accent: string;         // e.g. 'brand'
   accentHex: string;      // literal hex for inline styles
@@ -71,20 +73,22 @@ export const CATEGORIES: Category[] = [
   },
   {
     slug: 'whatsapp-community-value-posts',
-    name: '[Dr Jasmine] WhatsApp Community — Value Posts',
+    name: 'Dr Jasmine · Value Post Prompt',
+    cardLabel: 'AI Writing',
     department: 'Community',
-    description: 'AI prompt and writing rules for Dr Jasmine WhatsApp value posts: frameworks, hooks, tone, workflow, and topic rotation.',
+    description: 'Copy-paste AI prompt for WhatsApp value posts: frameworks, hooks, tone, workflow, and topic rotation.',
     accent: 'green',
     accentHex: '#25D366',
     accentBg: 'bg-emerald-500/10 border-emerald-500/20',
   },
   {
     slug: 'whatsapp-community-dr-jasmine-show-up',
-    name: '[Dr Jasmine] WhatsApp Community — Show Up',
+    name: 'Dr Jasmine · Show Up Sequence',
+    cardLabel: '6 Messages',
     department: 'Community',
-    description: 'Pre-webinar WhatsApp community message sequence: when to send, what to update, images, and copy-paste templates.',
-    accent: 'green',
-    accentHex: '#25D366',
-    accentBg: 'bg-emerald-500/10 border-emerald-500/20',
+    description: 'Pre-webinar reminder sequence: when to send, custom values, images, and copy-paste templates for each step.',
+    accent: 'teal',
+    accentHex: '#075E54',
+    accentBg: 'bg-teal-800/10 border-teal-800/20',
   },
 ];
