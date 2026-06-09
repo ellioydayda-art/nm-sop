@@ -3,7 +3,13 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { DR_JASMINE_SHOW_UP_MESSAGES, SHOW_UP_SCHEDULE_SUMMARY } from "@/data/sop/dr-jasmine-show-up-messages";
+import {
+  COMBINED_COMMUNITY_SCHEDULE,
+  DR_JASMINE_SHOW_UP_MESSAGES,
+  SHOW_UP_SCHEDULE_SUMMARY,
+  VALUE_POST_SLOT_RULES,
+  VALUE_POST_SOP_SLUG,
+} from "@/data/sop/dr-jasmine-show-up-messages";
 import {
   DEFAULT_SHOW_UP_VALUES,
   SHOW_UP_EXAMPLE_VALUES,
@@ -16,7 +22,7 @@ import {
   validateStepMessage,
   type ShowUpCustomValues,
 } from "@/lib/show-up-template";
-import { IconArrowLeft, IconCheck, IconCopy, IconDownload } from "./Icons";
+import { IconArrowLeft, IconCheck, IconChevronRight, IconCopy, IconDownload } from "./Icons";
 import styles from "./whatsapp-show-up-sop-viewer.module.css";
 
 interface WhatsappShowUpSopViewerCategory {
@@ -202,6 +208,13 @@ export default function WhatsappShowUpSopViewer({ category }: WhatsappShowUpSopV
               >
                 {scheduleCopied ? <IconCheck size={14} /> : <IconCopy size={14} />}
                 {scheduleCopied ? "Schedule copied" : "Copy full schedule"}
+              </button>
+              <button
+                type="button"
+                onClick={() => scrollTo("value-post-slots")}
+                className={styles.valuePostNavBtn}
+              >
+                Value Post slots
               </button>
             </div>
           </aside>
@@ -482,6 +495,75 @@ export default function WhatsappShowUpSopViewer({ category }: WhatsappShowUpSopV
                 </article>
               );
             })}
+
+            <section className={styles.valuePostSection} id="value-post-slots">
+              <div className={styles.valuePostSectionHeader}>
+                <div>
+                  <p className={styles.valuePostEyebrow}>Slot in between reminders</p>
+                  <h2 className={styles.valuePostTitle}>When to Post Value Posts</h2>
+                  <p className={styles.valuePostDesc}>
+                    Show Up messages drive attendance. Value Posts warm the community in between.
+                    Use the schedule below to see where each value post fits around the reminder sequence.
+                  </p>
+                </div>
+                <Link href={`/sop/${VALUE_POST_SOP_SLUG}`} className={styles.valuePostSopLink}>
+                  <span>Value Post Prompt SOP</span>
+                  <IconChevronRight size={14} />
+                </Link>
+              </div>
+
+              <div className={styles.valuePostRules}>
+                <p className={styles.valuePostRulesTitle}>When to post extra Value Post</p>
+                <ul className={styles.valuePostRulesList}>
+                  {VALUE_POST_SLOT_RULES.map(rule => (
+                    <li key={rule}>{rule}</li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className={styles.combinedTimeline}>
+                <p className={styles.combinedTimelineTitle}>Full community posting calendar</p>
+                <div className={styles.combinedTimelineLegend}>
+                  <span className={styles.legendShowUp}>Show Up reminder</span>
+                  <span className={styles.legendValuePost}>Value Post</span>
+                </div>
+                <div className={styles.combinedTimelineList}>
+                  {COMBINED_COMMUNITY_SCHEDULE.map(item => (
+                    <div
+                      key={`${item.day}-${item.time}-${item.label}`}
+                      className={`${styles.combinedTimelineRow} ${item.type === "show-up" ? styles.combinedRowShowUp : styles.combinedRowValuePost}`}
+                    >
+                      <div className={styles.combinedTimelineMeta}>
+                        <span className={styles.combinedTimelineDay}>{item.day}</span>
+                        <span className={styles.combinedTimelineTime}>{item.time}</span>
+                      </div>
+                      <div className={styles.combinedTimelineBody}>
+                        <span className={styles.combinedTimelineType}>
+                          {item.type === "show-up" ? "Show Up" : "Value Post"}
+                        </span>
+                        <span className={styles.combinedTimelineLabel}>{item.label}</span>
+                        {item.note ? (
+                          <span className={styles.combinedTimelineNote}>{item.note}</span>
+                        ) : null}
+                        {item.stepId ? (
+                          <button
+                            type="button"
+                            onClick={() => scrollTo(item.stepId ?? "")}
+                            className={styles.combinedTimelineJump}
+                          >
+                            Jump to message
+                          </button>
+                        ) : item.type === "value-post" ? (
+                          <Link href={`/sop/${VALUE_POST_SOP_SLUG}`} className={styles.combinedTimelineJump}>
+                            Open Value Post SOP
+                          </Link>
+                        ) : null}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
 
             <div className={styles.footer}>
               <Link href="/dashboard" className={styles.footerBack}>

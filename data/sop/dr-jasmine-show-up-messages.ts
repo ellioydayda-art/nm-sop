@@ -294,3 +294,34 @@ export const SHOW_UP_SCHEDULE_SUMMARY = `Dr Jasmine WhatsApp Community Show Up S
 06 Live Sticker     → Webinar day   @ 8:18 PM
 
 Fill in Custom Values at the top of the SOP before copying any message.`;
+
+export interface CombinedScheduleItem {
+  day: string;
+  time: string;
+  type: "show-up" | "value-post";
+  label: string;
+  note?: string;
+  stepId?: string;
+}
+
+/** Full community calendar: show-up reminders + where value posts slot in. */
+export const COMBINED_COMMUNITY_SCHEDULE: CombinedScheduleItem[] = [
+  { day: "4 days before webinar", time: "3:00 PM", type: "show-up", label: "01 Welcome", stepId: "welcome" },
+  { day: "3 days before webinar", time: "11:00 AM", type: "value-post", label: "Value Post", note: "1 day after Welcome Post" },
+  { day: "2 days before webinar", time: "3:00 PM", type: "show-up", label: "02 2-Day Countdown", stepId: "2day-countdown" },
+  { day: "1 day before webinar", time: "11:00 AM", type: "value-post", label: "Value Post", note: "Morning of 1-day before" },
+  { day: "1 day before webinar", time: "8:00 PM", type: "show-up", label: "03 1-Day Countdown", stepId: "1day-countdown" },
+  { day: "Webinar day", time: "11:00 AM", type: "show-up", label: "04 Starting Soon", stepId: "starting-soon" },
+  { day: "Webinar day", time: "7:58 PM", type: "show-up", label: "05 LIVE NOW", stepId: "live-now" },
+  { day: "Webinar day", time: "8:18 PM", type: "show-up", label: "06 Sticker", stepId: "live-sticker" },
+  { day: "Day after live", time: "11:00 AM", type: "value-post", label: "Value Post", note: "Post-webinar follow-up" },
+];
+
+export const VALUE_POST_SLOT_RULES: string[] = [
+  "1 day after Welcome Post → 11:00 AM",
+  "Morning 11:00 AM on 1-day before webinar",
+  "Day after live → 11:00 AM",
+  "All other days in the pre-webinar window → alternate days (one value post every other day)",
+];
+
+export const VALUE_POST_SOP_SLUG = "whatsapp-community-value-posts";

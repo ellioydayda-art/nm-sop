@@ -234,6 +234,27 @@
   background: rgba(37, 211, 102, 0.16);
 }
 
+.valuePostNavBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-top: 8px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px dashed rgba(37, 211, 102, 0.45);
+  background: rgba(37, 211, 102, 0.06);
+  color: #128c7e;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.valuePostNavBtn:hover {
+  background: rgba(37, 211, 102, 0.14);
+}
+
 .main {
   flex: 1;
   min-width: 0;
@@ -1022,6 +1043,270 @@
 
 .footerBack:hover {
   color: #075e54;
+}
+
+.valuePostSection {
+  background: white;
+  border: 1px solid rgba(37, 211, 102, 0.25);
+  border-radius: 18px;
+  padding: 24px 26px;
+  margin-bottom: 28px;
+  box-shadow: 0 6px 28px rgba(7, 94, 84, 0.07);
+  scroll-margin-top: 88px;
+}
+
+:global(.dark) .valuePostSection {
+  background: #0d1f18;
+}
+
+.valuePostSectionHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.valuePostEyebrow {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #25d366;
+  margin: 0 0 6px;
+}
+
+.valuePostTitle {
+  font-size: 22px;
+  font-weight: 800;
+  color: #075e54;
+  margin: 0 0 8px;
+}
+
+:global(.dark) .valuePostTitle {
+  color: #25d366;
+}
+
+.valuePostDesc {
+  font-size: 13px;
+  line-height: 1.65;
+  color: #5a7d6c;
+  margin: 0;
+  max-width: 560px;
+}
+
+.valuePostSopLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: #25d366;
+  color: #053d2e;
+  font-size: 12px;
+  font-weight: 800;
+  text-decoration: none;
+  transition: background 0.15s ease, transform 0.15s ease;
+  flex-shrink: 0;
+}
+
+.valuePostSopLink:hover {
+  background: #1fb855;
+  transform: translateY(-1px);
+}
+
+.valuePostRules {
+  padding: 16px 18px;
+  border-radius: 14px;
+  background: rgba(37, 211, 102, 0.08);
+  border: 1px solid rgba(37, 211, 102, 0.22);
+  margin-bottom: 20px;
+}
+
+.valuePostRulesTitle {
+  margin: 0 0 10px;
+  font-size: 13px;
+  font-weight: 800;
+  color: #075e54;
+}
+
+:global(.dark) .valuePostRulesTitle {
+  color: #25d366;
+}
+
+.valuePostRulesList {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.valuePostRulesList li {
+  font-size: 13px;
+  line-height: 1.55;
+  color: #2d4a3c;
+  margin-bottom: 6px;
+}
+
+:global(.dark) .valuePostRulesList li {
+  color: #b8d4c4;
+}
+
+.combinedTimelineTitle {
+  margin: 0 0 12px;
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #075e54;
+}
+
+:global(.dark) .combinedTimelineTitle {
+  color: #8fd4b0;
+}
+
+.combinedTimelineLegend {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.legendShowUp,
+.legendValuePost {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+.legendShowUp {
+  background: rgba(7, 94, 84, 0.12);
+  color: #075e54;
+  border: 1px solid rgba(7, 94, 84, 0.25);
+}
+
+.legendValuePost {
+  background: rgba(37, 211, 102, 0.12);
+  color: #128c7e;
+  border: 1px solid rgba(37, 211, 102, 0.3);
+}
+
+.combinedTimelineList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.combinedTimelineRow {
+  display: flex;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+}
+
+.combinedRowShowUp {
+  background: rgba(7, 94, 84, 0.06);
+  border-color: rgba(7, 94, 84, 0.18);
+}
+
+.combinedRowValuePost {
+  background: rgba(37, 211, 102, 0.08);
+  border-color: rgba(37, 211, 102, 0.22);
+}
+
+.combinedTimelineMeta {
+  flex-shrink: 0;
+  width: 130px;
+}
+
+.combinedTimelineDay {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: #5a7d6c;
+  margin-bottom: 2px;
+}
+
+.combinedTimelineTime {
+  display: block;
+  font-size: 13px;
+  font-weight: 800;
+  color: #0e2a1f;
+}
+
+:global(.dark) .combinedTimelineTime {
+  color: #e8f5ef;
+}
+
+.combinedTimelineBody {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.combinedTimelineType {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.combinedRowShowUp .combinedTimelineType {
+  background: #075e54;
+  color: white;
+}
+
+.combinedRowValuePost .combinedTimelineType {
+  background: #25d366;
+  color: #053d2e;
+}
+
+.combinedTimelineLabel {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0e2a1f;
+}
+
+:global(.dark) .combinedTimelineLabel {
+  color: #e8f5ef;
+}
+
+.combinedTimelineNote {
+  font-size: 12px;
+  color: #6b8f7c;
+  width: 100%;
+}
+
+.combinedTimelineJump {
+  font-size: 11px;
+  font-weight: 700;
+  color: #075e54;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.combinedTimelineJump:hover {
+  color: #25d366;
+}
+
+@media (max-width: 640px) {
+  .combinedTimelineRow {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .combinedTimelineMeta {
+    width: 100%;
+  }
 }
 
 @media (max-width: 900px) {
