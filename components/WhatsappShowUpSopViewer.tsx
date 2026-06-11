@@ -493,7 +493,9 @@ export default function WhatsappShowUpSopViewer({ category, config }: WhatsappSh
                           </pre>
                           {!canCopy && getPlaceholdersInTemplate(step.message).length > 0 ? (
                             <p className={styles.previewNote}>
-                              Blanks like {"{{WORKSHOP_DAY}}"} will be replaced once Custom Values are filled correctly.
+                              {step.id === "welcome" && config.theme.id === "cae"
+                                ? "Fill Webinar date above for the 🗓️ line (e.g. Monday, June 15, 2026)."
+                                : `Blanks like ${getPlaceholdersInTemplate(step.message).join(", ")} will be replaced once Custom Values are filled correctly.`}
                             </p>
                           ) : null}
                         </div>

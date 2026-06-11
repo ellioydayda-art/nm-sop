@@ -30,12 +30,27 @@ export function fillShowUpTemplate(
   values: ShowUpCustomValues,
   placeholderMap: Record<string, string>,
 ): string {
+  const resolved = resolveShowUpValues(values);
   let result = template;
   for (const [token, key] of Object.entries(placeholderMap)) {
-    const value = values[key];
+    const value = resolved[key];
     result = result.split(token).join(value ? trim(value) : "");
   }
   return result;
+}
+
+/** Fills derived fields so Welcome date line works from the right custom value. */
+export function resolveShowUpValues(values: ShowUpCustomValues): ShowUpCustomValues {
+  const resolved = { ...values };
+
+  if ("sessionDate" in resolved && !trim(resolved.sessionDate ?? "")) {
+    const workshopDay = trim(resolved.workshopDay ?? "");
+    if (workshopDay.includes(",")) {
+      resolved.sessionDate = workshopDay;
+    }
+  }
+
+  return resolved;
 }
 
 export function validateShowUpValue(
@@ -64,8 +79,8 @@ export function validateShowUpValue(
       if (!isValidUrl(v)) return "Enter a valid http:// or https:// URL";
       return null;
     case "sessionDate":
-      if (!v) return "Session date is required";
-      if (v.length < 6) return "Enter full date (e.g. Jun 9, 2026)";
+      if (!v) return "Webinar date is required";
+      if (v.length < 6) return "Enter full date (e.g. Monday, June 15, 2026)";
       return null;
     case "sessionTime":
       if (!v) return "Session time is required";
@@ -91,6 +106,7 @@ export function validateStepMessage(
   config: ShowUpSopConfig,
 ): { ok: boolean; errors: string[]; filled: string } {
   const errors: string[] = [];
+  const resolved = resolveShowUpValues(values);
   const placeholders = getPlaceholdersInTemplate(template);
 
   for (const token of placeholders) {
@@ -99,13 +115,13 @@ export function validateStepMessage(
       errors.push(`Unknown placeholder ${token}`);
       continue;
     }
-    const fieldError = validateShowUpValue(key, values[key] ?? "", config);
+    const fieldError = validateShowUpValue(key, resolved[key] ?? "", config);
     if (fieldError) {
       errors.push(fieldError);
     }
   }
 
-  const filled = fillShowUpTemplate(template, values, config.placeholderMap);
+  const filled = fillShowUpTemplate(template, resolved, config.placeholderMap);
   const leftover = getPlaceholdersInTemplate(filled);
   if (leftover.length > 0) {
     errors.push(`Message still has unfilled blanks: ${leftover.join(", ")}`);
