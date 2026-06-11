@@ -15,6 +15,8 @@ import automaticsalesProjectRdpSOP from '@/data/sop/automaticsales-project-rdp';
 import automaticsalesProjectCaeSOP from '@/data/sop/automaticsales-project-cae';
 import whatsappCommunityValuePostsSOP from '@/data/sop/whatsapp-community-value-posts';
 import whatsappCommunityDrJasmineShowUpSOP from '@/data/sop/whatsapp-community-dr-jasmine-show-up';
+import whatsappCommunityCaeShowUpSOP from '@/data/sop/whatsapp-community-cae-show-up';
+import { getShowUpSopConfig } from '@/data/sop/show-up-configs';
 import Navbar from '@/components/Navbar';
 import SopViewer from '@/components/SopViewer';
 import PromptCopySopViewer from '@/components/PromptCopySopViewer';
@@ -31,6 +33,7 @@ const SOP_MAP: Record<string, SOPDoc> = {
   'customer-support':              customerSupportSOP,
   'whatsapp-community-value-posts': whatsappCommunityValuePostsSOP,
   'whatsapp-community-dr-jasmine-show-up': whatsappCommunityDrJasmineShowUpSOP,
+  'whatsapp-community-cae-show-up': whatsappCommunityCaeShowUpSOP,
   'automaticsales-overview':       automaticsalesOverviewSOP,
   'automaticsales-session-update': automaticsalesSessionUpdateSOP,
   'automaticsales-waba':           automaticsalesWabaSOP,
@@ -71,11 +74,12 @@ export default async function SopPage({ params }: { params: { category: string }
     );
   }
 
-  if (params.category === 'whatsapp-community-dr-jasmine-show-up') {
+  const showUpConfig = getShowUpSopConfig(params.category);
+  if (showUpConfig) {
     return (
       <div className="min-h-screen bg-[var(--bg)]">
         <Navbar user={{ name: user.name, email: user.email, role: user.role }} />
-        <WhatsappShowUpSopViewer category={category} />
+        <WhatsappShowUpSopViewer category={category} config={showUpConfig} />
       </div>
     );
   }

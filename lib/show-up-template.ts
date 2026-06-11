@@ -1,121 +1,6 @@
-export interface ShowUpCustomValues {
-  workshopDay: string;
-  workshopDate: string;
-  workshopTime: string;
-  zoomLink: string;
-  sessionDate: string;
-  sessionTime: string;
-  zoomId: string;
-  zoomPasscode: string;
-}
+import type { ShowUpCustomValues, ShowUpSopConfig } from "@/data/sop/show-up-types";
 
-export const SHOW_UP_VALUE_FIELDS: {
-  key: keyof ShowUpCustomValues;
-  label: string;
-  placeholder: string;
-  hint: string;
-}[] = [
-  {
-    key: "workshopDay",
-    label: "Workshop day",
-    placeholder: "Tuesday",
-    hint: "Used in 2-day countdown (e.g. Tuesday)",
-  },
-  {
-    key: "workshopDate",
-    label: "Workshop date",
-    placeholder: "9/6",
-    hint: "Short date format (e.g. 9/6)",
-  },
-  {
-    key: "workshopTime",
-    label: "Workshop time",
-    placeholder: "8PM (GMT +8)",
-    hint: "Include timezone (e.g. 8PM (GMT +8))",
-  },
-  {
-    key: "zoomLink",
-    label: "Zoom link",
-    placeholder: "http://drjasminechiew.com/zoom",
-    hint: "Full URL, no spaces",
-  },
-  {
-    key: "sessionDate",
-    label: "Session date",
-    placeholder: "Jun 9, 2026",
-    hint: "Full date for Starting Soon message",
-  },
-  {
-    key: "sessionTime",
-    label: "Session time",
-    placeholder: "8:00PM – 10:00PM (GMT+8)",
-    hint: "Start and end time with timezone",
-  },
-  {
-    key: "zoomId",
-    label: "Zoom ID",
-    placeholder: "846 0992 4700",
-    hint: "Numbers with spaces as shown in Zoom",
-  },
-  {
-    key: "zoomPasscode",
-    label: "Zoom passcode",
-    placeholder: "8888",
-    hint: "Numeric passcode from Zoom",
-  },
-];
-
-export const DEFAULT_SHOW_UP_VALUES: ShowUpCustomValues = {
-  workshopDay: "",
-  workshopDate: "",
-  workshopTime: "8PM (GMT +8)",
-  zoomLink: "http://drjasminechiew.com/zoom",
-  sessionDate: "",
-  sessionTime: "8:00PM – 10:00PM (GMT+8)",
-  zoomId: "846 0992 4700",
-  zoomPasscode: "8888",
-};
-
-export const SHOW_UP_EXAMPLE_VALUES: ShowUpCustomValues = {
-  workshopDay: "Tuesday",
-  workshopDate: "9/6",
-  workshopTime: "8PM (GMT +8)",
-  zoomLink: "http://drjasminechiew.com/zoom",
-  sessionDate: "Jun 9, 2026",
-  sessionTime: "8:00PM – 10:00PM (GMT+8)",
-  zoomId: "846 0992 4700",
-  zoomPasscode: "8888",
-};
-
-const PLACEHOLDER_MAP: Record<string, keyof ShowUpCustomValues> = {
-  "{{WORKSHOP_DAY}}": "workshopDay",
-  "{{WORKSHOP_DATE}}": "workshopDate",
-  "{{WORKSHOP_TIME}}": "workshopTime",
-  "{{ZOOM_LINK}}": "zoomLink",
-  "{{SESSION_DATE}}": "sessionDate",
-  "{{SESSION_TIME}}": "sessionTime",
-  "{{ZOOM_ID}}": "zoomId",
-  "{{ZOOM_PASSCODE}}": "zoomPasscode",
-};
-
-const STORAGE_KEY = "dr-jasmine-show-up-values";
-
-export function loadShowUpValues(): ShowUpCustomValues {
-  if (typeof window === "undefined") return { ...DEFAULT_SHOW_UP_VALUES };
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return { ...DEFAULT_SHOW_UP_VALUES };
-    const parsed = JSON.parse(raw) as Partial<ShowUpCustomValues>;
-    return { ...DEFAULT_SHOW_UP_VALUES, ...parsed };
-  } catch {
-    return { ...DEFAULT_SHOW_UP_VALUES };
-  }
-}
-
-export function saveShowUpValues(values: ShowUpCustomValues): void {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(values));
-}
+export type { ShowUpCustomValues } from "@/data/sop/show-up-types";
 
 function trim(value: string): string {
   return value.trim();
@@ -136,29 +21,27 @@ function isValidZoomId(value: string): boolean {
 }
 
 export function getPlaceholdersInTemplate(template: string): string[] {
-  const matches = template.match(/\{\{[A-Z_]+\}\}/g);
+  const matches = template.match(/\{\{[A-Z_0-9]+\}\}/g);
   return matches ? Array.from(new Set(matches)) : [];
 }
 
-export function getUsedValueKeys(): (keyof ShowUpCustomValues)[] {
-  const keys = new Set<keyof ShowUpCustomValues>();
-  for (const token of Object.keys(PLACEHOLDER_MAP)) {
-    keys.add(PLACEHOLDER_MAP[token]);
-  }
-  return Array.from(keys);
-}
-
-export function fillShowUpTemplate(template: string, values: ShowUpCustomValues): string {
+export function fillShowUpTemplate(
+  template: string,
+  values: ShowUpCustomValues,
+  placeholderMap: Record<string, string>,
+): string {
   let result = template;
-  for (const [token, key] of Object.entries(PLACEHOLDER_MAP)) {
-    result = result.split(token).join(trim(values[key]));
+  for (const [token, key] of Object.entries(placeholderMap)) {
+    const value = values[key];
+    result = result.split(token).join(value ? trim(value) : "");
   }
   return result;
 }
 
 export function validateShowUpValue(
-  key: keyof ShowUpCustomValues,
+  key: string,
   value: string,
+  config: ShowUpSopConfig,
 ): string | null {
   const v = trim(value);
 
@@ -205,23 +88,24 @@ export function validateStepMessage(
   stepId: string,
   template: string,
   values: ShowUpCustomValues,
+  config: ShowUpSopConfig,
 ): { ok: boolean; errors: string[]; filled: string } {
   const errors: string[] = [];
   const placeholders = getPlaceholdersInTemplate(template);
 
   for (const token of placeholders) {
-    const key = PLACEHOLDER_MAP[token];
+    const key = config.placeholderMap[token];
     if (!key) {
       errors.push(`Unknown placeholder ${token}`);
       continue;
     }
-    const fieldError = validateShowUpValue(key, values[key]);
+    const fieldError = validateShowUpValue(key, values[key] ?? "", config);
     if (fieldError) {
       errors.push(fieldError);
     }
   }
 
-  const filled = fillShowUpTemplate(template, values);
+  const filled = fillShowUpTemplate(template, values, config.placeholderMap);
   const leftover = getPlaceholdersInTemplate(filled);
   if (leftover.length > 0) {
     errors.push(`Message still has unfilled blanks: ${leftover.join(", ")}`);
@@ -233,4 +117,28 @@ export function validateStepMessage(
 
   const uniqueErrors = Array.from(new Set(errors));
   return { ok: uniqueErrors.length === 0, errors: uniqueErrors, filled };
+}
+
+export function loadShowUpValues(config: ShowUpSopConfig): ShowUpCustomValues {
+  if (typeof window === "undefined") return { ...config.defaultValues };
+  try {
+    const raw = window.localStorage.getItem(config.storageKey);
+    if (!raw) return { ...config.defaultValues };
+    const parsed = JSON.parse(raw) as Record<string, unknown>;
+    const merged: ShowUpCustomValues = { ...config.defaultValues };
+    for (const key of Object.keys(config.defaultValues)) {
+      const value = parsed[key];
+      if (typeof value === "string") {
+        merged[key] = value;
+      }
+    }
+    return merged;
+  } catch {
+    return { ...config.defaultValues };
+  }
+}
+
+export function saveShowUpValues(config: ShowUpSopConfig, values: ShowUpCustomValues): void {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(config.storageKey, JSON.stringify(values));
 }

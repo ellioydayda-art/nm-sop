@@ -1,22 +1,6 @@
-export interface ShowUpMessageStep {
-  id: string;
-  step: string;
-  title: string;
-  timing: string;
-  sendAt: string;
-  checklist: string[];
-  message: string;
-  image?: {
-    src: string;
-    downloadName: string;
-    alt: string;
-    /** When false, download is hidden (e.g. WhatsApp in-app stickers). Default true. */
-    allowDownload?: boolean;
-  };
-  /** Sticker-only step: no text message, in-app sticker required */
-  stickerOnly?: boolean;
-  notes?: string[];
-}
+import type { CombinedScheduleItem, ShowUpMessageStep } from "@/data/sop/show-up-types";
+
+export type { ShowUpMessageStep, CombinedScheduleItem };
 
 export const DR_JASMINE_SHOW_UP_MESSAGES: ShowUpMessageStep[] = [
   {
@@ -294,15 +278,6 @@ export const SHOW_UP_SCHEDULE_SUMMARY = `Dr Jasmine WhatsApp Community Show Up S
 06 Live Sticker     → Webinar day   @ 8:18 PM
 
 Fill in Custom Values at the top of the SOP before copying any message.`;
-
-export interface CombinedScheduleItem {
-  day: string;
-  time: string;
-  type: "show-up" | "value-post";
-  label: string;
-  note?: string;
-  stepId?: string;
-}
 
 /** Full community schedule: show-up reminders + value posts in order. */
 export const COMBINED_COMMUNITY_SCHEDULE: CombinedScheduleItem[] = [

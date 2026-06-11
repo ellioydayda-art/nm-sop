@@ -3,26 +3,14 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import type { CombinedScheduleItem, ShowUpCustomValues, ShowUpSopConfig } from "@/data/sop/show-up-types";
 import {
-  COMBINED_COMMUNITY_SCHEDULE,
-  DR_JASMINE_SHOW_UP_MESSAGES,
-  SHOW_UP_SCHEDULE_SUMMARY,
-  VALUE_POST_ALTERNATE_RULE,
-  VALUE_POST_FIXED_SLOTS,
-  VALUE_POST_SOP_SLUG,
-  type CombinedScheduleItem,
-} from "@/data/sop/dr-jasmine-show-up-messages";
-import {
-  DEFAULT_SHOW_UP_VALUES,
-  SHOW_UP_EXAMPLE_VALUES,
-  SHOW_UP_VALUE_FIELDS,
   fillShowUpTemplate,
   getPlaceholdersInTemplate,
   loadShowUpValues,
   saveShowUpValues,
   validateShowUpValue,
   validateStepMessage,
-  type ShowUpCustomValues,
 } from "@/lib/show-up-template";
 import { IconArrowLeft, IconCheck, IconChevronRight, IconCopy, IconDownload } from "./Icons";
 import styles from "./whatsapp-show-up-sop-viewer.module.css";
@@ -37,6 +25,7 @@ interface WhatsappShowUpSopViewerCategory {
 
 interface WhatsappShowUpSopViewerProps {
   category: WhatsappShowUpSopViewerCategory;
+  config: ShowUpSopConfig;
 }
 
 async function copyText(text: string): Promise<void> {
@@ -54,36 +43,36 @@ async function copyText(text: string): Promise<void> {
   }
 }
 
-export default function WhatsappShowUpSopViewer({ category }: WhatsappShowUpSopViewerProps) {
-  const [values, setValues] = useState<ShowUpCustomValues>(DEFAULT_SHOW_UP_VALUES);
+export default function WhatsappShowUpSopViewer({ category, config }: WhatsappShowUpSopViewerProps) {
+  const [values, setValues] = useState<ShowUpCustomValues>(config.defaultValues);
   const [valuesReady, setValuesReady] = useState(false);
-  const [activeId, setActiveId] = useState(DR_JASMINE_SHOW_UP_MESSAGES[0]?.id ?? "");
+  const [activeId, setActiveId] = useState(config.messages[0]?.id ?? "");
   const [progress, setProgress] = useState(0);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [scheduleCopied, setScheduleCopied] = useState(false);
   const [copyErrorId, setCopyErrorId] = useState<string | null>(null);
 
   useEffect(() => {
-    setValues(loadShowUpValues());
+    setValues(loadShowUpValues(config));
     setValuesReady(true);
-  }, []);
+  }, [config]);
 
   useEffect(() => {
     if (!valuesReady) return;
-    saveShowUpValues(values);
-  }, [values, valuesReady]);
+    saveShowUpValues(config, values);
+  }, [config, values, valuesReady]);
 
   const stepResults = useMemo(() => {
     const map = new Map<string, ReturnType<typeof validateStepMessage>>();
-    for (const step of DR_JASMINE_SHOW_UP_MESSAGES) {
+    for (const step of config.messages) {
       if (!step.message.trim()) {
         map.set(step.id, { ok: true, errors: [], filled: "" });
       } else {
-        map.set(step.id, validateStepMessage(step.id, step.message, values));
+        map.set(step.id, validateStepMessage(step.id, step.message, values, config));
       }
     }
     return map;
-  }, [values]);
+  }, [config, values]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -115,18 +104,18 @@ export default function WhatsappShowUpSopViewer({ category }: WhatsappShowUpSopV
     setActiveId(id);
   }
 
-  function updateValue(key: keyof ShowUpCustomValues, next: string) {
+  function updateValue(key: string, next: string) {
     setValues(prev => ({ ...prev, [key]: next }));
     setCopyErrorId(null);
   }
 
   function loadExampleValues() {
-    setValues({ ...SHOW_UP_EXAMPLE_VALUES });
+    setValues({ ...config.exampleValues });
     setCopyErrorId(null);
   }
 
   function resetValues() {
-    setValues({ ...DEFAULT_SHOW_UP_VALUES });
+    setValues({ ...config.defaultValues });
     setCopyErrorId(null);
   }
 
@@ -146,17 +135,17 @@ export default function WhatsappShowUpSopViewer({ category }: WhatsappShowUpSopV
   }
 
   async function handleCopySchedule() {
-    await copyText(SHOW_UP_SCHEDULE_SUMMARY);
+    await copyText(config.scheduleSummary);
     setScheduleCopied(true);
     window.setTimeout(() => setScheduleCopied(false), 2500);
   }
 
-  const copyableSteps = DR_JASMINE_SHOW_UP_MESSAGES.filter(step => step.message.trim());
+  const copyableSteps = config.messages.filter(step => step.message.trim());
   const messagesReady = copyableSteps.filter(step => stepResults.get(step.id)?.ok).length;
 
   const scheduleByDay = useMemo(() => {
     const groups: { day: string; items: CombinedScheduleItem[] }[] = [];
-    for (const item of COMBINED_COMMUNITY_SCHEDULE) {
+    for (const item of config.combinedSchedule) {
       const last = groups[groups.length - 1];
       if (last && last.day === item.day) {
         last.items.push(item);
@@ -165,10 +154,10 @@ export default function WhatsappShowUpSopViewer({ category }: WhatsappShowUpSopV
       }
     }
     return groups;
-  }, []);
+  }, [config.combinedSchedule]);
 
-  const fieldsWithErrors = SHOW_UP_VALUE_FIELDS.filter(
-    field => validateShowUpValue(field.key, values[field.key]) !== null
+  const fieldsWithErrors = config.valueFields.filter(
+    field => validateShowUpValue(field.key, values[field.key] ?? "", config) !== null
   ).length;
 
   return (
@@ -177,15 +166,15 @@ export default function WhatsappShowUpSopViewer({ category }: WhatsappShowUpSopV
         <div className={styles.progressFill} style={{ width: `${progress}%` }} />
       </div>
 
-      <div className={styles.wrapper}>
+      <div className={styles.wrapper} data-theme={config.theme.id}>
         <header className={styles.hero}>
           <div className={styles.heroGlow} aria-hidden />
           <Link href="/dashboard" className={styles.backLink}>
             <IconArrowLeft size={12} />
             Dashboard
           </Link>
-          <span className={styles.badge}>WhatsApp Community · Show Up Sequence</span>
-          <h1 className={styles.heroTitle}>[Dr Jasmine] Community Show Up SOP</h1>
+          <span className={styles.badge}>{config.heroBadge}</span>
+          <h1 className={styles.heroTitle}>{config.heroTitle}</h1>
           <p className={styles.heroSub}>{category.description}</p>
         </header>
 
@@ -193,7 +182,7 @@ export default function WhatsappShowUpSopViewer({ category }: WhatsappShowUpSopV
           <aside className={styles.sidebar}>
             <div className={styles.sidebarCard}>
               <p className={styles.sidebarLabel}>Message sequence</p>
-              {DR_JASMINE_SHOW_UP_MESSAGES.map(step => {
+              {config.messages.map(step => {
                 const result = stepResults.get(step.id);
                 const needsFill = getPlaceholdersInTemplate(step.message).length > 0;
                 return (
@@ -224,13 +213,15 @@ export default function WhatsappShowUpSopViewer({ category }: WhatsappShowUpSopV
                 {scheduleCopied ? <IconCheck size={14} /> : <IconCopy size={14} />}
                 {scheduleCopied ? "Schedule copied" : "Copy full schedule"}
               </button>
-              <button
-                type="button"
-                onClick={() => scrollTo("value-post-slots")}
-                className={styles.valuePostNavBtn}
-              >
-                Value Post slots
-              </button>
+              {config.showValuePostSection ? (
+                <button
+                  type="button"
+                  onClick={() => scrollTo("value-post-slots")}
+                  className={styles.valuePostNavBtn}
+                >
+                  Value Post slots
+                </button>
+              ) : null}
             </div>
           </aside>
 
@@ -269,8 +260,8 @@ export default function WhatsappShowUpSopViewer({ category }: WhatsappShowUpSopV
               </div>
 
               <div className={styles.valuesGrid}>
-                {SHOW_UP_VALUE_FIELDS.map(field => {
-                  const error = validateShowUpValue(field.key, values[field.key]);
+                {config.valueFields.map(field => {
+                  const error = validateShowUpValue(field.key, values[field.key] ?? "", config);
                   return (
                     <label key={field.key} className={styles.valueField}>
                       <span className={styles.valueLabel}>{field.label}</span>
@@ -296,7 +287,7 @@ export default function WhatsappShowUpSopViewer({ category }: WhatsappShowUpSopV
             <div className={styles.timelineCard}>
               <p className={styles.timelineTitle}>Quick reference timeline</p>
               <div className={styles.timelineGrid}>
-                {DR_JASMINE_SHOW_UP_MESSAGES.map(step => (
+                {config.messages.map(step => (
                   <button
                     key={`timeline-${step.id}`}
                     type="button"
@@ -313,7 +304,7 @@ export default function WhatsappShowUpSopViewer({ category }: WhatsappShowUpSopV
               </div>
             </div>
 
-            {DR_JASMINE_SHOW_UP_MESSAGES.map(step => {
+            {config.messages.map(step => {
               const result = stepResults.get(step.id);
               const hasMessage = step.message.trim().length > 0;
               const canCopy = hasMessage && (result?.ok ?? false);
@@ -496,7 +487,9 @@ export default function WhatsappShowUpSopViewer({ category }: WhatsappShowUpSopV
                             </button>
                           </div>
                           <pre className={styles.messageText}>
-                            {canCopy ? result?.filled : fillShowUpTemplate(step.message, values)}
+                            {canCopy
+                              ? result?.filled
+                              : fillShowUpTemplate(step.message, values, config.placeholderMap)}
                           </pre>
                           {!canCopy && getPlaceholdersInTemplate(step.message).length > 0 ? (
                             <p className={styles.previewNote}>
@@ -511,6 +504,10 @@ export default function WhatsappShowUpSopViewer({ category }: WhatsappShowUpSopV
               );
             })}
 
+            {config.showValuePostSection &&
+            config.valuePostFixedSlots &&
+            config.valuePostAlternateRule &&
+            config.valuePostSopSlug ? (
             <section className={styles.valuePostSection} id="value-post-slots">
               <div className={styles.valuePostSectionHeader}>
                 <div>
@@ -521,7 +518,7 @@ export default function WhatsappShowUpSopViewer({ category }: WhatsappShowUpSopV
                     Use the schedule below to see where each value post fits around the reminder sequence.
                   </p>
                 </div>
-                <Link href={`/sop/${VALUE_POST_SOP_SLUG}`} className={styles.valuePostSopLink}>
+                <Link href={`/sop/${config.valuePostSopSlug}`} className={styles.valuePostSopLink}>
                   <span>Value Post Prompt SOP</span>
                   <IconChevronRight size={14} />
                 </Link>
@@ -530,15 +527,15 @@ export default function WhatsappShowUpSopViewer({ category }: WhatsappShowUpSopV
               <div className={styles.valuePostRules}>
                 <p className={styles.valuePostRulesTitle}>Fixed value post slots</p>
                 <ul className={styles.valuePostRulesList}>
-                  {VALUE_POST_FIXED_SLOTS.map(rule => (
+                  {config.valuePostFixedSlots.map(rule => (
                     <li key={rule}>{rule}</li>
                   ))}
                 </ul>
               </div>
 
               <div className={styles.alternateDayBanner} role="alert">
-                <p className={styles.alternateDayTitle}>{VALUE_POST_ALTERNATE_RULE.title}</p>
-                <p className={styles.alternateDayBody}>{VALUE_POST_ALTERNATE_RULE.body}</p>
+                <p className={styles.alternateDayTitle}>{config.valuePostAlternateRule.title}</p>
+                <p className={styles.alternateDayBody}>{config.valuePostAlternateRule.body}</p>
               </div>
 
               <div className={styles.combinedTimeline}>
@@ -582,7 +579,7 @@ export default function WhatsappShowUpSopViewer({ category }: WhatsappShowUpSopV
                                   Jump to message →
                                 </button>
                               ) : (
-                                <Link href={`/sop/${VALUE_POST_SOP_SLUG}`} className={styles.scheduleRowAction}>
+                                <Link href={`/sop/${config.valuePostSopSlug}`} className={styles.scheduleRowAction}>
                                   Open Value Post SOP →
                                 </Link>
                               )}
@@ -595,6 +592,53 @@ export default function WhatsappShowUpSopViewer({ category }: WhatsappShowUpSopV
                 </div>
               </div>
             </section>
+            ) : config.combinedSchedule.length > 0 ? (
+              <section className={styles.showUpOnlySchedule} id="posting-schedule">
+                <div className={styles.combinedTimelineHead}>
+                  <p className={styles.combinedTimelineTitle}>Full posting schedule</p>
+                  <div className={styles.combinedTimelineLegend}>
+                    <span className={styles.legendShowUp}>Show Up</span>
+                  </div>
+                </div>
+                <div className={styles.scheduleDayGroups}>
+                  {scheduleByDay.map(group => (
+                    <div key={group.day} className={styles.scheduleDayGroup}>
+                      <div className={styles.scheduleDayHeader}>
+                        <span className={styles.scheduleDayLabel}>{group.day}</span>
+                      </div>
+                      <div className={styles.scheduleDayItems}>
+                        {group.items.map(item => (
+                          <div
+                            key={`${group.day}-${item.time}-${item.label}`}
+                            className={`${styles.scheduleRow} ${styles.scheduleRowShowUp}`}
+                          >
+                            <span className={styles.scheduleRowTime}>{item.time}</span>
+                            <div className={styles.scheduleRowBody}>
+                              <div className={styles.scheduleRowTop}>
+                                <span className={styles.scheduleRowTitle}>{item.label}</span>
+                                <span className={styles.scheduleRowType}>Show Up</span>
+                              </div>
+                              {item.note ? (
+                                <p className={styles.scheduleRowNote}>{item.note}</p>
+                              ) : null}
+                              {item.stepId ? (
+                                <button
+                                  type="button"
+                                  onClick={() => scrollTo(item.stepId ?? "")}
+                                  className={styles.scheduleRowAction}
+                                >
+                                  Jump to message →
+                                </button>
+                              ) : null}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            ) : null}
 
             <div className={styles.footer}>
               <Link href="/dashboard" className={styles.footerBack}>

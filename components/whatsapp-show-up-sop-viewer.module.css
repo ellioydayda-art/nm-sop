@@ -1,13 +1,51 @@
 .wrapper {
+  --su-bg: #f0faf4;
+  --su-text: var(--su-text);
+  --su-text-muted: var(--su-text-muted);
+  --su-primary: var(--su-primary);
+  --su-primary-dark: #0a3d32;
+  --su-primary-deeper: #061f1a;
+  --su-accent: var(--su-accent);
+  --su-accent-2: var(--su-accent-2);
+  --su-accent-soft: var(--su-accent-soft);
+  --su-surface: var(--su-surface);
+  --su-value-post: var(--su-accent);
+  --su-warn: #f59e0b;
+  --su-warn-bg: #fffbeb;
+  --su-warn-text: #92400e;
+  --su-warn-title: #b45309;
   flex: 1;
   min-height: calc(100vh - 56px);
-  background: #f0faf4;
-  color: #0e2a1f;
+  background: var(--su-bg);
+  color: var(--su-text);
+}
+
+.wrapper[data-theme="cae"] {
+  --su-bg: #f5f3ff;
+  --su-text: #1e1b4b;
+  --su-text-muted: #6b7280;
+  --su-primary: #5b21b6;
+  --su-primary-dark: #4c1d95;
+  --su-primary-deeper: #2e1065;
+  --su-accent: #7c3aed;
+  --su-accent-2: #a78bfa;
+  --su-accent-soft: #c4b5fd;
+  --su-surface: #ede9fe;
+  --su-value-post: #f59e0b;
+  --su-warn: #d97706;
+  --su-warn-bg: #fffbeb;
+  --su-warn-text: #92400e;
+  --su-warn-title: #b45309;
 }
 
 :global(.dark) .wrapper {
   background: #061410;
   color: #e8f5ef;
+}
+
+:global(.dark) .wrapper[data-theme="cae"] {
+  background: #0f0720;
+  color: #ede9fe;
 }
 
 .progressTrack {
@@ -17,17 +55,17 @@
   right: 0;
   z-index: 30;
   height: 3px;
-  background: rgba(37, 211, 102, 0.15);
+  background: color-mix(in srgb, var(--su-accent) 15%, transparent);
 }
 
 .progressFill {
   height: 100%;
-  background: linear-gradient(90deg, #25d366, #128c7e);
+  background: linear-gradient(90deg, var(--su-accent), var(--su-accent-2));
   transition: width 0.1s ease;
 }
 
 .hero {
-  background: linear-gradient(160deg, #075e54 0%, #0a3d32 55%, #061f1a 100%);
+  background: linear-gradient(160deg, var(--su-primary) 0%, var(--su-primary-dark) 55%, var(--su-primary-deeper) 100%);
   padding: 48px 24px 40px;
   text-align: center;
   position: relative;
@@ -39,7 +77,7 @@
   width: 500px;
   height: 500px;
   border-radius: 50%;
-  background: #25d366;
+  background: var(--su-accent);
   filter: blur(120px);
   opacity: 0.2;
   top: -60%;
@@ -66,8 +104,8 @@
 
 .badge {
   display: inline-block;
-  background: #25d366;
-  color: #053d2e;
+  background: var(--su-accent);
+  color: var(--su-primary-deeper);
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.16em;
@@ -135,7 +173,7 @@
   font-weight: 800;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #128c7e;
+  color: var(--su-accent-2);
   margin-bottom: 12px;
 }
 
@@ -174,7 +212,7 @@
 
 .navStatusOk {
   background: rgba(37, 211, 102, 0.2);
-  color: #128c7e;
+  color: var(--su-accent-2);
 }
 
 .navStatusWarn {
@@ -188,23 +226,23 @@
 
 .navBtn:hover {
   background: rgba(37, 211, 102, 0.08);
-  color: #075e54;
+  color: var(--su-primary);
 }
 
 .navBtnActive {
   background: rgba(37, 211, 102, 0.14);
-  color: #075e54;
+  color: var(--su-primary);
   font-weight: 700;
 }
 
 :global(.dark) .navBtnActive {
-  color: #25d366;
+  color: var(--su-accent);
 }
 
 .navStep {
   font-size: 10px;
   font-weight: 800;
-  color: #25d366;
+  color: var(--su-accent);
   min-width: 28px;
 }
 
@@ -219,7 +257,7 @@
   border-radius: 10px;
   border: 1px solid rgba(37, 211, 102, 0.35);
   background: rgba(37, 211, 102, 0.08);
-  color: #075e54;
+  color: var(--su-primary);
   font-size: 11px;
   font-weight: 700;
   cursor: pointer;
@@ -227,7 +265,7 @@
 }
 
 :global(.dark) .copyScheduleBtn {
-  color: #25d366;
+  color: var(--su-accent);
 }
 
 .copyScheduleBtn:hover {
@@ -244,7 +282,7 @@
   border-radius: 10px;
   border: 1px dashed rgba(37, 211, 102, 0.45);
   background: rgba(37, 211, 102, 0.06);
-  color: #128c7e;
+  color: var(--su-accent-2);
   font-size: 11px;
   font-weight: 700;
   cursor: pointer;
@@ -289,19 +327,19 @@
   font-weight: 800;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #128c7e;
+  color: var(--su-accent-2);
   margin: 0 0 6px;
 }
 
 .valuesTitle {
   font-size: 22px;
   font-weight: 800;
-  color: #075e54;
+  color: var(--su-primary);
   margin: 0 0 8px;
 }
 
 :global(.dark) .valuesTitle {
-  color: #25d366;
+  color: var(--su-accent);
 }
 
 .valuesDesc {
@@ -322,7 +360,7 @@
   padding: 9px 16px;
   border-radius: 10px;
   border: none;
-  background: #25d366;
+  background: var(--su-accent);
   color: #053d2e;
   font-size: 12px;
   font-weight: 800;
@@ -339,14 +377,14 @@
   border-radius: 10px;
   border: 1px solid rgba(37, 211, 102, 0.35);
   background: transparent;
-  color: #075e54;
+  color: var(--su-primary);
   font-size: 12px;
   font-weight: 700;
   cursor: pointer;
 }
 
 :global(.dark) .valuesActionBtnSecondary {
-  color: #25d366;
+  color: var(--su-accent);
 }
 
 .valuesStatusRow {
@@ -363,7 +401,7 @@
   padding: 5px 12px;
   border-radius: 999px;
   background: rgba(37, 211, 102, 0.12);
-  color: #075e54;
+  color: var(--su-primary);
 }
 
 .valuesStatusOk {
@@ -393,11 +431,11 @@
 .valueLabel {
   font-size: 12px;
   font-weight: 700;
-  color: #075e54;
+  color: var(--su-primary);
 }
 
 :global(.dark) .valueLabel {
-  color: #8fd4b0;
+  color: var(--su-accent-soft);
 }
 
 .valueInput {
@@ -407,7 +445,7 @@
   border: 1px solid rgba(37, 211, 102, 0.25);
   background: #f8fdf9;
   font-size: 13px;
-  color: #0e2a1f;
+  color: var(--su-text);
   font-family: "JetBrains Mono", ui-monospace, monospace;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
@@ -419,7 +457,7 @@
 
 .valueInput:focus {
   outline: none;
-  border-color: #25d366;
+  border-color: var(--su-accent);
   box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.15);
 }
 
@@ -434,7 +472,7 @@
 
 .valueHint {
   font-size: 11px;
-  color: #6b8f7c;
+  color: var(--su-text-muted);
   line-height: 1.4;
 }
 
@@ -490,7 +528,7 @@
 }
 
 .copyBtnDisabled:hover {
-  background: #25d366;
+  background: var(--su-accent);
   transform: none !important;
 }
 
@@ -519,14 +557,14 @@
 .timelineTitle {
   font-size: 13px;
   font-weight: 800;
-  color: #075e54;
+  color: var(--su-primary);
   margin-bottom: 14px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
 
 :global(.dark) .timelineTitle {
-  color: #25d366;
+  color: var(--su-accent);
 }
 
 .timelineGrid {
@@ -545,14 +583,14 @@
 .timelineStep {
   font-size: 10px;
   font-weight: 800;
-  color: #25d366;
+  color: var(--su-accent);
   margin-bottom: 4px;
 }
 
 .timelineName {
   font-size: 12px;
   font-weight: 700;
-  color: #0e2a1f;
+  color: var(--su-text);
   margin-bottom: 2px;
 }
 
@@ -607,7 +645,7 @@
   min-width: 40px;
   height: 40px;
   border-radius: 12px;
-  background: #25d366;
+  background: var(--su-accent);
   color: #053d2e;
   font-size: 13px;
   font-weight: 900;
@@ -698,12 +736,12 @@
 .cardTitle {
   font-size: 20px;
   font-weight: 800;
-  color: #075e54;
+  color: var(--su-primary);
   margin: 0 0 8px;
 }
 
 :global(.dark) .cardTitle {
-  color: #25d366;
+  color: var(--su-accent);
 }
 
 .metaRow {
@@ -719,7 +757,7 @@
   border-radius: 999px;
   background: white;
   border: 1px solid rgba(37, 211, 102, 0.25);
-  color: #128c7e;
+  color: var(--su-accent-2);
 }
 
 :global(.dark) .metaPill {
@@ -738,7 +776,7 @@
   font-weight: 800;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #128c7e;
+  color: var(--su-accent-2);
   margin-bottom: 8px;
 }
 
@@ -770,7 +808,7 @@
   height: 20px;
   border-radius: 6px;
   background: rgba(37, 211, 102, 0.15);
-  color: #128c7e;
+  color: var(--su-accent-2);
   font-size: 11px;
   font-weight: 800;
   display: flex;
@@ -926,7 +964,7 @@
   gap: 8px;
   padding: 9px 16px;
   border-radius: 10px;
-  background: #075e54;
+  background: var(--su-primary);
   color: white;
   font-size: 12px;
   font-weight: 700;
@@ -958,11 +996,11 @@
 .messageLabel {
   font-size: 12px;
   font-weight: 700;
-  color: #075e54;
+  color: var(--su-primary);
 }
 
 :global(.dark) .messageLabel {
-  color: #25d366;
+  color: var(--su-accent);
 }
 
 .copyBtn {
@@ -972,7 +1010,7 @@
   padding: 7px 14px;
   border-radius: 9px;
   border: none;
-  background: #25d366;
+  background: var(--su-accent);
   color: #053d2e;
   font-size: 12px;
   font-weight: 800;
@@ -1042,17 +1080,35 @@
 }
 
 .footerBack:hover {
-  color: #075e54;
+  color: var(--su-primary);
 }
 
+.showUpOnlySchedule,
 .valuePostSection {
   background: white;
-  border: 1px solid rgba(37, 211, 102, 0.25);
+  border: 1px solid color-mix(in srgb, var(--su-primary) 20%, transparent);
   border-radius: 18px;
   padding: 24px 26px;
   margin-bottom: 28px;
-  box-shadow: 0 6px 28px rgba(7, 94, 84, 0.07);
+  box-shadow: 0 6px 28px color-mix(in srgb, var(--su-primary) 7%, transparent);
   scroll-margin-top: 88px;
+}
+
+.showUpOnlySchedule {
+  overflow: hidden;
+  padding: 0;
+}
+
+.showUpOnlySchedule .combinedTimelineHead {
+  margin-bottom: 0;
+}
+
+:global(.dark) .showUpOnlySchedule {
+  background: #0d1f18;
+}
+
+:global(.dark) .wrapper[data-theme="cae"] .showUpOnlySchedule {
+  background: #1a1033;
 }
 
 :global(.dark) .valuePostSection {
@@ -1073,19 +1129,19 @@
   font-weight: 800;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #25d366;
+  color: var(--su-accent);
   margin: 0 0 6px;
 }
 
 .valuePostTitle {
   font-size: 22px;
   font-weight: 800;
-  color: #075e54;
+  color: var(--su-primary);
   margin: 0 0 8px;
 }
 
 :global(.dark) .valuePostTitle {
-  color: #25d366;
+  color: var(--su-accent);
 }
 
 .valuePostDesc {
@@ -1102,7 +1158,7 @@
   gap: 6px;
   padding: 10px 16px;
   border-radius: 10px;
-  background: #25d366;
+  background: var(--su-accent);
   color: #053d2e;
   font-size: 12px;
   font-weight: 800;
@@ -1128,11 +1184,11 @@
   margin: 0 0 10px;
   font-size: 13px;
   font-weight: 800;
-  color: #075e54;
+  color: var(--su-primary);
 }
 
 :global(.dark) .valuePostRulesTitle {
-  color: #25d366;
+  color: var(--su-accent);
 }
 
 .valuePostRulesList {
@@ -1212,11 +1268,11 @@
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #075e54;
+  color: var(--su-primary);
 }
 
 :global(.dark) .combinedTimelineTitle {
-  color: #8fd4b0;
+  color: var(--su-accent-soft);
 }
 
 .combinedTimelineLegend {
@@ -1236,14 +1292,14 @@
 
 .legendShowUp {
   background: rgba(7, 94, 84, 0.14);
-  color: #075e54;
+  color: var(--su-primary);
   border: 1px solid rgba(7, 94, 84, 0.28);
 }
 
 .legendValuePost {
-  background: rgba(37, 211, 102, 0.14);
-  color: #128c7e;
-  border: 1px solid rgba(37, 211, 102, 0.32);
+  background: color-mix(in srgb, var(--su-value-post) 14%, transparent);
+  color: var(--su-accent-2);
+  border: 1px solid color-mix(in srgb, var(--su-value-post) 32%, transparent);
 }
 
 .scheduleDayGroups {
@@ -1257,7 +1313,7 @@
 
 .scheduleDayHeader {
   padding: 10px 16px;
-  background: #f4faf6;
+  background: var(--su-surface);
   border-bottom: 1px solid rgba(7, 94, 84, 0.08);
 }
 
@@ -1270,11 +1326,11 @@
   font-weight: 800;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #075e54;
+  color: var(--su-primary);
 }
 
 :global(.dark) .scheduleDayLabel {
-  color: #8fd4b0;
+  color: var(--su-accent-soft);
 }
 
 .scheduleDayItems {
@@ -1296,12 +1352,12 @@
 
 .scheduleRowShowUp {
   background: rgba(7, 94, 84, 0.05);
-  border-left: 4px solid #075e54;
+  border-left: 4px solid var(--su-primary);
 }
 
 .scheduleRowValuePost {
-  background: rgba(37, 211, 102, 0.07);
-  border-left: 4px solid #25d366;
+  background: color-mix(in srgb, var(--su-value-post) 7%, transparent);
+  border-left: 4px solid var(--su-value-post);
 }
 
 .scheduleRowTime {
@@ -1309,13 +1365,13 @@
   width: 72px;
   font-size: 13px;
   font-weight: 800;
-  color: #075e54;
+  color: var(--su-primary);
   font-variant-numeric: tabular-nums;
   padding-top: 2px;
 }
 
 :global(.dark) .scheduleRowTime {
-  color: #8fd4b0;
+  color: var(--su-accent-soft);
 }
 
 .scheduleRowBody {
@@ -1334,7 +1390,7 @@
 .scheduleRowTitle {
   font-size: 14px;
   font-weight: 700;
-  color: #0e2a1f;
+  color: var(--su-text);
 }
 
 :global(.dark) .scheduleRowTitle {
@@ -1351,26 +1407,26 @@
 }
 
 .scheduleRowShowUp .scheduleRowType {
-  background: #075e54;
+  background: var(--su-primary);
   color: white;
 }
 
 .scheduleRowValuePost .scheduleRowType {
-  background: #25d366;
-  color: #053d2e;
+  background: var(--su-value-post);
+  color: var(--su-primary-deeper);
 }
 
 .scheduleRowNote {
   margin: 0 0 6px;
   font-size: 12px;
-  color: #6b8f7c;
+  color: var(--su-text-muted);
   line-height: 1.45;
 }
 
 .scheduleRowAction {
   font-size: 11px;
   font-weight: 700;
-  color: #075e54;
+  color: var(--su-primary);
   background: none;
   border: none;
   padding: 0;
@@ -1379,7 +1435,7 @@
 }
 
 .scheduleRowAction:hover {
-  color: #25d366;
+  color: var(--su-accent);
   text-decoration: underline;
   text-underline-offset: 2px;
 }

@@ -1,0 +1,97 @@
+import {
+  CAE_COMBINED_SCHEDULE,
+  CAE_SHOW_UP_MESSAGES,
+  CAE_SHOW_UP_SCHEDULE_SUMMARY,
+} from "@/data/sop/cae-show-up-messages";
+import type { ShowUpSopConfig } from "@/data/sop/show-up-types";
+
+export const CAE_SHOW_UP_CONFIG: ShowUpSopConfig = {
+  theme: { id: "cae" },
+  storageKey: "cae-show-up-values",
+  heroBadge: "CAE · WhatsApp Community · Show Up Sequence",
+  heroTitle: "[CAE] Community Show Up SOP",
+  valueFields: [
+    {
+      key: "workshopDay",
+      label: "Workshop day",
+      placeholder: "Monday",
+      hint: "Day of week for the live session (e.g. Monday)",
+    },
+    {
+      key: "workshopDate",
+      label: "Workshop date (short)",
+      placeholder: "15/6",
+      hint: "Short date format (e.g. 15/6)",
+    },
+    {
+      key: "workshopTime",
+      label: "Workshop time",
+      placeholder: "8:00PM (GMT+8)",
+      hint: "Include timezone (e.g. 8:00PM (GMT+8))",
+    },
+    {
+      key: "sessionDate",
+      label: "Session date (full)",
+      placeholder: "Monday, June 15, 2026",
+      hint: "Full date line for Welcome & Starting Soon (e.g. Monday, June 15, 2026)",
+    },
+    {
+      key: "sessionTime",
+      label: "Session time (full)",
+      placeholder: "8:00PM – 10:00PM (GMT+8)",
+      hint: "Start and end time with timezone",
+    },
+    {
+      key: "zoomLink",
+      label: "Zoom link",
+      placeholder: "https://zoom.us/j/...",
+      hint: "Full URL, no spaces",
+    },
+    {
+      key: "zoomId",
+      label: "Zoom ID",
+      placeholder: "83674571175",
+      hint: "9–11 digits (spaces allowed for display)",
+    },
+    {
+      key: "zoomPasscode",
+      label: "Zoom passcode",
+      placeholder: "8888",
+      hint: "Numeric passcode from Zoom",
+    },
+  ],
+  defaultValues: {
+    workshopDay: "",
+    workshopDate: "",
+    workshopTime: "8:00PM (GMT+8)",
+    sessionDate: "",
+    sessionTime: "8:00PM – 10:00PM (GMT+8)",
+    zoomLink: "",
+    zoomId: "",
+    zoomPasscode: "",
+  },
+  exampleValues: {
+    workshopDay: "Monday",
+    workshopDate: "15/6",
+    workshopTime: "8:00PM (GMT+8)",
+    sessionDate: "Monday, June 15, 2026",
+    sessionTime: "8:00PM – 10:00PM (GMT+8)",
+    zoomLink: "https://zoom.us/j/83674571175",
+    zoomId: "83674571175",
+    zoomPasscode: "8888",
+  },
+  placeholderMap: {
+    "{{WORKSHOP_DAY}}": "workshopDay",
+    "{{WORKSHOP_DATE}}": "workshopDate",
+    "{{WORKSHOP_TIME}}": "workshopTime",
+    "{{SESSION_DATE}}": "sessionDate",
+    "{{SESSION_TIME}}": "sessionTime",
+    "{{ZOOM_LINK}}": "zoomLink",
+    "{{ZOOM_ID}}": "zoomId",
+    "{{ZOOM_PASSCODE}}": "zoomPasscode",
+  },
+  messages: CAE_SHOW_UP_MESSAGES,
+  scheduleSummary: CAE_SHOW_UP_SCHEDULE_SUMMARY,
+  combinedSchedule: CAE_COMBINED_SCHEDULE,
+  showValuePostSection: false,
+};

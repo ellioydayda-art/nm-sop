@@ -91,4 +91,14 @@ export const CATEGORIES: Category[] = [
     accentHex: '#075E54',
     accentBg: 'bg-teal-800/10 border-teal-800/20',
   },
+  {
+    slug: 'whatsapp-community-cae-show-up',
+    name: 'CAE · Show Up Sequence',
+    cardLabel: '6 Messages',
+    department: 'Community',
+    description: 'Purple Star Astrology community reminders: same show-up timeline as Dr Jasmine, custom values, images, and copy-paste templates.',
+    accent: 'violet',
+    accentHex: '#7c3aed',
+    accentBg: 'bg-violet-500/10 border-violet-500/20',
+  },
 ];

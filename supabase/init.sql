@@ -39,6 +39,7 @@ values
   ('customer-support', 'Customer Support', 'Support', 'How we handle customer chats, reminders, and common questions.', '#f43f5e'),
   ('whatsapp-community-value-posts', 'Dr Jasmine · Value Post Prompt', 'Community', 'Copy-paste AI prompt for WhatsApp value posts: frameworks, hooks, tone, workflow, and topic rotation.', '#25D366'),
   ('whatsapp-community-dr-jasmine-show-up', 'Dr Jasmine · Show Up Sequence', 'Community', 'Pre-webinar reminder sequence: when to send, custom values, images, and copy-paste templates for each step.', '#075E54'),
+  ('whatsapp-community-cae-show-up', 'CAE · Show Up Sequence', 'Community', 'Purple Star Astrology community reminders: same show-up timeline as Dr Jasmine, custom values, images, and copy-paste templates.', '#7c3aed'),
   ('automaticsales-overview', 'AutomaticSales — Overview', 'AutomaticSales', 'What AutomaticSales is, how our webinar pipeline works, and how to navigate this SOP.', '#7c3aed'),
   ('automaticsales-session-update', 'AutomaticSales — Session Update', 'AutomaticSales', 'The recurring pre-session checklist: Zoom setup, custom values, Google Sheet, and verification.', '#f59e0b'),
   ('automaticsales-waba', 'AutomaticSales — WABA & Email', 'AutomaticSales', 'Reminder systems, the marketing/utility fallback, fail rates, and manual blast procedure.', '#10b981'),
