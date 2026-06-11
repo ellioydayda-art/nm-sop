@@ -1,15 +1,33 @@
 .wrapper {
   --su-bg: #f0faf4;
-  --su-text: var(--su-text);
-  --su-text-muted: var(--su-text-muted);
-  --su-primary: var(--su-primary);
+  --su-text: #0e2a1f;
+  --su-text-muted: #6b8f7c;
+  --su-primary: #075e54;
   --su-primary-dark: #0a3d32;
   --su-primary-deeper: #061f1a;
-  --su-accent: var(--su-accent);
-  --su-accent-2: var(--su-accent-2);
-  --su-accent-soft: var(--su-accent-soft);
-  --su-surface: var(--su-surface);
-  --su-value-post: var(--su-accent);
+  --su-accent: #25d366;
+  --su-accent-2: #128c7e;
+  --su-accent-soft: #8fd4b0;
+  --su-surface: #f4faf6;
+  --su-value-post: #25d366;
+  --su-on-accent: #053d2e;
+  --su-on-primary: #ffffff;
+  --su-btn-bg: #075e54;
+  --su-btn-text: #ffffff;
+  --su-btn-hover: #0a3d32;
+  --su-hero-pill-bg: #25d366;
+  --su-hero-pill-text: #053d2e;
+  --su-step-bg: #075e54;
+  --su-step-text: #ffffff;
+  --su-border: rgba(7, 94, 84, 0.18);
+  --su-border-accent: rgba(37, 211, 102, 0.28);
+  --su-fill-subtle: rgba(37, 211, 102, 0.08);
+  --su-fill-medium: rgba(37, 211, 102, 0.14);
+  --su-fill-strong: rgba(37, 211, 102, 0.2);
+  --su-card-header: linear-gradient(135deg, rgba(37, 211, 102, 0.12) 0%, rgba(18, 140, 126, 0.06) 100%);
+  --su-card-shadow: rgba(7, 94, 84, 0.08);
+  --su-nav-text: #4a6b5c;
+  --su-input-bg: #f8fdf9;
   --su-warn: #f59e0b;
   --su-warn-bg: #fffbeb;
   --su-warn-text: #92400e;
@@ -21,21 +39,35 @@
 }
 
 .wrapper[data-theme="cae"] {
-  --su-bg: #f5f3ff;
+  --su-bg: #faf8ff;
   --su-text: #1e1b4b;
-  --su-text-muted: #6b7280;
+  --su-text-muted: #64748b;
   --su-primary: #5b21b6;
   --su-primary-dark: #4c1d95;
-  --su-primary-deeper: #2e1065;
+  --su-primary-deeper: #3b0764;
   --su-accent: #7c3aed;
-  --su-accent-2: #a78bfa;
+  --su-accent-2: #6d28d9;
   --su-accent-soft: #c4b5fd;
-  --su-surface: #ede9fe;
-  --su-value-post: #f59e0b;
-  --su-warn: #d97706;
-  --su-warn-bg: #fffbeb;
-  --su-warn-text: #92400e;
-  --su-warn-title: #b45309;
+  --su-surface: #f3f0ff;
+  --su-value-post: #d97706;
+  --su-on-accent: #ffffff;
+  --su-on-primary: #ffffff;
+  --su-btn-bg: #5b21b6;
+  --su-btn-text: #ffffff;
+  --su-btn-hover: #4c1d95;
+  --su-hero-pill-bg: #fbbf24;
+  --su-hero-pill-text: #3b0764;
+  --su-step-bg: #5b21b6;
+  --su-step-text: #ffffff;
+  --su-border: rgba(91, 33, 182, 0.16);
+  --su-border-accent: rgba(124, 58, 237, 0.28);
+  --su-fill-subtle: rgba(124, 58, 237, 0.07);
+  --su-fill-medium: rgba(124, 58, 237, 0.12);
+  --su-fill-strong: rgba(124, 58, 237, 0.18);
+  --su-card-header: linear-gradient(135deg, rgba(124, 58, 237, 0.1) 0%, rgba(251, 191, 36, 0.08) 100%);
+  --su-card-shadow: rgba(91, 33, 182, 0.1);
+  --su-nav-text: #5b21b6;
+  --su-input-bg: #faf8ff;
 }
 
 :global(.dark) .wrapper {
@@ -104,8 +136,8 @@
 
 .badge {
   display: inline-block;
-  background: var(--su-accent);
-  color: var(--su-primary-deeper);
+  background: var(--su-hero-pill-bg);
+  color: var(--su-hero-pill-text);
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.16em;
@@ -157,15 +189,19 @@
 
 .sidebarCard {
   background: white;
-  border: 1px solid rgba(37, 211, 102, 0.2);
+  border: 1px solid var(--su-border-accent);
   border-radius: 16px;
   padding: 16px;
-  box-shadow: 0 4px 20px rgba(7, 94, 84, 0.08);
+  box-shadow: 0 4px 20px var(--su-card-shadow);
 }
 
 :global(.dark) .sidebarCard {
   background: #0d1f18;
-  border-color: rgba(37, 211, 102, 0.15);
+  border-color: var(--su-border-accent);
+}
+
+:global(.dark) .wrapper[data-theme="cae"] .sidebarCard {
+  background: #1a1033;
 }
 
 .sidebarLabel {
@@ -189,7 +225,7 @@
   background: transparent;
   cursor: pointer;
   font-size: 12px;
-  color: #4a6b5c;
+  color: var(--su-nav-text);
   transition: background 0.15s ease, color 0.15s ease;
 }
 
@@ -211,8 +247,8 @@
 }
 
 .navStatusOk {
-  background: rgba(37, 211, 102, 0.2);
-  color: var(--su-accent-2);
+  background: var(--su-fill-strong);
+  color: var(--su-primary);
 }
 
 .navStatusWarn {
@@ -221,28 +257,32 @@
 }
 
 :global(.dark) .navBtn {
-  color: #8fb9a5;
+  color: var(--su-accent-soft);
+}
+
+:global(.dark) .wrapper[data-theme="cae"] .navBtn {
+  color: #c4b5fd;
 }
 
 .navBtn:hover {
-  background: rgba(37, 211, 102, 0.08);
+  background: var(--su-fill-subtle);
   color: var(--su-primary);
 }
 
 .navBtnActive {
-  background: rgba(37, 211, 102, 0.14);
+  background: var(--su-fill-medium);
   color: var(--su-primary);
   font-weight: 700;
 }
 
 :global(.dark) .navBtnActive {
-  color: var(--su-accent);
+  color: var(--su-accent-soft);
 }
 
 .navStep {
   font-size: 10px;
   font-weight: 800;
-  color: var(--su-accent);
+  color: var(--su-primary);
   min-width: 28px;
 }
 
@@ -255,8 +295,8 @@
   margin-top: 14px;
   padding: 10px 12px;
   border-radius: 10px;
-  border: 1px solid rgba(37, 211, 102, 0.35);
-  background: rgba(37, 211, 102, 0.08);
+  border: 1px solid var(--su-border-accent);
+  background: var(--su-fill-subtle);
   color: var(--su-primary);
   font-size: 11px;
   font-weight: 700;
@@ -265,11 +305,11 @@
 }
 
 :global(.dark) .copyScheduleBtn {
-  color: var(--su-accent);
+  color: var(--su-accent-soft);
 }
 
 .copyScheduleBtn:hover {
-  background: rgba(37, 211, 102, 0.16);
+  background: var(--su-fill-medium);
 }
 
 .valuePostNavBtn {
@@ -280,9 +320,9 @@
   margin-top: 8px;
   padding: 10px 12px;
   border-radius: 10px;
-  border: 1px dashed rgba(37, 211, 102, 0.45);
-  background: rgba(37, 211, 102, 0.06);
-  color: var(--su-accent-2);
+  border: 1px dashed var(--su-border-accent);
+  background: var(--su-fill-subtle);
+  color: var(--su-primary);
   font-size: 11px;
   font-weight: 700;
   cursor: pointer;
@@ -290,7 +330,7 @@
 }
 
 .valuePostNavBtn:hover {
-  background: rgba(37, 211, 102, 0.14);
+  background: var(--su-fill-medium);
 }
 
 .main {
@@ -301,16 +341,20 @@
 
 .valuesCard {
   background: white;
-  border: 2px solid rgba(37, 211, 102, 0.35);
+  border: 2px solid var(--su-border-accent);
   border-radius: 18px;
   padding: 22px 24px;
   margin-bottom: 28px;
-  box-shadow: 0 8px 32px rgba(7, 94, 84, 0.1);
+  box-shadow: 0 8px 32px var(--su-card-shadow);
   scroll-margin-top: 88px;
 }
 
 :global(.dark) .valuesCard {
   background: #0d1f18;
+}
+
+:global(.dark) .wrapper[data-theme="cae"] .valuesCard {
+  background: #1a1033;
 }
 
 .valuesHeader {
@@ -345,7 +389,7 @@
 .valuesDesc {
   font-size: 13px;
   line-height: 1.6;
-  color: #5a7d6c;
+  color: var(--su-text-muted);
   margin: 0;
   max-width: 560px;
 }
@@ -360,22 +404,24 @@
   padding: 9px 16px;
   border-radius: 10px;
   border: none;
-  background: var(--su-accent);
-  color: #053d2e;
+  background: var(--su-btn-bg);
+  color: var(--su-btn-text);
   font-size: 12px;
   font-weight: 800;
   cursor: pointer;
-  transition: background 0.15s ease;
+  transition: background 0.15s ease, transform 0.12s ease;
+  box-shadow: 0 2px 8px var(--su-card-shadow);
 }
 
 .valuesActionBtn:hover {
-  background: #1fb855;
+  background: var(--su-btn-hover);
+  transform: translateY(-1px);
 }
 
 .valuesActionBtnSecondary {
   padding: 9px 16px;
   border-radius: 10px;
-  border: 1px solid rgba(37, 211, 102, 0.35);
+  border: 1px solid var(--su-border-accent);
   background: transparent;
   color: var(--su-primary);
   font-size: 12px;
@@ -384,7 +430,7 @@
 }
 
 :global(.dark) .valuesActionBtnSecondary {
-  color: var(--su-accent);
+  color: var(--su-accent-soft);
 }
 
 .valuesStatusRow {
@@ -400,7 +446,7 @@
   font-weight: 700;
   padding: 5px 12px;
   border-radius: 999px;
-  background: rgba(37, 211, 102, 0.12);
+  background: var(--su-fill-medium);
   color: var(--su-primary);
 }
 
@@ -442,8 +488,8 @@
   width: 100%;
   padding: 10px 12px;
   border-radius: 10px;
-  border: 1px solid rgba(37, 211, 102, 0.25);
-  background: #f8fdf9;
+  border: 1px solid var(--su-border-accent);
+  background: var(--su-input-bg);
   font-size: 13px;
   color: var(--su-text);
   font-family: "JetBrains Mono", ui-monospace, monospace;
@@ -458,7 +504,7 @@
 .valueInput:focus {
   outline: none;
   border-color: var(--su-accent);
-  box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.15);
+  box-shadow: 0 0 0 3px var(--su-fill-strong);
 }
 
 .valueInputError {
@@ -576,14 +622,14 @@
 .timelineItem {
   padding: 10px 12px;
   border-radius: 10px;
-  background: rgba(37, 211, 102, 0.07);
-  border: 1px solid rgba(37, 211, 102, 0.15);
+  background: var(--su-fill-subtle);
+  border: 1px solid var(--su-border);
 }
 
 .timelineStep {
   font-size: 10px;
   font-weight: 800;
-  color: var(--su-accent);
+  color: var(--su-primary);
   margin-bottom: 4px;
 }
 
@@ -605,11 +651,11 @@
 
 .messageCard {
   background: white;
-  border: 1px solid rgba(37, 211, 102, 0.2);
+  border: 1px solid var(--su-border-accent);
   border-radius: 18px;
   overflow: hidden;
   margin-bottom: 28px;
-  box-shadow: 0 6px 28px rgba(7, 94, 84, 0.07);
+  box-shadow: 0 6px 28px var(--su-card-shadow);
   scroll-margin-top: 88px;
 }
 
@@ -620,6 +666,10 @@
 
 :global(.dark) .messageCard {
   background: #0d1f18;
+}
+
+:global(.dark) .wrapper[data-theme="cae"] .messageCard {
+  background: #1a1033;
 }
 
 :global(.dark) .messageCardSticker {
@@ -634,8 +684,8 @@
   justify-content: space-between;
   gap: 12px;
   padding: 20px 22px;
-  background: linear-gradient(135deg, rgba(37, 211, 102, 0.12) 0%, rgba(18, 140, 126, 0.06) 100%);
-  border-bottom: 1px solid rgba(37, 211, 102, 0.15);
+  background: var(--su-card-header);
+  border-bottom: 1px solid var(--su-border);
 }
 
 .cardStepBadge {
@@ -645,11 +695,12 @@
   min-width: 40px;
   height: 40px;
   border-radius: 12px;
-  background: var(--su-accent);
-  color: #053d2e;
+  background: var(--su-step-bg);
+  color: var(--su-step-text);
   font-size: 13px;
   font-weight: 900;
   flex-shrink: 0;
+  box-shadow: 0 2px 10px var(--su-card-shadow);
 }
 
 .cardStepBadgeSticker {
@@ -756,8 +807,8 @@
   padding: 4px 10px;
   border-radius: 999px;
   background: white;
-  border: 1px solid rgba(37, 211, 102, 0.25);
-  color: var(--su-accent-2);
+  border: 1px solid var(--su-border-accent);
+  color: var(--su-primary);
 }
 
 :global(.dark) .metaPill {
@@ -979,7 +1030,7 @@
 
 .messageBlock {
   border-radius: 14px;
-  border: 1px solid rgba(37, 211, 102, 0.2);
+  border: 1px solid var(--su-border-accent);
   overflow: hidden;
 }
 
@@ -989,8 +1040,8 @@
   justify-content: space-between;
   gap: 12px;
   padding: 12px 16px;
-  background: rgba(37, 211, 102, 0.08);
-  border-bottom: 1px solid rgba(37, 211, 102, 0.15);
+  background: var(--su-fill-subtle);
+  border-bottom: 1px solid var(--su-border);
 }
 
 .messageLabel {
@@ -1010,16 +1061,17 @@
   padding: 7px 14px;
   border-radius: 9px;
   border: none;
-  background: var(--su-accent);
-  color: #053d2e;
+  background: var(--su-btn-bg);
+  color: var(--su-btn-text);
   font-size: 12px;
   font-weight: 800;
   cursor: pointer;
   transition: background 0.15s ease, transform 0.15s ease;
+  box-shadow: 0 2px 8px var(--su-card-shadow);
 }
 
 .copyBtn:hover {
-  background: #1fb855;
+  background: var(--su-btn-hover);
   transform: translateY(-1px);
 }
 
@@ -1158,25 +1210,26 @@
   gap: 6px;
   padding: 10px 16px;
   border-radius: 10px;
-  background: var(--su-accent);
-  color: #053d2e;
+  background: var(--su-btn-bg);
+  color: var(--su-btn-text);
   font-size: 12px;
   font-weight: 800;
   text-decoration: none;
   transition: background 0.15s ease, transform 0.15s ease;
   flex-shrink: 0;
+  box-shadow: 0 2px 8px var(--su-card-shadow);
 }
 
 .valuePostSopLink:hover {
-  background: #1fb855;
+  background: var(--su-btn-hover);
   transform: translateY(-1px);
 }
 
 .valuePostRules {
   padding: 16px 18px;
   border-radius: 14px;
-  background: rgba(37, 211, 102, 0.08);
-  border: 1px solid rgba(37, 211, 102, 0.22);
+  background: var(--su-fill-subtle);
+  border: 1px solid var(--su-border-accent);
   margin-bottom: 20px;
 }
 
