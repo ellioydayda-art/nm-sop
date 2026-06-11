@@ -12,8 +12,8 @@ export const CAE_SHOW_UP_MESSAGES: ShowUpMessageStep[] = [
       "Confirm the webinar day and date before sending",
     ],
     image: {
-      src: "/sop/cae-show-up/01-welcome.png",
-      downloadName: "cae-purple-star-show-up-01-welcome.png",
+      src: "https://assets.cdn.filesafe.space/OjRihR4hKrEVcA3qJMfk/media/6a2a930dee57e63b960540c4.jpg",
+      downloadName: "cae-purple-star-show-up-01-welcome.jpg",
       alt: "Purple Star Astrology Workshop welcome community banner",
     },
     message: `Hey everyone! 👋🏼
